@@ -135,8 +135,11 @@
   <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
     <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
   </data>
-  <data name="Info_SkipDefinedMethod" xml:space="preserve">
-    <value>The method '{0}' was not included as part of proxy type as it is already defined as a property or event.</value>
+  <data name="Info_SkipDefinedEventMethod" xml:space="preserve">
+    <value>The method '{0}' was not included as part of proxy type as it is already defined as an event.</value>
+  </data>
+  <data name="Info_SkipDefinedPropertyMethod" xml:space="preserve">
+    <value>The method '{0}' was not included as part of proxy type as it is already defined as a property.</value>
   </data>
   <data name="Warn_TypeNotLoaded" xml:space="preserve">
     <value>Could not load the type '{0}'.</value>

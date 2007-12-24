@@ -31,6 +31,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(settings.EmitMethods);
             Assert.That(settings.EmitProperties);
             Assert.That(settings.EmitStatics);
+            Assert.That(settings.EmitEvents);
         }
 
         /// <summary>
@@ -41,12 +42,14 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             bool expectedMethodSetting = RandomNumbers.Next(0, 1) == 0;
             bool expectedPropertiesSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedEventSetting = RandomNumbers.Next(0, 1) == 0;
             bool expectedStaticsSetting = RandomNumbers.Next(0, 1) == 0;
 
-            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(expectedStaticsSetting, expectedMethodSetting, expectedPropertiesSetting);
+            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(expectedStaticsSetting, expectedMethodSetting, expectedPropertiesSetting, expectedEventSetting);
 
             Assert.That(settings.EmitMethods, Is.EqualTo(expectedMethodSetting));
             Assert.That(settings.EmitProperties, Is.EqualTo(expectedPropertiesSetting));
+            Assert.That(settings.EmitEvents, Is.EqualTo(expectedEventSetting));
             Assert.That(settings.EmitStatics, Is.EqualTo(expectedStaticsSetting));
         }
 
@@ -58,6 +61,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitMethods);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitProperties);
+            Assert.That(ProxyAssemblyBuilderSettings.Default.EmitEvents);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitStatics);
         }
 

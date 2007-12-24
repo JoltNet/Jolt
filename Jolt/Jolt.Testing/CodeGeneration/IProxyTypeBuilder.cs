@@ -33,6 +33,15 @@ namespace Jolt.Testing.CodeGeneration
         void AddProperty(PropertyInfo property);
 
         /// <summary>
+        /// Adds an event to the proxy builder.
+        /// </summary>
+        /// 
+        /// <param name="eventInfo">
+        /// The event to add to the builder.
+        /// </param>
+        void AddEvent(EventInfo eventInfo);
+
+        /// <summary>
         /// Creates the proxy interface type for the current state of the builder.
         /// </summary>
         Type CreateInterface();

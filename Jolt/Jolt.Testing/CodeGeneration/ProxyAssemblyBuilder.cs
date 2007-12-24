@@ -130,6 +130,7 @@ namespace Jolt.Testing.CodeGeneration
 
             m_methodBindingFlags = ComputeMemberBindingFlags(m_settings.EmitMethods, m_settings.EmitStatics);
             m_propertyBindingFlags = ComputeMemberBindingFlags(m_settings.EmitProperties, m_settings.EmitStatics);
+            m_eventBindingFlags = ComputeMemberBindingFlags(m_settings.EmitEvents, m_settings.EmitStatics);
         }
 
         #endregion
@@ -176,7 +177,7 @@ namespace Jolt.Testing.CodeGeneration
         {
             IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_module);
             Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), builder.AddProperty);
-            //Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), builder.AddEvent);
+            Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), builder.AddEvent);
             Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), delegate(MethodInfo m) { AddMethod(m, builder); });
 
             builder.CreateProxy();
@@ -217,32 +218,6 @@ namespace Jolt.Testing.CodeGeneration
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Determines if a given method is defined as part of a property
-        /// or event on its declaring type.  Uses the property and event
-        /// binding member declarations for lookup.
-        /// </summary>
-        /// 
-        /// <param name="method">
-        /// The method to validate.
-        /// </param>
-        private bool IsSpecialMethod(MethodInfo method)
-        {
-            foreach (string sPrefix in PropertyMethodPrefixes)
-            {
-                if (method.Name.IndexOf(sPrefix) == 0 &&
-                    method.DeclaringType.GetMember(method.Name.Substring(sPrefix.Length), m_propertyBindingFlags) != null)
-                {
-                    return true;
-                }
-            }
-
-            // check add_sMethodName, event binding
-            // check remove_sMethodName, event binding.
-
-            return false;
-        }
-
-        /// <summary>
         /// Adds the given method to the given builder, only if it isn't already part of
         /// another member (property, event) on the proxy class.
         /// </summary>
@@ -256,13 +231,22 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         private void AddMethod(MethodInfo method, IProxyTypeBuilder builder)
         {
-            if (IsSpecialMethod(method))
+            if (IsSpecialMethod(method, PropertyMethodPrefixes, m_propertyBindingFlags))
             {
-                // Output a log message stating the method is skipped only
-                // when property/event emit is enabled.
                 if (m_propertyBindingFlags != BindingFlags.Default)
                 {
-                    Log.InfoFormat(Resources.Info_SkipDefinedMethod, method.Name);
+                    // Property method detected and property-emit is enabled.
+                    // Emit warning as property already added to the builder.
+                    Log.InfoFormat(Resources.Info_SkipDefinedPropertyMethod, method.Name);
+                }
+            }
+            else if (IsSpecialMethod(method, EventMethodPrefixes, m_eventBindingFlags))
+            {
+                if (m_eventBindingFlags != BindingFlags.Default)
+                {
+                    // Event method detected and event-emit is enabled.
+                    // Emit warning as event already added to the builder.
+                    Log.InfoFormat(Resources.Info_SkipDefinedEventMethod, method.Name);
                 }
             }
             else
@@ -281,6 +265,36 @@ namespace Jolt.Testing.CodeGeneration
         #endregion
 
         #region private class methods -------------------------------------------------------------
+
+        /// <summary>
+        /// Determines if a given method is defined as part of a property
+        /// or event on its declaring type.
+        /// </summary>
+        /// 
+        /// <param name="method">
+        /// The method to validate.
+        /// </param>
+        /// 
+        /// <param name="methodPrefixes">
+        /// The method prefixes to use as part of validation (e.g. "add_", "get_").
+        /// </param>
+        /// 
+        /// <param name="bindings">
+        /// The property or event method bindings to use during validation.
+        /// </param>
+        private static bool IsSpecialMethod(MethodInfo method, string[] methodPrefixes, BindingFlags bindings)
+        {
+            foreach (string sPrefix in methodPrefixes)
+            {
+                if (method.Name.IndexOf(sPrefix) == 0 &&
+                    method.DeclaringType.GetMember(method.Name.Substring(sPrefix.Length), bindings) != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Determines the binding flags for a particular member given a Boolean
@@ -321,6 +335,7 @@ namespace Jolt.Testing.CodeGeneration
         private readonly ProxyAssemblyBuilderSettings m_settings;
         private readonly BindingFlags m_methodBindingFlags;
         private readonly BindingFlags m_propertyBindingFlags;
+        private readonly BindingFlags m_eventBindingFlags;
 
         #endregion
 
@@ -329,6 +344,7 @@ namespace Jolt.Testing.CodeGeneration
         private static readonly string DefaultNamespace = "Jolt.Testing.CodeGeneration";
         private static readonly string DefaultAssemblyFilename = DefaultNamespace + ".Proxies.dll";
         private static readonly string[] PropertyMethodPrefixes = { "get_", "set_" };
+        private static readonly string[] EventMethodPrefixes = { "add_", "remove_" };
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProxyAssemblyBuilder));
 
         #endregion

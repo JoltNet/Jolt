@@ -39,11 +39,16 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="emitProperties">
         /// Determines if properties are generated.
         /// </param>
-        public ProxyAssemblyBuilderSettings(bool emitStatics, bool emitMethods, bool emitProperties)
+        /// 
+        /// <param name="emitEvents">
+        /// Determines if events are generated.
+        /// </param>
+        public ProxyAssemblyBuilderSettings(bool emitStatics, bool emitMethods, bool emitProperties, bool emitEvents)
         {
             this["emitStatics"] = emitStatics;
             this["emitMethods"] = emitMethods;
             this["emitProperties"] = emitProperties;
+            this["emitEvents"] = emitEvents;
         }
 
         #endregion
@@ -55,7 +60,7 @@ namespace Jolt.Testing.CodeGeneration
 
 
         /// <summary>
-        /// Gets/sets the value that controls static function generation.
+        /// Gets the value that controls static function generation.
         /// </summary>
         [ConfigurationProperty("emitStatics", IsRequired=false, DefaultValue=true)]
         public bool EmitStatics
@@ -64,7 +69,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets/sets the value that controls method generation.
+        /// Gets the value that controls method generation.
         /// </summary>
         [ConfigurationProperty("emitMethods", IsRequired=false, DefaultValue=true)]
         public bool EmitMethods
@@ -73,12 +78,21 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets/sets the value that controls property generation.
+        /// Gets the value that controls property generation.
         /// </summary>
         [ConfigurationProperty("emitProperties", IsRequired=false, DefaultValue=true)]
         public bool EmitProperties
         {
             get { return (bool)this["emitProperties"]; }
+        }
+
+        /// <summary>
+        /// Gets the value that controls event generation.
+        /// </summary>
+        [ConfigurationProperty("emitEvents", IsRequired=false, DefaultValue=true)]
+        public bool EmitEvents
+        {
+            get { return (bool)this["emitEvents"]; }
         }
     }
 }

@@ -170,6 +170,42 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
+        /// Adds an event to the proxy builder.
+        /// </summary>
+        /// 
+        /// <param name="eventInfo">
+        /// The event to add to the builder.
+        /// </param>
+        public virtual void AddEvent(EventInfo eventInfo)
+        {
+            ThrowOnNullMember(eventInfo);
+            ValidateEvent(eventInfo);
+
+            // Add the event to the inteface.
+            EventBuilder interfaceEventBuilder = m_proxyInterface.DefineEvent(eventInfo.Name,
+                eventInfo.Attributes, eventInfo.EventHandlerType);
+
+            // Add the event to the proxy.
+            EventBuilder proxyEventBuilder = m_proxy.DefineEvent(String.Concat(m_proxyInterface.Name, '.', eventInfo.Name),
+                eventInfo.Attributes, eventInfo.EventHandlerType);
+            
+            // Define the event methods (add/remove) for the interface and proxy.
+            MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
+
+            DefineInterfaceAndProxyMethod(eventInfo.GetAddMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+            interfaceEventBuilder.SetAddOnMethod(interfaceMethodBuilder);
+            proxyEventBuilder.SetAddOnMethod(proxyMethodBuilder);
+
+            DefineInterfaceAndProxyMethod(eventInfo.GetRemoveMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+            interfaceEventBuilder.SetRemoveOnMethod(interfaceMethodBuilder);
+            proxyEventBuilder.SetRemoveOnMethod(proxyMethodBuilder);
+
+            // NOTE: The raise method on the proxy event is not set since the proxy does
+            // not contain any code to raise the event.  Once the subject's event is raised,
+            // any method subscribed to the proxy event will be notified.
+        }
+
+        /// <summary>
         /// Creates the proxy interface type for the current state of the builder.
         /// </summary>
         public virtual Type CreateInterface()
@@ -372,6 +408,19 @@ namespace Jolt.Testing.CodeGeneration
 
             if (property.CanRead)   { ValidateMethod(property.GetGetMethod(true)); }
             if (property.CanWrite)  { ValidateMethod(property.GetSetMethod(true)); }
+        }
+
+        /// <summary>
+        /// Verifies that the given event is legal for input into the builder.
+        /// </summary>
+        /// 
+        /// <param name="eventInfo">
+        /// The property to validate.
+        /// </param>
+        private void ValidateEvent(EventInfo eventInfo)
+        {
+            ValidateMethod(eventInfo.GetAddMethod(true));
+            ValidateMethod(eventInfo.GetRemoveMethod(true));
         }
 
         #endregion

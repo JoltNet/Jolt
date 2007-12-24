@@ -87,7 +87,7 @@ namespace Jolt.Testing.CodeGeneration
             Console.WriteLine();
             Console.WriteLine("'subjectTypesFullPath' is the full path to an XML configuration file containing the real subject types.");
             Console.WriteLine("'proxyAssemblyNamespace' is the optional namespace of the generated proxy assembly.");
-            Console.WriteLine("'proxyAssemblyFullPath' is the optional target path of the generated proxy assembly");
+            Console.WriteLine("'proxyAssemblyFullPath' is the optional target path of the generated proxy assembly.");
             Console.WriteLine();
         }
     }

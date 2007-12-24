@@ -171,6 +171,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyFileName + ", Version=1.0.0.0, Culture=en-US, PublicKeyToken=null"));
                 Assert.That(builder.Settings.EmitMethods);
                 Assert.That(builder.Settings.EmitProperties);
+                Assert.That(builder.Settings.EmitEvents);
                 Assert.That(!builder.Settings.EmitStatics);
 
                 Module[] assemblyModules = builder.Assembly.GetModules();
@@ -212,6 +213,10 @@ namespace Jolt.Testing.Test.CodeGeneration
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", BindingFlags.Public | BindingFlags.Static));
@@ -244,7 +249,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
@@ -284,7 +289,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false));
 
                 // Expectations
                 // The proxy type builder is created.
@@ -310,6 +315,42 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         /// <summary>
         /// Verifies the behavior of the AddType() method when the
+        /// builder is configured to suppress static events.
+        /// </summary>
+        [Test]
+        public void AddType_NoStaticEvents()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true));
+
+                // Expectations
+                // The proxy type builder is created.
+                Type expectedSubjectType = typeof(__RealSubjectType);
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy builder is invoked for each public property and method
+                // on the real subject type.
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedSubjectType);
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddType() method when the
         /// builder is configured to suppress all methods.
         /// </summary>
         [Test]
@@ -320,7 +361,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, true, true));
 
                 // Expectations
                 // The proxy type builder is created.
@@ -334,6 +375,10 @@ namespace Jolt.Testing.Test.CodeGeneration
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
@@ -358,7 +403,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, false, true));
 
                 // Expectations
                 // The proxy type builder is created.
@@ -376,6 +421,56 @@ namespace Jolt.Testing.Test.CodeGeneration
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetHashCode"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("ToString"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("Equals"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedSubjectType);
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddType() method when the
+        /// builder is configured to suppress all events.
+        /// </summary>
+        [Test]
+        public void AddType_NoEvents()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, true, false));
+
+                // Expectations
+                // The proxy type builder is created.
+                Type expectedSubjectType = typeof(__RealSubjectType);
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy builder is invoked for each public method
+                // on the real subject type.
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1"));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetType"));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetHashCode"));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("ToString"));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("Equals"));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
@@ -400,7 +495,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
@@ -545,6 +640,11 @@ namespace Jolt.Testing.Test.CodeGeneration
             public static int PublicProperty_3 { get { return 0; } set { } }
             public static int PublicProperty_4 { get { return 0; } set { } }
             
+            public event EventHandler<EventArgs> PublicEvent_1;
+            public event EventHandler<EventArgs> PublicEvent_2;
+            public static event EventHandler<EventArgs> PublicEvent_3;
+            public static event EventHandler<EventArgs> PublicEvent_4;
+
             internal void InternalMethod() { }
             protected void ProtectedMethod() { }
             private void PrivateMethod() { }
@@ -554,6 +654,11 @@ namespace Jolt.Testing.Test.CodeGeneration
             protected int ProtectedProperty { get { return 0; } set { } }
             private int PrivateProperty { get { return 0; } set { } }
             private static int PrivateStaticProperty { get { return 0; } set { } }
+
+            internal event EventHandler<EventArgs> InternalEvent;
+            protected event EventHandler<EventArgs> ProtectedEvent;
+            private event EventHandler<EventArgs> PrivateEvent;
+            private static event EventHandler<EventArgs> PrivateStaticEvent;
         }
 
         #endregion
