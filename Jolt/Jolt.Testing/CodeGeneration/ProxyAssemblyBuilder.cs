@@ -122,11 +122,11 @@ namespace Jolt.Testing.CodeGeneration
             m_createProxyTypeBuilder = createTypeBuilder;
             m_settings = settings ?? ProxyAssemblyBuilderSettings.Default;
 
-            string sAssemblyFileName = Path.GetFileName(m_sAssemblyFullPath);
-            m_assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(
-                new AssemblyName(String.Concat(sAssemblyFileName, ", Version=1.0.0.0, Culture=en-US, PublicKeyToken=null")),
-                AssemblyBuilderAccess.RunAndSave, Path.GetDirectoryName(m_sAssemblyFullPath));
-            m_module = m_assembly.DefineDynamicModule(Path.GetFileNameWithoutExtension(DefaultAssemblyFilename), sAssemblyFileName, true);
+            AssemblyName assemblyName = new AssemblyName(Path.GetFileNameWithoutExtension(sAssemblyFullPath));
+            assemblyName.Version = new Version(1, 0);
+            m_assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave,
+                Path.GetDirectoryName(m_sAssemblyFullPath));
+            m_module = m_assembly.DefineDynamicModule(DefaultAssemblyFilename, Path.GetFileName(sAssemblyFullPath), true);
 
             m_methodBindingFlags = ComputeMemberBindingFlags(m_settings.EmitMethods, m_settings.EmitStatics);
             m_propertyBindingFlags = ComputeMemberBindingFlags(m_settings.EmitProperties, m_settings.EmitStatics);

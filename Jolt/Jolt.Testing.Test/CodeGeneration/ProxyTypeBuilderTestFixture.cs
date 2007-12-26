@@ -116,18 +116,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_NonStaticClass_ConstructorInitialization()
         {
-            Type proxiedType = typeof(__ConstructorTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
+            Type realSubjectType = typeof(__ConstructorTestType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
             Type proxy = builder.CreateProxy();
-            ConstructorInfo[] proxiedTypeConstructors = proxiedType.GetConstructors();
-            ConstructorInfo[] proxyTypeConstructors = proxy.GetConstructors();
+            ConstructorInfo[] expectedConstructors = realSubjectType.GetConstructors();
+            ConstructorInfo[] actualConstructors = proxy.GetConstructors();
 
             // Both proxy and proxied have the same number of constructors and same arguments.
-            Assert.That(proxiedTypeConstructors.Length, Is.EqualTo(proxyTypeConstructors.Length));
-            for (int i = 0; i < proxiedTypeConstructors.Length; ++i)
+            Assert.That(actualConstructors.Length, Is.EqualTo(expectedConstructors.Length));
+            for (int i = 0; i < expectedConstructors.Length; ++i)
             {
-                Assert.That(JTCG.Convert.ToParameterTypes(proxiedTypeConstructors[i].GetParameters()),
-                    Is.EqualTo(JTCG.Convert.ToParameterTypes(proxyTypeConstructors[i].GetParameters())));
+                AssertMethodState(expectedConstructors[i], actualConstructors[i]);
             }
 
             // Proxy constructor forwards to the proxied type constructor.
@@ -977,12 +976,30 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="actualMethod">
         /// The method to validate.
         /// </param>
-        private static void AssertMethodState(MethodInfo expectedMethod, MethodInfo actualMethod)
+        private static void AssertMethodState(MethodBase expectedMethod, MethodBase actualMethod)
         {
             Assert.That(actualMethod, Is.Not.Null);
             Assert.That(!actualMethod.IsStatic);
-            Assert.That(JTCG.Convert.ToParameterTypes(actualMethod.GetParameters()),
-                Is.EqualTo(JTCG.Convert.ToParameterTypes(expectedMethod.GetParameters())));
+
+            ParameterInfo[] expectedParameters = expectedMethod.GetParameters();
+            ParameterInfo[] actualParameters = actualMethod.GetParameters();
+
+            Assert.That(JTCG.Convert.ToParameterTypes(actualParameters),
+                Is.EqualTo(JTCG.Convert.ToParameterTypes(expectedParameters)));
+            
+            for (int i = 0; i < expectedParameters.Length; ++i)
+            {
+                Assert.That(actualParameters[i].Attributes, Is.EqualTo(expectedParameters[i].Attributes));
+                Assert.That(actualParameters[i].Name, Is.EqualTo(expectedParameters[i].Name));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="AssertMethodState(MethodBase, MethodBase)"/>
+        /// </summary>
+        private static void AssertMethodState(MethodInfo expectedMethod, MethodInfo actualMethod)
+        {
+            AssertMethodState(expectedMethod as MethodBase, actualMethod as MethodBase);
             Assert.That(actualMethod.ReturnType, Is.EqualTo(expectedMethod.ReturnType));
         }
 
