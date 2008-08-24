@@ -28,12 +28,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeGeneration\AbstractMethodDeclarerImplTestFixture.cs" />
+    <Compile Include="CodeGeneration\AbstractMethodDeclarerTestFixture.cs" />
+    <Compile Include="CodeGeneration\ConstructorDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\ConvertTestFixture.cs" />
+    <Compile Include="CodeGeneration\InterfaceMethodDeclarerTestFixture.cs" />
+    <Compile Include="CodeGeneration\MethodDeclarerFactoryTestFixture.cs" />
+    <Compile Include="CodeGeneration\MethodDeclarerHelperTestFixture.cs" />
+    <Compile Include="CodeGeneration\NonGenericConstructorDeclarerTestFixture.cs" />
+    <Compile Include="CodeGeneration\NonGenericMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderSettingsTextFixture.cs" />
+    <Compile Include="CodeGeneration\ProxyMethodDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyTypeBuilderTestFixture.cs" />
     <Compile Include="CodeGeneration\Xml\XmlConfiguratorTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CodeGeneration\TestTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error_DelayedConstructorDeclaration" xml:space="preserve">
+    <value>The constructor '{0}' must be declared at the same time its corresponding ConstructorBuilder is created.</value>
+  </data>
   <data name="Error_DuplicateMember" xml:space="preserve">
     <value>Duplicate method, property, or event detected within a type.</value>
   </data>
@@ -134,6 +137,18 @@
   </data>
   <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
     <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
+  </data>
+  <data name="Error_NonSupportedGenericConstructor" xml:space="preserve">
+    <value>The constructor '{0}' contains generic parameters, and is not supported by this constructor declarer.</value>
+  </data>
+  <data name="Error_NonSupportedGenericMethod" xml:space="preserve">
+    <value>The method '{0}' contains generic parameters, and is not supported by this method declarer implementation.</value>
+  </data>
+  <data name="Error_NonSupportedNnonGenericConstructor" xml:space="preserve">
+    <value>The constructor '{0}' does not contain generic parameters, and is not supported by this constructor declarer.</value>
+  </data>
+  <data name="Error_NonSupportedNonGenericMethod" xml:space="preserve">
+    <value>The method '{0}' does not contain generic parameters, and is not supported by this method declarer implementation.</value>
   </data>
   <data name="Info_SkipDefinedEventMethod" xml:space="preserve">
     <value>The method '{0}' was not included as part of proxy type as it is already defined as an event.</value>

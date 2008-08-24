@@ -8,11 +8,13 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 
 using JTCG = Jolt.Testing.CodeGeneration;
 using Jolt.Testing.CodeGeneration;
+using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
@@ -22,6 +24,10 @@ namespace Jolt.Testing.Test.CodeGeneration
     /// Verifies the implementation of the ProxyTypeBuilder class.
     /// The methods CreateProxy() and CreateInterface() are tested indirectly
     /// as they validate the effects of the other class methods.
+    /// 
+    /// Furthermore, this focus of this fixture is to test the implementation
+    /// of the generated methods and types.  Testing the declaration of methods
+    /// is handled in the method-declarer test fixtures.
     /// </summary>
     [TestFixture]
     public sealed class ProxyTypeBuilderTestFixture
@@ -56,6 +62,24 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             ModuleBuilder expectedModule = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
                     AssemblyBuilderAccess.ReflectionOnly).DefineDynamicModule("__transientModule");
+
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+            Assert.That(builder.Module, Is.SameAs(expectedModule));
+        }
+
+        /// <summary>
+        /// Verifies the internal construction of the class.
+        /// </summary>
+        [Test]
+        public void Construction_Internal()
+        {
+            Type proxiedType = typeof(string);
+            ModuleBuilder expectedModule = AppDomain.CurrentDomain
+                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.ReflectionOnly)
+                .DefineDynamicModule("__transientModule");
+            MethodDeclarerFactory factory = new MethodDeclarerFactory(CreateTypeBuilder(expectedModule), CreateTypeBuilder(expectedModule));
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
 
@@ -124,10 +148,6 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             // Both proxy and proxied have the same number of constructors and same arguments.
             Assert.That(actualConstructors.Length, Is.EqualTo(expectedConstructors.Length));
-            for (int i = 0; i < expectedConstructors.Length; ++i)
-            {
-                AssertMethodState(expectedConstructors[i], actualConstructors[i]);
-            }
 
             // Proxy constructor forwards to the proxied type constructor.
             AssertConstructorInvoked(proxy, null, "0");
@@ -139,7 +159,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when an interface type
         /// is given to the proxy type builder as the real subject type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test, ExpectedException(typeof(NotSupportedException))]
         public void Construction_RealSubjectInterfaceType()
         {
             new ProxyTypeBuilder(DefaultNamespace, typeof(__InterfaceType));
@@ -149,7 +169,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when a delegate type
         /// is given to the proxy type builder as the real subject type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test, ExpectedException(typeof(NotSupportedException))]
         public void Construction_RealSubjectDelegateType()
         {
             new ProxyTypeBuilder(DefaultNamespace, typeof(AssertDynamicMethodInvocationDelegate));
@@ -172,6 +192,22 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies the default behavior of the CreateInterface() method,
+        /// when the real subject type is nested, and prior to adding methods.
+        /// </summary>
+        [Test]
+        public void CreateInterface_FromNestedType()
+        {
+            Type proxyInterface = new ProxyTypeBuilder(DefaultNamespace, typeof(WebRequestMethods.Ftp)).CreateInterface();
+
+            Assert.That(proxyInterface.IsInterface);
+            Assert.That(proxyInterface.IsAbstract);
+            Assert.That(proxyInterface.IsPublic);
+            Assert.That(proxyInterface.Namespace, Is.EqualTo(DefaultNamespace + ".System.Net"));
+            Assert.That(proxyInterface.Name, Is.EqualTo("IFtp"));
+        }
+
+        /// <summary>
         /// Verifies the default behavior of the CreateProxy() method,
         /// prior to adding methods.
         /// </summary>
@@ -188,6 +224,26 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxy.IsSealed);
             Assert.That(proxy.Namespace, Is.EqualTo(proxyInterface.Namespace));
             Assert.That(proxy.Name, Is.EqualTo("StringProxy"));
+            Assert.That(proxy.GetInterfaces(), List.Contains(proxyInterface));
+        }
+
+        /// <summary>
+        /// Verifies the default behavior of the CreateProxy() method,
+        /// when the real subject type is nested, and prior to adding methods.
+        /// </summary>
+        [Test]
+        public void CreateProxy_FromNestedType()
+        {
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(WebRequestMethods.Http));
+            Type proxy = builder.CreateProxy();
+            Type proxyInterface = builder.CreateInterface();
+
+            Assert.That(proxy.IsClass);
+            Assert.That(!proxy.IsAbstract);
+            Assert.That(proxy.IsPublic);
+            Assert.That(proxy.IsSealed);
+            Assert.That(proxy.Namespace, Is.EqualTo(proxyInterface.Namespace));
+            Assert.That(proxy.Name, Is.EqualTo("HttpProxy"));
             Assert.That(proxy.GetInterfaces(), List.Contains(proxyInterface));
         }
 
@@ -379,7 +435,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             // Verify that the following operations do not throw.
             builder.AddMethod(realSubjectType.GetMethod("InstanceMethod",Type.EmptyTypes));
-            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { typeof(int)}));
+            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { typeof(int) }));
             builder.CreateInterface();
             builder.CreateProxy();
         }
@@ -710,34 +766,41 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertAddEventBehavior(typeof(__EventTestType), "StaticEvent", "RaiseStaticEvent",
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
-                // Declare methods and data used in verifying event invocation.
-                object[] incBy10 = { new EventHandler<EventArgs>(__EventTestType.IncBy10) };
-                object[] incBy20 = { new EventHandler<EventArgs>(__EventTestType.IncBy20) };
+                int[] initialState = __EventTestType.StaticEventData.Clone() as int[];
 
-                // Verify the behavior of the generated proxy.
-                object proxyInstance = Activator.CreateInstance(proxy);
+                try
+                {
+                    // Declare methods and data used in verifying event invocation.
+                    object[] incBy10 = { new EventHandler<EventArgs>(__EventTestType.IncBy10) };
+                    object[] incBy20 = { new EventHandler<EventArgs>(__EventTestType.IncBy20) };
 
-                // No event handlers.
-                proxyRaiseEventMethod.Invoke(proxyInstance, null);
-                Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 0, 0 }));
+                    // Verify the behavior of the generated proxy.
+                    object proxyInstance = Activator.CreateInstance(proxy);
 
-                // Add event handler.
-                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy10);
-                proxyRaiseEventMethod.Invoke(proxyInstance, null);
-                Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 0 }));
+                    // No event handlers.
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 0, 0 }));
 
-                // Remove event handler.
-                proxyEvent.GetRemoveMethod(true).Invoke(proxyInstance, incBy10);
-                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
-                proxyRaiseEventMethod.Invoke(proxyInstance, null);
-                Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 20 }));
+                    // Add event handler.
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy10);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 0 }));
 
-                // Multicast.
-                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
-                proxyRaiseEventMethod.Invoke(proxyInstance, null);
-                Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 60 }));
+                    // Remove event handler.
+                    proxyEvent.GetRemoveMethod(true).Invoke(proxyInstance, incBy10);
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 20 }));
 
-                // TODO: Reset static __EventTestType state!
+                    // Multicast.
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType.StaticEventData, Is.EquivalentTo(new int[] { 10, 60 }));
+                }
+                finally
+                {
+                    __EventTestType.StaticEventData = initialState;
+                }
             });
         }
 
@@ -938,6 +1001,18 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private class methods -------------------------------------------------------------
 
         /// <summary>
+        /// Create a unique type builder within the scope of the given module builder.
+        /// </summary>
+        /// 
+        /// <param name="builder">
+        /// The module builder that defines the requested type builder.
+        /// </param>
+        private static TypeBuilder CreateTypeBuilder(ModuleBuilder builder)
+        {
+            return builder.DefineType("__transientType_" + Guid.NewGuid().ToString());
+        }
+
+        /// <summary>
         /// Verifies the construction of a given type.
         /// </summary>
         /// 
@@ -966,44 +1041,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Validates the state of a method after construction by the builder.
-        /// </summary>
-        /// 
-        /// <param name="expectedMethod">
-        /// The method from the builder's real subject type that models the actual method.
-        /// </param>
-        /// 
-        /// <param name="actualMethod">
-        /// The method to validate.
-        /// </param>
-        private static void AssertMethodState(MethodBase expectedMethod, MethodBase actualMethod)
-        {
-            Assert.That(actualMethod, Is.Not.Null);
-            Assert.That(!actualMethod.IsStatic);
-
-            ParameterInfo[] expectedParameters = expectedMethod.GetParameters();
-            ParameterInfo[] actualParameters = actualMethod.GetParameters();
-
-            Assert.That(JTCG.Convert.ToParameterTypes(actualParameters),
-                Is.EqualTo(JTCG.Convert.ToParameterTypes(expectedParameters)));
-            
-            for (int i = 0; i < expectedParameters.Length; ++i)
-            {
-                Assert.That(actualParameters[i].Attributes, Is.EqualTo(expectedParameters[i].Attributes));
-                Assert.That(actualParameters[i].Name, Is.EqualTo(expectedParameters[i].Name));
-            }
-        }
-
-        /// <summary>
-        /// <see cref="AssertMethodState(MethodBase, MethodBase)"/>
-        /// </summary>
-        private static void AssertMethodState(MethodInfo expectedMethod, MethodInfo actualMethod)
-        {
-            AssertMethodState(expectedMethod as MethodBase, actualMethod as MethodBase);
-            Assert.That(actualMethod.ReturnType, Is.EqualTo(expectedMethod.ReturnType));
-        }
-
-        /// <summary>
         /// Validates the state of a property after construction by the builder.
         /// </summary>
         /// 
@@ -1018,18 +1055,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Assert.That(actualProperty, Is.Not.Null);
             Assert.That(actualProperty.PropertyType, Is.EqualTo(expectedProperty.PropertyType));
-
             Assert.That(actualProperty.CanRead, Is.EqualTo(expectedProperty.CanRead));
-            if (actualProperty.CanRead)
-            {
-                AssertMethodState(expectedProperty.GetGetMethod(), actualProperty.GetGetMethod(true));
-            }
-
             Assert.That(actualProperty.CanWrite, Is.EqualTo(expectedProperty.CanWrite));
-            if (actualProperty.CanWrite)
-            {
-                AssertMethodState(expectedProperty.GetSetMethod(), actualProperty.GetSetMethod(true));
-            }
         }
 
         /// <summary>
@@ -1047,10 +1074,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Assert.That(actualEvent, Is.Not.Null);
             Assert.That(actualEvent.EventHandlerType, Is.EqualTo(expectedEvent.EventHandlerType));
-
             Assert.That(actualEvent.GetRaiseMethod(), Is.Null);
-            AssertMethodState(expectedEvent.GetAddMethod(), actualEvent.GetAddMethod(true));
-            AssertMethodState(expectedEvent.GetRemoveMethod(), actualEvent.GetRemoveMethod(true));
         }
 
         /// <summary>
@@ -1072,23 +1096,13 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertDynamicMethodInvocationDelegate assertMethodInvocation)
         {
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            builder.AddMethod(realSubjectType.GetMethod(sMethodName, methodParamterTypes));
 
-            MethodInfo expectedMethod = realSubjectType.GetMethod(sMethodName, methodParamterTypes);
-            builder.AddMethod(expectedMethod);
-
-            // Verify the method on the proxy inteface.
             Type proxyInterface = builder.CreateInterface();
-            MethodInfo interfaceMethod = proxyInterface.GetMethod(sMethodName, methodParamterTypes);
-            AssertMethodState(expectedMethod, interfaceMethod);
-
-            // Verify the method on the proxy.
             Type proxy = builder.CreateProxy();
-            string sProxyMethodName = String.Concat(proxyInterface.Name, '.', sMethodName);
-            MethodInfo proxyMethod = proxy.GetMethod(sProxyMethodName, BindingFlags.Instance | BindingFlags.NonPublic, null,
-                methodParamterTypes, null);
-            AssertMethodState(expectedMethod, proxyMethod);
 
-            // Verify the behavior of the generated proxy.
+            string sProxyMethodName = String.Concat(proxyInterface.Name, '.', sMethodName);
+
             assertMethodInvocation(proxy, sProxyMethodName);
         }
 
@@ -1207,159 +1221,11 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region nested types supporting unit tests ------------------------------------------------
+        #region delegate types supporting unit tests ----------------------------------------------
 
         private delegate void AssertDynamicMethodInvocationDelegate(Type proxy, string sProxyMethodName);
         private delegate void AssertDynamicPropertyInvocationDelegate(Type proxy, PropertyInfo proxyProperty);
         private delegate void AssertDynamicEventInvocationDelegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod);
-
-        private static class __AbstractSealedType { }
-
-        private abstract class __AbstractType
-        {
-            public int InstanceProperty { get { return 123; } }
-            public event EventHandler<EventArgs> InstanceEvent;
-        }
-        
-        public class __MethodTestType
-        {
-            public DateTime InstanceMethod() { return DateTime.Today; }     // Also covers return-value, and no-args method test cases.
-            public DateTime InstanceMethod(int i) { return DateTime.Today.AddMonths(i); }
-            public static TimeSpan StaticMethod() { return TimeSpan.FromHours(12.0);  }
-            public void VoidReturnValueMethod() { throw new ApplicationException("void-return"); }
-            public string ManyArgumentsMethod(string s, int x, double y, DateTime d) { return String.Concat("many-args:", s, x, y, d); }
-            public string ParamsArrayArgumentsMethod(string s, params object[] i) { return "params-args:" + String.Concat(i); }
-            public void OutParameterMethod(out string s) { s = "out-param"; }
-
-            private void PrivateMethod() { }
-        }
-
-        public class __PropertyTestType
-        {
-            public uint InstanceProperty
-            {
-                get { return m_instancePropertyValue; }
-                set { m_instancePropertyValue = value; }
-            }
-
-            public static DateTime StaticProperty
-            {
-                get { return StaticPropertyValue; }
-                set { StaticPropertyValue = value; }
-            }
-
-            public string Getter
-            {
-                get { return "getter-only"; }
-            }
-
-            public uint Setter
-            {
-                set { m_instancePropertyValue = value; }
-            }
-
-            public int this[int x, int y, int z]
-            {
-                get { return m_indexerValue; }
-                set { m_indexerValue = value + x + y + z; }
-            }
-
-            public string this[int x]
-            {
-                get { return m_simpleIndexerValue; }
-                set { m_simpleIndexerValue = String.Concat(value, x); }
-            }
-
-            private int PrivateProperty
-            {
-                get { return 0; }
-            }
-
-
-            private uint m_instancePropertyValue = 0xdeadbeef;
-            private static DateTime StaticPropertyValue = DateTime.Today;
-            private int m_indexerValue = 0xbeef;
-            private string m_simpleIndexerValue = "simple-value";
-        }
-
-        public class __EventTestType
-        {
-            public event EventHandler<EventArgs> InstanceEvent;
-            public static event EventHandler<EventArgs> StaticEvent;
-            private event EventHandler<EventArgs> PrivateEvent;
-
-            public void RaiseInstanceEvent() { RaiseEvent(InstanceEvent); }
-            public static void RaiseStaticEvent() { RaiseEvent(StaticEvent); }
-
-            public static void IncBy10(object sender, EventArgs args) { StaticEventData[0] += 10; }
-            public static void IncBy20(object sender, EventArgs args) { StaticEventData[1] += 20; }
-            public static int[] StaticEventData = { 0, 0 };
-
-            private static void RaiseEvent(EventHandler<EventArgs> eventToRaise)
-            {
-                if (eventToRaise != null) { eventToRaise(null, null); }
-            }
-        }
-
-        public class __ConstructorTestType
-        {
-            public __ConstructorTestType() { throw new ApplicationException("0"); }
-            public __ConstructorTestType(int x) { throw new ApplicationException(x.ToString()); }
-            public __ConstructorTestType(int x, int y) { throw new ApplicationException(x.ToString() + y.ToString()); }
-        }
-
-        public class __BaseSubjectType
-        {
-            public virtual string VirtualMethod() { return m_virtualPropertyValue; }
-            public string NonVirtualMethod() { return m_nonVirtualPropertyValue; }
-
-            public virtual string VirtualProperty
-            {
-                get { return m_virtualPropertyValue; }
-                set { m_virtualPropertyValue = value; }
-            }
-
-            public string NonVirtualProperty
-            {
-                get { return m_nonVirtualPropertyValue; }
-                set { m_nonVirtualPropertyValue = value; }
-            }
-
-            public virtual event EventHandler<EventArgs> VirtualEvent;
-            public event EventHandler<EventArgs> NonVirtualEvent;
-
-            public void RaiseVirtualEvent() { RaiseEvent(VirtualEvent); }
-            public void RaiseNonVirtualEvent() { RaiseEvent(NonVirtualEvent); }
-
-            private static void RaiseEvent(EventHandler<EventArgs> eventToRaise)
-            {
-                if (eventToRaise != null) { eventToRaise(null, null); }
-            }
-
-            private string m_virtualPropertyValue = "Base:Virtual";
-            private string m_nonVirtualPropertyValue = "Base:NonVirtual";
-        }
-
-        public class __DerivedSubjectType : __BaseSubjectType
-        {
-            public override string VirtualMethod() { return m_virtualPropertyValue; }
-
-            public override string VirtualProperty
-            {
-                get { return m_virtualPropertyValue; }
-                set { m_virtualPropertyValue = "fixed-value"; }
-            }
-
-            public override event EventHandler<EventArgs> VirtualEvent
-            {
-                add { }    // always null
-                remove { } // always null
-            }
-
-            private string m_virtualPropertyValue = "Derived:Override";
-        }
-
-        private interface __InterfaceType { }
 
         #endregion
     }

@@ -18,26 +18,6 @@ using Jolt.Testing.Properties;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Defines a delegate that matches the method signatures of
-    /// <seealso cref="MethodBuilder.DefineParameter"/> and
-    /// <seealso cref="ConstructorBuilder.DefineParameter"/>.
-    /// </summary>
-    /// 
-    /// <param name="nParamPosition">
-    /// The one-based index of the parameter in the method signature.
-    /// </param>
-    /// 
-    /// <param name="paramAttributes">
-    /// The attributes of the parameter.
-    /// </param>
-    /// 
-    /// <param name="sParamName">
-    /// The parameter name.
-    /// </param>
-    delegate ParameterBuilder DefineParameterDelegate(int nParamPosition, ParameterAttributes paramAttributes, string sParamName);
-
-
-    /// <summary>
     /// Provides methods to dynamically reverse engineer a proxy and accompanying
     /// interface for a given type.  The proxy and interface are created in a given
     /// namespace, which is appended by the namespace of the real subject type.
@@ -59,42 +39,6 @@ namespace Jolt.Testing.CodeGeneration
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the proxy builder.
-        /// </summary>
-        /// 
-        /// <param name="sRootNamespace">
-        /// The namespace in which all types are created.
-        /// </param>
-        /// 
-        /// <param name="realSubjectType">
-        /// The type of object for which the proxy forwards to.
-        /// </param>
-        /// 
-        /// <param name="targetModule">
-        /// The module in which the types are created.
-        /// </param>
-        public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, ModuleBuilder targetModule)
-        {
-            ValidateRealSubjectType(realSubjectType);
-
-            m_realSubjectType = realSubjectType;
-            m_module = targetModule;
-            m_addedMembers = new Dictionary<MemberInfo, bool>();
-
-            // Create the type holders for the generated interface and proxy.
-            m_proxy = m_module.DefineType(String.Concat(sRootNamespace, '.', m_realSubjectType.FullName, "Proxy"),
-                TypeAttributes.Public | TypeAttributes.Sealed);
-            m_proxyInterface = m_module.DefineType(String.Concat(sRootNamespace, '.', m_realSubjectType.Namespace, ".I", m_realSubjectType.Name),
-                TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract);
-
-            if (!m_realSubjectType.IsAbstract)
-            {
-                m_realSubjectField = m_proxy.DefineField("m_realSubject", m_realSubjectType, FieldAttributes.Private | FieldAttributes.InitOnly);
-                InitializeProxyConstructors();
-            }
-        }
-
-        /// <summary>
         /// Initializes the proxy builder with a transient assembly in the current
         /// appdomain.
         /// </summary>
@@ -108,7 +52,45 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType)
             : this(sRootNamespace, realSubjectType, AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
-                    AssemblyBuilderAccess.Run).DefineDynamicModule("__transientModule")) {}
+                    AssemblyBuilderAccess.Run).DefineDynamicModule("__transientModule")) { }
+
+        /// <summary>
+        /// Initializes the proxy builder and overrides the method declarer factory.
+        /// </summary>
+        /// 
+        /// <param name="sRootNamespace">
+        /// The namespace in which all types are created.
+        /// </param>
+        /// 
+        /// <param name="realSubjectType">
+        /// The type of object for which the proxy forwards to.
+        /// </param>
+        /// 
+        /// <param name="targetModule">
+        /// The module in which the types are created.
+        /// </param>
+        internal ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, ModuleBuilder targetModule)
+        {
+            ValidateRealSubjectType(realSubjectType);
+
+            m_realSubjectType = realSubjectType;
+            m_module = targetModule;
+            m_addedMembers = new Dictionary<MemberInfo, bool>();
+
+            // Create the type holders for the generated interface and proxy.
+            m_proxy = m_module.DefineType(String.Concat(sRootNamespace, '.', m_realSubjectType.Namespace, '.', realSubjectType.Name, "Proxy"),
+                TypeAttributes.Public | TypeAttributes.Sealed);
+            m_proxyInterface = m_module.DefineType(String.Concat(sRootNamespace, '.', m_realSubjectType.Namespace, ".I", m_realSubjectType.Name),
+                TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract);
+
+            m_methodDeclarerFactory = new MethodDeclarerFactory(m_proxyInterface, m_proxy);
+
+            if (!m_realSubjectType.IsAbstract)
+            {
+                m_realSubjectField = m_proxy.DefineField("m_realSubject", m_realSubjectType, FieldAttributes.Private | FieldAttributes.InitOnly);
+                InitializeProxyConstructors();
+            }
+        }
 
         #endregion
 
@@ -262,20 +244,14 @@ namespace Jolt.Testing.CodeGeneration
             // on the real subject type.
             foreach (ConstructorInfo constructor in m_realSubjectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
             {
-                ParameterInfo[] constructorParameters = constructor.GetParameters();
-                ConstructorBuilder proxyConstructorBuilder = m_proxy.DefineConstructor(
-                    MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                    CallingConventions.Standard, JTCG.Convert.ToParameterTypes(constructorParameters));
-                DefineParametersWith(proxyConstructorBuilder.DefineParameter, constructorParameters);
-
-                ILGenerator codeGenerator = proxyConstructorBuilder.GetILGenerator();
+                ILGenerator codeGenerator = m_methodDeclarerFactory.Create(constructor).Declare().GetILGenerator();
  
                 // Call the base constructor, if it exists.
                 emitBaseClassConstructorCall(codeGenerator);
 
                 // Load all arguments on to stack, including this pointer, to
                 // prepare to forward to real subject's constructor.
-                for (sbyte i = 0; i <= constructorParameters.Length; ++i)
+                for (sbyte i = 0; i <= constructor.GetParameters().Length; ++i)
                 {
                     codeGenerator.Emit(OpCodes.Ldarg_S, i);
                 }
@@ -335,24 +311,9 @@ namespace Jolt.Testing.CodeGeneration
         /// </remarks>
         private void DefineInterfaceAndProxyMethod(MethodInfo method, out MethodBuilder interfaceMethodBuilder, out MethodBuilder proxyMethodBuilder)
         {
-            ParameterInfo[] methodParameters = method.GetParameters();
-            Type[] methodParameterTypes = JTCG.Convert.ToParameterTypes(methodParameters);
-
-            // Add the method to the interface.
-            // All interface methods are public, abstract and virtual.
-            interfaceMethodBuilder = m_proxyInterface.DefineMethod(method.Name,
-                MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.Public |
-                MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.SpecialName,
-                method.ReturnType, methodParameterTypes);
-            DefineParametersWith(interfaceMethodBuilder.DefineParameter, methodParameters);
-            
-            // Add the method to the proxy.
-            // The method explicity implements the interface method.
-            proxyMethodBuilder = m_proxy.DefineMethod(String.Concat(m_proxyInterface.Name, '.', method.Name),
-                MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-                MethodAttributes.SpecialName | MethodAttributes.Virtual | MethodAttributes.Final,
-                method.ReturnType, methodParameterTypes);
-            DefineParametersWith(proxyMethodBuilder.DefineParameter, methodParameters);
+            // Declare the interface and proxy methods.
+            interfaceMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Interface, method).Declare();
+            proxyMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Proxy, method).Declare();
 
             // Generate the IL that represents the proxy's method call.
             ILGenerator codeGenerator = proxyMethodBuilder.GetILGenerator();
@@ -368,7 +329,7 @@ namespace Jolt.Testing.CodeGeneration
             }
 
             // Load each argument to the function call onto the stack.
-            for (sbyte i = 1; i <= methodParameterTypes.Length; ++i)
+            for (sbyte i = 1; i <= method.GetParameters().Length; ++i)
             {
                 codeGenerator.Emit(OpCodes.Ldarg_S, i);
             }
@@ -452,26 +413,6 @@ namespace Jolt.Testing.CodeGeneration
         #region private class methods -------------------------------------------------------------
 
         /// <summary>
-        /// Defines a copy of the given parameters in the order supplied,
-        /// using the given delegate.
-        /// </summary>
-        /// 
-        /// <param name="methodBuilder">
-        /// The delegate that defines a parameter on an implicit object.
-        /// </param>
-        /// 
-        /// <param name="parameters">
-        /// The parameters that model the paramters to define.
-        /// </param>
-        private static void DefineParametersWith(DefineParameterDelegate defineParameter, ParameterInfo[] parameters)
-        {
-            for (int i = 0; i < parameters.Length; ++i)
-            {
-                defineParameter(i + 1, parameters[i].Attributes, parameters[i].Name);
-            }
-        }
-
-        /// <summary>
         /// Throws an exception when the given member is null.
         /// </summary>
         /// 
@@ -512,8 +453,10 @@ namespace Jolt.Testing.CodeGeneration
             // by a proxy and interface.
             if (realSubjectType.IsInterface || typeof(Delegate).IsAssignableFrom(realSubjectType))
             {
-                throw new InvalidOperationException(String.Format(Resources.Error_InvalidRealSubjectType, realSubjectType.Name));
+                throw new NotSupportedException(String.Format(Resources.Error_InvalidRealSubjectType, realSubjectType.Name));
             }
+
+            // TODO: Validate accessibility of realSubjectType, including its parent types (for nested types).
         }
 
         #endregion
@@ -526,6 +469,7 @@ namespace Jolt.Testing.CodeGeneration
         private readonly TypeBuilder m_proxyInterface;
         private readonly TypeBuilder m_proxy;
         private readonly IDictionary<MemberInfo, bool> m_addedMembers;
+        private readonly MethodDeclarerFactory m_methodDeclarerFactory;
 
         #endregion
     }

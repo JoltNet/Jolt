@@ -61,6 +61,15 @@ namespace Jolt.Testing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The constructor &apos;{0}&apos; must be declared at the same time its corresponding ConstructorBuilder is created..
+        /// </summary>
+        internal static string Error_DelayedConstructorDeclaration {
+            get {
+                return ResourceManager.GetString("Error_DelayedConstructorDeclaration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate method, property, or event detected within a type..
         /// </summary>
         internal static string Error_DuplicateMember {
@@ -111,6 +120,42 @@ namespace Jolt.Testing.Properties {
         internal static string Error_MethodNotMemberOfRealSubject {
             get {
                 return ResourceManager.GetString("Error_MethodNotMemberOfRealSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The constructor &apos;{0}&apos; contains generic parameters, and is not supported by this constructor declarer..
+        /// </summary>
+        internal static string Error_NonSupportedGenericConstructor {
+            get {
+                return ResourceManager.GetString("Error_NonSupportedGenericConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The method &apos;{0}&apos; contains generic parameters, and is not supported by this method declarer implementation..
+        /// </summary>
+        internal static string Error_NonSupportedGenericMethod {
+            get {
+                return ResourceManager.GetString("Error_NonSupportedGenericMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The constructor &apos;{0}&apos; does not contain generic parameters, and is not supported by this constructor declarer..
+        /// </summary>
+        internal static string Error_NonSupportedNnonGenericConstructor {
+            get {
+                return ResourceManager.GetString("Error_NonSupportedNnonGenericConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The method &apos;{0}&apos; does not contain generic parameters, and is not supported by this method declarer implementation..
+        /// </summary>
+        internal static string Error_NonSupportedNonGenericMethod {
+            get {
+                return ResourceManager.GetString("Error_NonSupportedNonGenericMethod", resourceCulture);
             }
         }
         
