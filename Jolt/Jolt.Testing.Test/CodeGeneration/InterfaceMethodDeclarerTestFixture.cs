@@ -62,9 +62,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Assert.That(interfaceMethod.IsPublic);
                 Assert.That(interfaceMethod.IsVirtual);
                 Assert.That(interfaceMethod.IsAbstract);
-                Assert.That(interfaceMethod.IsHideBySig);
-                Assert.That(interfaceMethod.IsSpecialName);
-                Assert.That(interfaceMethod.Attributes & MethodAttributes.NewSlot, Is.EqualTo(MethodAttributes.NewSlot));
+                Assert.That(!interfaceMethod.IsHideBySig);
+                Assert.That(!interfaceMethod.IsSpecialName);
+                Assert.That(interfaceMethod.Attributes & MethodAttributes.NewSlot, Is.Not.EqualTo(MethodAttributes.NewSlot));
                 Assert.That(implementationArgs.TrueForAll(delegate(MethodBuilder method)
                 {
                     // The interface method created by the type builder is passed to each implementation

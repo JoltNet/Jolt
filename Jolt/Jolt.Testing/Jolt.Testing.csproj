@@ -9,6 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Jolt.Testing</RootNamespace>
     <AssemblyName>Jolt.Testing</AssemblyName>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeGeneration\GenericConstructorDeclarer.cs" />
     <Compile Include="CodeGeneration\IMethodDeclarerImpl.cs" />
     <Compile Include="CodeGeneration\ConstructorDeclarerImpl.cs" />
     <Compile Include="CodeGeneration\Convert.cs" />

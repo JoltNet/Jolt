@@ -1,15 +1,15 @@
 // ----------------------------------------------------------------------------
-// NonGenericConstructorDeclarer.cs
+// GenericConstructorDeclarer.cs
 //
-// Contains the definition of the NonGenericConstructorDeclarer class.
+// Contains the definition of the GenericConstructorDeclarer class.
 // Copyright 2008 Steve Guidi.
 //
-// File created: 7/21/2008 22:15:41
+// File created: 9/1/2008 13:01:20
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Reflection;
 using System.Reflection.Emit;
+using System.Reflection;
 
 using JTCG = Jolt.Testing.CodeGeneration;
 
@@ -17,14 +17,16 @@ namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
     /// Creates and defines the ConstructorBuilder used by the
-    /// ProxyTypeBuilder for non-generic constructors on the proxy type.
+    /// ProxyTypeBuilder for generic constructors on the proxy type.
     /// </summary>
-    internal sealed class NonGenericConstructorDeclarer : AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo>
+    internal sealed class GenericConstructorDeclarer : AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.ctor(TypeBuilder, ConstructorInfo, AbstractMethodDeclarerImpl&lt;ConstructorBuilder,  ConstructorInfo&gt;"/>
-        internal NonGenericConstructorDeclarer(TypeBuilder proxyTypeBuilder, ConstructorInfo realSubjectTypeConstructor,
+        internal GenericConstructorDeclarer(
+            TypeBuilder proxyTypeBuilder,
+            ConstructorInfo realSubjectTypeConstructor,
             IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation)
             : base(proxyTypeBuilder, realSubjectTypeConstructor, implementation) { }
 
@@ -36,8 +38,9 @@ namespace Jolt.Testing.CodeGeneration
         internal override ConstructorBuilder Declare()
         {
             ParameterInfo[] constructorParameters = RealSubjectTypeMethod.GetParameters();
-            ConstructorBuilder builder = Builder.DefineConstructor(
-                ConstructorAttributes, CallingConventions.HasThis, JTCG.Convert.ToParameterTypes(constructorParameters));
+
+            ConstructorBuilder builder = Builder.DefineConstructor(ConstructorAttributes, CallingConventions.HasThis,
+                JTCG.Convert.ToParameterTypes(constructorParameters, Builder.GetGenericArguments()));
             Implementation.DefineMethodParameters(builder, RealSubjectTypeMethod);
 
             return builder;

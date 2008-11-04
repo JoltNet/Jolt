@@ -8,7 +8,6 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -17,6 +16,11 @@ using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
+using Rhino.Mocks;
+using Rhino.Mocks.Interfaces;
+using System.IO;
+using System.Net;
+using System.Text;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -52,16 +56,14 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the construction of the class when the proxied type. root namespace,
-        /// and target module are provided..
+        /// Verifies the construction of the class when the proxied type, root namespace,
+        /// and target module are provided.
         /// </summary>
         [Test]
         public void Construction_Namespace_ProxiedType_Module()
         {
             Type proxiedType = typeof(string);
-
-            ModuleBuilder expectedModule = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
-                    AssemblyBuilderAccess.ReflectionOnly).DefineDynamicModule("__transientModule");
+            ModuleBuilder expectedModule = CreateTransientModule();
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
 
@@ -75,16 +77,13 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_Internal()
         {
-            Type proxiedType = typeof(string);
-            ModuleBuilder expectedModule = AppDomain.CurrentDomain
-                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.ReflectionOnly)
-                .DefineDynamicModule("__transientModule");
-            MethodDeclarerFactory factory = new MethodDeclarerFactory(CreateTypeBuilder(expectedModule), CreateTypeBuilder(expectedModule));
+                Type proxiedType = typeof(string);
+                ModuleBuilder expectedModule = CreateTransientModule();
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
 
-            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
-            Assert.That(builder.Module, Is.SameAs(expectedModule));
+                Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+                Assert.That(builder.Module, Is.SameAs(expectedModule));
         }
 
         /// <summary>
@@ -95,6 +94,21 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Construction_AbstractClass()
         {
             Type proxiedType = typeof(__AbstractType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
+
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Assert.That(proxiedTypeField, Is.Null);
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when the proxied type is generic and abstract.
+        /// The generated proxy must not contain a field reference to the proxied type.
+        /// </summary>
+        [Test]
+        public void Construction_AbstractClass_Generic()
+        {
+            Type proxiedType = typeof(__AbstractType<>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
             FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -118,6 +132,20 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifes the construction of the class when the proxied type is generic, abstract, and sealed (static).
+        /// The generated proxy must not contain a field reference to the proxied type;
+        /// </summary>
+        [Test]
+        public void Construction_StaticClass_Generic()
+        {
+            Type proxiedType = typeof(__AbstractSealedType<,,>);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
+
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Assert.That(proxiedTypeField, Is.Null);
+        }
+        /// <summary>
         /// Verifies the construction of the class when the proxied type is not static.
         /// The generated proxy must contain a field reference to the proxied type.
         /// </summary>
@@ -130,6 +158,26 @@ namespace Jolt.Testing.Test.CodeGeneration
             FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance );
 
             Assert.That(proxiedTypeField, Is.Not.Null);
+            Assert.That(proxiedTypeField.FieldType, Is.EqualTo(proxiedType));
+            Assert.That(proxiedTypeField.IsInitOnly && proxiedTypeField.IsPrivate && !proxiedTypeField.IsStatic);
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when the proxied type is generic and not static.
+        /// The generated proxy must contain a field reference to the proxied type.
+        /// </summary>
+        [Test]
+        public void Construction_NonStaticClass_Generic()
+        {
+            Type proxiedType = typeof(System.Collections.Generic.List<>);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
+
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Assert.That(proxiedTypeField, Is.Not.Null);
+            Assert.That(proxiedTypeField.FieldType, Is.Not.EqualTo(proxiedType));
+            Assert.That(proxiedTypeField.FieldType.Name, Is.EqualTo(proxiedType.Name));
+            Assert.That(proxiedTypeField.FieldType.Namespace, Is.EqualTo(proxiedType.Namespace));
             Assert.That(proxiedTypeField.IsInitOnly && proxiedTypeField.IsPrivate && !proxiedTypeField.IsStatic);
         }
 
@@ -153,6 +201,29 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertConstructorInvoked(proxy, null, "0");
             AssertConstructorInvoked(proxy, new object[] { 123 }, "123");
             AssertConstructorInvoked(proxy, new object[] { 456, 789 }, "456789");
+        }
+
+        /// <summary>
+        /// Verifies the initialziation of constructors in the proxied type,
+        /// when the proxied type is generic and not static.
+        /// </summary>
+        [Test]
+        public void Construction_NonStaticClass_Generic_ConstructorInitialization()
+        {
+            Type realSubjectType = typeof(__ConstructorTestType<,>);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            Type specializedProxy = builder.CreateProxy().MakeGenericType(typeof(string), typeof(TimeSpan));
+            ConstructorInfo[] expectedConstructors = realSubjectType.GetConstructors();
+            ConstructorInfo[] actualConstructors = specializedProxy.GetConstructors();
+
+            // Both proxy and proxied have the same number of constructors and same arguments.
+            Assert.That(actualConstructors.Length, Is.EqualTo(expectedConstructors.Length));
+
+            // Proxy constructor forwards to the proxied type constructor.
+            AssertConstructorInvoked(specializedProxy, null, "0");
+            AssertConstructorInvoked(specializedProxy, new object[] { "single-generic-param" }, "single-generic-param");
+            AssertConstructorInvoked(specializedProxy, new object[] { "two-generic-params", TimeSpan.FromSeconds(1.0) }, "two-generic-params00:00:01");
+            AssertConstructorInvoked(specializedProxy, new object[] { "mixed-params", TimeSpan.Zero, 123 }, "mixed-params00:00:00123");
         }
 
         /// <summary>
@@ -183,12 +254,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void CreateInterface()
         {
             Type proxyInterface = new ProxyTypeBuilder(DefaultNamespace, typeof(string)).CreateInterface();
-
-            Assert.That(proxyInterface.IsInterface);
-            Assert.That(proxyInterface.IsAbstract);
-            Assert.That(proxyInterface.IsPublic);
-            Assert.That(proxyInterface.Namespace, Is.EqualTo(DefaultNamespace + ".System"));
-            Assert.That(proxyInterface.Name, Is.EqualTo("IString"));
+            AssertInterfaceAttributes(proxyInterface, "IString", DefaultNamespace + ".System");
         }
 
         /// <summary>
@@ -199,12 +265,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void CreateInterface_FromNestedType()
         {
             Type proxyInterface = new ProxyTypeBuilder(DefaultNamespace, typeof(WebRequestMethods.Ftp)).CreateInterface();
-
-            Assert.That(proxyInterface.IsInterface);
-            Assert.That(proxyInterface.IsAbstract);
-            Assert.That(proxyInterface.IsPublic);
-            Assert.That(proxyInterface.Namespace, Is.EqualTo(DefaultNamespace + ".System.Net"));
-            Assert.That(proxyInterface.Name, Is.EqualTo("IFtp"));
+            AssertInterfaceAttributes(proxyInterface, "IFtp", DefaultNamespace + ".System.Net");
         }
 
         /// <summary>
@@ -218,13 +279,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxy = builder.CreateProxy();
             Type proxyInterface = builder.CreateInterface();
 
-            Assert.That(proxy.IsClass);
-            Assert.That(!proxy.IsAbstract);
-            Assert.That(proxy.IsPublic);
-            Assert.That(proxy.IsSealed);
-            Assert.That(proxy.Namespace, Is.EqualTo(proxyInterface.Namespace));
-            Assert.That(proxy.Name, Is.EqualTo("StringProxy"));
-            Assert.That(proxy.GetInterfaces(), List.Contains(proxyInterface));
+            AssertProxyAttributes(proxy, proxyInterface, "StringProxy", DefaultNamespace + ".System");
         }
 
         /// <summary>
@@ -238,13 +293,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxy = builder.CreateProxy();
             Type proxyInterface = builder.CreateInterface();
 
-            Assert.That(proxy.IsClass);
-            Assert.That(!proxy.IsAbstract);
-            Assert.That(proxy.IsPublic);
-            Assert.That(proxy.IsSealed);
-            Assert.That(proxy.Namespace, Is.EqualTo(proxyInterface.Namespace));
-            Assert.That(proxy.Name, Is.EqualTo("HttpProxy"));
-            Assert.That(proxy.GetInterfaces(), List.Contains(proxyInterface));
+            AssertProxyAttributes(proxy, proxyInterface, "HttpProxy", DefaultNamespace + ".System.Net");
         }
 
         /// <summary>
@@ -254,11 +303,27 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Instance()
         {
-            AssertAddMethodBehavior(typeof(__MethodTestType), "InstanceMethod", Type.EmptyTypes, delegate(Type proxy, string sProxyMethodName)
+            AssertAddMethodBehavior(typeof(__MethodTestType), "InstanceMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                DateTime result = (DateTime)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null,  Activator.CreateInstance(proxy), null);
+                DateTime result = (DateTime)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null,  Activator.CreateInstance(proxy), null);
                 Assert.That(result, Is.EqualTo(DateTime.Today));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// an instance method from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_Instance_GenericRealSubectType()
+        {
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "InstanceMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(StringBuilder), typeof(MemoryStream));
+                DateTime result = (DateTime)specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy), null);
+                Assert.That(result, Is.EqualTo(DateTime.MinValue));
             });
         }
 
@@ -269,11 +334,27 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Static()
         {
-            AssertAddMethodBehavior(typeof(__MethodTestType), "StaticMethod", Type.EmptyTypes, delegate(Type proxy, string sProxyMethodName)
+            AssertAddMethodBehavior(typeof(__MethodTestType), "StaticMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                TimeSpan result = (TimeSpan)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+                TimeSpan result = (TimeSpan)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
                 Assert.That(result, Is.EqualTo(TimeSpan.FromHours(12.0)));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// a static method from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_Static_GenericRealSubjectType()
+        {
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "StaticMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(StringBuilder), typeof(MemoryStream));
+                StringBuilder result = (StringBuilder)specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy), null);
+                Assert.That(result.ToString(), Is.Empty);
             });
         }
 
@@ -284,12 +365,37 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_VoidReturnValue()
         {
-            AssertAddMethodBehavior(typeof(__MethodTestType), "VoidReturnValueMethod", Type.EmptyTypes, delegate(Type proxy, string sProxyMethodName)
+            AssertAddMethodBehavior(typeof(__MethodTestType), "VoidReturnValueMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
                 try
                 {
-                    proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+                    proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+                    Assert.Fail();
+                }
+                catch (ApplicationException ex)
+                {
+                    Assert.That(ex.InnerException.Message, Is.EqualTo("void-return"));
+                }
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// an instance method with no return value from a generic type
+        /// to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_VoidReturnValue_GenericRealSubjectType()
+        {
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "VoidReturnValueMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(StringBuilder), typeof(MemoryStream));
+
+                try
+                {
+                    specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy), null);
                     Assert.Fail();
                 }
                 catch (ApplicationException ex)
@@ -307,13 +413,34 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void AddMethod_ManyArguments()
         {
             AssertAddMethodBehavior(typeof(__MethodTestType), "ManyArgumentsMethod", new Type[] { typeof(string), typeof(int), typeof(double), typeof(DateTime) },
-            delegate(Type proxy, string sProxyMethodName)
+            delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                string sResult = (string)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy),
+                string sResult = (string)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy),
                     new object[] { "-test-", 1, 2.3, DateTime.Today });
                 Assert.That(sResult, Is.EqualTo("many-args:-test-12.3" + DateTime.Today.ToString()));
             });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// an instance method with many arguments from a generic type 
+        /// to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_ManyArguments_GenericRealSubjectType()
+        {
+            Type[] genericArguments = typeof(__MethodTestType<,,>).GetGenericArguments();
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "ManyArgumentsMethod",
+                new Type[] { genericArguments[0], genericArguments[1], typeof(double), genericArguments[2] },
+                delegate(Type proxy, string proxyMethodName)
+                {
+                    // Verify the behavior of the generated proxy.
+                    Type specializedProxy = proxy.MakeGenericType(typeof(TimeSpan), typeof(StringBuilder), typeof(MemoryStream));
+                    string sResult = (string)specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy),
+                        new object[] { TimeSpan.Zero, new StringBuilder("abc"), 2.3, new MemoryStream(new byte[] { 120 }) });
+                    Assert.That(sResult, Is.EqualTo("many-args:00:00:00abc2.3120"));
+                });
         }
 
         /// <summary>
@@ -324,12 +451,103 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void AddMethod_ParamsArrayArguments()
         {
             AssertAddMethodBehavior(typeof(__MethodTestType), "ParamsArrayArgumentsMethod", new Type[] { typeof(string), typeof(object[]) },
-            delegate(Type proxy, string sProxyMethodName)
+            delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                string sResult = (string)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy),
+                string sResult = (string)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy),
                     new object[] { String.Empty, new object[] { 0, 1, 2, 3, 4, 5, 10 } });
                 Assert.That(sResult, Is.EqualTo("params-args:01234510"));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// an instance method with params[] arguments from a generic type
+        /// to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_ParamsArrayArguments_GenericRealSubjecType()
+        {
+            Type[] genericArguments = typeof(__MethodTestType<,,>).GetGenericArguments();
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "ParamsArrayArgumentsMethod", new Type[] { genericArguments[2], genericArguments[0].MakeArrayType() },
+            delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                Type specializedProxy = proxy.MakeGenericType(typeof(TimeSpan), typeof(StringBuilder), typeof(MemoryStream));
+                string sResult = (string)specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy),
+                    new object[] { new MemoryStream(new byte[] { 42 }), new TimeSpan[] { TimeSpan.FromSeconds(1.0), TimeSpan.Zero, TimeSpan.FromHours(2.0) } });
+                Assert.That(sResult, Is.EqualTo("params-args:4200:00:0100:00:0002:00:00"));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when
+        /// two overloaded methods are added to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_Overload()
+        {
+            Type realSubjectType = typeof(__MethodTestType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+
+            // Verify that the following operations do not throw.
+            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", Type.EmptyTypes));
+            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { typeof(int) }));
+            builder.CreateInterface();
+            builder.CreateProxy();
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when
+        /// two overloaded methods from a generic type are added
+        /// to the builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_Overload_GenericRealSubjectType()
+        {
+            Type realSubjectType = typeof(__MethodTestType<,,>);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+
+            // Verify that the following operations do not throw.
+            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", Type.EmptyTypes));
+            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { realSubjectType.GetGenericArguments()[1] }));
+            builder.CreateInterface();
+            builder.CreateProxy();
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// a method that contains an out parameter.
+        /// </summary>
+        [Test]
+        public void AddMethod_OutParameter()
+        {
+            AssertAddMethodBehavior(typeof(__MethodTestType), "OutParameterMethod", new Type[] { typeof(string).MakeByRefType() },
+            delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                object[] methodArgs = { null };
+                proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), methodArgs, null);
+                Assert.That(methodArgs[0], Is.EqualTo("out-param"));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when adding
+        /// a method from a generic type, containing an out parameter.
+        /// </summary>
+        [Test]
+        public void AddMethod_OutParameter_GenericRealSubjectType()
+        {
+            Type[] genericArguments = typeof(__MethodTestType<,,>).GetGenericArguments();
+            AssertAddMethodBehavior(typeof(__MethodTestType<,,>), "OutParameterMethod", new Type[] { genericArguments[1].MakeByRefType() },
+            delegate(Type proxy, string proxyMethodName)
+            {
+                // Verify the behavior of the generated proxy.
+                Type specializedProxy = proxy.MakeGenericType(typeof(TimeSpan), typeof(Exception), typeof(MemoryStream));
+                Exception[] methodArgs = { null };
+                specializedProxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(specializedProxy), methodArgs, null);
+                Assert.That(methodArgs[0].Message, Is.EqualTo("Exception of type 'System.Exception' was thrown."));
             });
         }
 
@@ -379,16 +597,27 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that an appropriate exception is thrown when the AddMethod()
+        /// method is invoked with a generic method.
+        /// </summary>
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void AddMethod_GenericMethodDefinition()
+        {
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(Array));
+            builder.AddMethod(typeof(Array).GetMethod("ConvertAll"));
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddMethod() method when adding an
         /// inherited, non-virtual method.
         /// </summary>
         [Test]
         public void AddMethod_Inherited()
         {
-            AssertAddMethodBehavior(typeof(__DerivedSubjectType), "NonVirtualMethod", Type.EmptyTypes, delegate(Type proxy, string sProxyMethodName)
+            AssertAddMethodBehavior(typeof(__DerivedSubjectType), "NonVirtualMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                string sResult = (string)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+                string sResult = (string)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
                 Assert.That(sResult, Is.EqualTo("Base:NonVirtual"));
             });
         }
@@ -400,10 +629,10 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Override()
         {
-            AssertAddMethodBehavior(typeof(__DerivedSubjectType), "VirtualMethod", Type.EmptyTypes, delegate(Type proxy, string sProxyMethodName)
+            AssertAddMethodBehavior(typeof(__DerivedSubjectType), "VirtualMethod", Type.EmptyTypes, delegate(Type proxy, string proxyMethodName)
             {
                 // Verify the behavior of the generated proxy.
-                string sResult = (string)proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+                string sResult = (string)proxy.InvokeMember(proxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
                 Assert.That(sResult, Is.EqualTo("Derived:Override"));
             });
         }
@@ -421,40 +650,6 @@ namespace Jolt.Testing.Test.CodeGeneration
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
             builder.AddMethod(method);
             builder.AddMethod(method);
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the AddMethod() method when
-        /// two overloaded methods are added to the builder.
-        /// </summary>
-        [Test]
-        public void AddMethod_Overload()
-        {
-            Type realSubjectType = typeof(__MethodTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
-
-            // Verify that the following operations do not throw.
-            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod",Type.EmptyTypes));
-            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { typeof(int) }));
-            builder.CreateInterface();
-            builder.CreateProxy();
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the AddMethod() method when adding
-        /// a method that contains an out parameter.
-        /// </summary>
-        [Test]
-        public void AddMethod_OutParameter()
-        {
-            AssertAddMethodBehavior(typeof(__MethodTestType), "OutParameterMethod", new Type[] { typeof(string).MakeByRefType() },
-            delegate(Type proxy, string sProxyMethodName)
-            {
-                // Verify the behavior of the generated proxy.
-                object[] methodArgs = { null };
-                proxy.InvokeMember(sProxyMethodName, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), methodArgs, null);
-                Assert.That(methodArgs[0], Is.EqualTo("out-param"));
-            });
         }
 
         /// <summary>
@@ -482,6 +677,32 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         /// <summary>
         /// Verifies the behavior of the AddProperty() method when adding
+        /// an instance property from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddProperty_Instance_GenericRealSubjectType()
+        {
+            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>), "InstanceProperty",
+            delegate(Type proxy, PropertyInfo proxyProperty)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
+                proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
+
+                // Verify the behavior of the generated proxy.
+                // Get operation.
+                object proxyInstance = Activator.CreateInstance(specializedProxy);
+                DateTime result = (DateTime)proxyProperty.GetValue(proxyInstance, null);
+                Assert.That(result, Is.EqualTo(DateTime.MinValue));
+
+                // Set operation.
+                proxyProperty.SetValue(proxyInstance, DateTime.Today, null);
+                result = (DateTime)proxyProperty.GetValue(proxyInstance, null);
+                Assert.That(result, Is.EqualTo(DateTime.Today));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when adding
         /// a static property to the builder.
         /// </summary>
         [Test]
@@ -497,9 +718,37 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Assert.That(result, Is.EqualTo(DateTime.Today));
 
                 // Set operation.
-                proxyProperty.SetValue(proxyInstance, DateTime.Today.AddMonths(-1), null);
+                DateTime expectedValue = DateTime.Today.AddMonths(-1);
+                proxyProperty.SetValue(proxyInstance, expectedValue, null);
                 result = (DateTime)proxyProperty.GetValue(proxyInstance, null);
-                Assert.That(result, Is.EqualTo(DateTime.Today.AddMonths(-1)));
+                Assert.That(result, Is.EqualTo(expectedValue));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when adding
+        /// a static property from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddProperty_Static_GenericRealSubjectType()
+        {
+            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>), "StaticProperty",
+            delegate(Type proxy, PropertyInfo proxyProperty)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
+                proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
+
+                // Verify the behavior of the generated proxy.
+                // Get operation.
+                object proxyInstance = Activator.CreateInstance(specializedProxy);
+                TimeSpan result = (TimeSpan)proxyProperty.GetValue(proxyInstance, null);
+                Assert.That(result, Is.EqualTo(TimeSpan.Zero));
+
+                // Set operation.
+                TimeSpan expectedValue = TimeSpan.FromMinutes(72);
+                proxyProperty.SetValue(proxyInstance, expectedValue, null);
+                result = (TimeSpan)proxyProperty.GetValue(proxyInstance, null);
+                Assert.That(result, Is.EqualTo(expectedValue));
             });
         }
 
@@ -655,7 +904,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         /// <summary>
         /// Verifies the behavior fo the AddProperty() method when
-        /// an indexer proeprty is added to the builder.
+        /// an indexer property is added to the builder.
         /// </summary>
         [Test]
         public void AddProperty_Indexer()
@@ -666,13 +915,42 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // Verify the behavior of the generated proxy.
                 // Get operation.
                 object proxyInstance = Activator.CreateInstance(proxy);
-                string sResult = (string)proxyProperty.GetValue(proxyInstance, new object[] { 0 });
+                object[] getterArguments = { 0 };
+                string sResult = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
                 Assert.That(sResult, Is.EqualTo("simple-value"));
 
                 // Set operation.
                 proxyProperty.SetValue(proxyInstance, "new-value-", new object[] { 0xC000 });
-                sResult = (string)proxyProperty.GetValue(proxyInstance, new object[] { 0 });
+                sResult = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
                 Assert.That(sResult, Is.EqualTo("new-value-49152"));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior fo the AddProperty() method when
+        /// an indexer property from a generic type is added to the builder.
+        /// </summary>
+        [Test]
+        public void AddProperty_Indexer_GenericRealSubjectType()
+        {
+            Type[] genericArguments = typeof(__PropertyTestType<,,>).GetGenericArguments();
+            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>), "Item", new Type[] { genericArguments[0] },
+            delegate(Type proxy, PropertyInfo proxyProperty)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
+                proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
+
+                // Verify the behavior of the generated proxy.
+                // Get operation.
+                object proxyInstance = Activator.CreateInstance(specializedProxy);
+                object[] getterArguments = { DateTime.Now };
+                string sResult = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
+                Assert.That(sResult, Is.EqualTo("simple-value"));
+
+                // Set operation.
+                proxyProperty.SetValue(proxyInstance, "new-value-", new object[] { DateTime.Today });
+                sResult = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
+                Assert.That(sResult, Is.EqualTo("new-value-" + DateTime.Today.ToString()));
             });
         }
 
@@ -696,6 +974,34 @@ namespace Jolt.Testing.Test.CodeGeneration
                 proxyProperty.SetValue(proxyInstance, 0xC000, new object[] { 0x0F00, 0x00F0, 0x000F });
                 nResult = (int)proxyProperty.GetValue(proxyInstance, new object[] { 0, 1, 2 });
                 Assert.That(nResult, Is.EqualTo(0xCFFF));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when
+        /// a multi-argument indexer property from a generic type
+        /// is added to the builder.
+        /// </summary>
+        [Test]
+        public void AddProperty_Indexer_ManyArguments_GenericRealSubjectType()
+        {
+            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>), "Item", typeof(__PropertyTestType<,,>).GetGenericArguments(),
+            delegate(Type proxy, PropertyInfo proxyProperty)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
+                proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
+
+                // Verify the behavior of the generated proxy.
+                // Get operation.
+                object proxyInstance = Activator.CreateInstance(specializedProxy);
+                object[] getterArguments = { DateTime.Now, TimeSpan.Zero, new StringBuilder() };
+                string result = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
+                Assert.That(result, Is.EqualTo("complex-value"));
+
+                // Set operation.
+                proxyProperty.SetValue(proxyInstance, "indexer-value", new object[] { DateTime.Parse("2008-01-01"), TimeSpan.FromDays(0.5), new StringBuilder("test") });
+                result = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
+                Assert.That(result, Is.EqualTo("indexer-value1/1/2008 00:00:0012:00:00test"));
             });
         }
 
@@ -733,6 +1039,50 @@ namespace Jolt.Testing.Test.CodeGeneration
 
                 // Verify the behavior of the generated proxy.
                 object proxyInstance = Activator.CreateInstance(proxy);
+
+                // No event handlers.
+                proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                Assert.That(eventData, Is.EquivalentTo(new int[] { 0, 0 }));
+
+                // Add event handler.
+                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy10);
+                proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                Assert.That(eventData, Is.EquivalentTo(new int[] { 10, 0 }));
+
+                // Remove event handler.
+                proxyEvent.GetRemoveMethod(true).Invoke(proxyInstance, incBy10);
+                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                Assert.That(eventData, Is.EquivalentTo(new int[] { 10, 20 }));
+
+                // Multicast.
+                proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                Assert.That(eventData, Is.EquivalentTo(new int[] { 10, 60 }));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddEvent() method when adding
+        /// an instance event from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddEvent_Instance_GenericRealSubjectType()
+        {
+            AssertAddEventBehavior(typeof(__EventTestType<>), "InstanceEvent", "RaiseInstanceEvent",
+            delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(UnhandledExceptionEventArgs));
+                proxyEvent = specializedProxy.GetEvent(proxyEvent.Name);
+                proxyRaiseEventMethod = specializedProxy.GetMethod(proxyRaiseEventMethod.Name);
+
+                // Declare methods and data used in verifying event invocation.
+                int[] eventData = { 0, 0 };
+                object[] incBy10 = { new EventHandler<UnhandledExceptionEventArgs>(delegate { eventData[0] += 10; }) };
+                object[] incBy20 = { new EventHandler<UnhandledExceptionEventArgs>(delegate { eventData[1] += 20; }) };
+
+                // Verify the behavior of the generated proxy.
+                object proxyInstance = Activator.CreateInstance(specializedProxy);
 
                 // No event handlers.
                 proxyRaiseEventMethod.Invoke(proxyInstance, null);
@@ -800,6 +1150,58 @@ namespace Jolt.Testing.Test.CodeGeneration
                 finally
                 {
                     __EventTestType.StaticEventData = initialState;
+                }
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddEvent() method when adding
+        /// a static event from a generic type to the builder.
+        /// </summary>
+        [Test]
+        public void AddEvent_Static_GenericRealSubjectType()
+        {
+            AssertAddEventBehavior(typeof(__EventTestType<>), "StaticEvent", "RaiseStaticEvent",
+            delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
+            {
+                Type specializedProxy = proxy.MakeGenericType(typeof(ResolveEventArgs));
+                proxyEvent = specializedProxy.GetEvent(proxyEvent.Name);
+                proxyRaiseEventMethod = specializedProxy.GetMethod(proxyRaiseEventMethod.Name);
+
+                int[] initialState = __EventTestType<ResolveEventArgs>.StaticEventData.Clone() as int[];
+
+                try
+                {
+                    // Declare methods and data used in verifying event invocation.
+                    object[] incBy10 = { new EventHandler<ResolveEventArgs>(__EventTestType<ResolveEventArgs>.IncBy10) };
+                    object[] incBy20 = { new EventHandler<ResolveEventArgs>(__EventTestType<ResolveEventArgs>.IncBy20) };
+
+                    // Verify the behavior of the generated proxy.
+                    object proxyInstance = Activator.CreateInstance(specializedProxy);
+
+                    // No event handlers.
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType<ResolveEventArgs>.StaticEventData, Is.EquivalentTo(new int[] { 0, 0 }));
+
+                    // Add event handler.
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy10);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType<ResolveEventArgs>.StaticEventData, Is.EquivalentTo(new int[] { 10, 0 }));
+
+                    // Remove event handler.
+                    proxyEvent.GetRemoveMethod(true).Invoke(proxyInstance, incBy10);
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType<ResolveEventArgs>.StaticEventData, Is.EquivalentTo(new int[] { 10, 20 }));
+
+                    // Multicast.
+                    proxyEvent.GetAddMethod(true).Invoke(proxyInstance, incBy20);
+                    proxyRaiseEventMethod.Invoke(proxyInstance, null);
+                    Assert.That(__EventTestType<ResolveEventArgs>.StaticEventData, Is.EquivalentTo(new int[] { 10, 60 }));
+                }
+                finally
+                {
+                    __EventTestType<ResolveEventArgs>.StaticEventData = initialState;
                 }
             });
         }
@@ -1001,15 +1403,62 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private class methods -------------------------------------------------------------
 
         /// <summary>
-        /// Create a unique type builder within the scope of the given module builder.
+        /// Asserts that the given interface contains the expected
+        /// attributes as prescribed the implementation of the ProxyTypeBuilder.
         /// </summary>
         /// 
-        /// <param name="builder">
-        /// The module builder that defines the requested type builder.
+        /// <param name="interfaceType">
+        /// The type to validate.
         /// </param>
-        private static TypeBuilder CreateTypeBuilder(ModuleBuilder builder)
+        /// 
+        /// <param name="expectedName">
+        /// The expected interface name.
+        /// </param>
+        /// 
+        /// <param name="expectedNamespace">
+        /// The expected interface namespace.
+        /// </param>
+        private static void AssertInterfaceAttributes(Type interfaceType, string expectedName, string expectedNamespace)
         {
-            return builder.DefineType("__transientType_" + Guid.NewGuid().ToString());
+            Assert.IsNotNull(interfaceType);
+            Assert.That(interfaceType.Name, Is.EqualTo(expectedName));
+            Assert.That(interfaceType.Namespace, Is.EqualTo(expectedNamespace));
+            Assert.That(interfaceType.IsInterface);
+            Assert.That(interfaceType.IsAbstract);
+            Assert.That(interfaceType.IsPublic);
+        }
+
+        /// <summary>
+        /// Asserts that the given proxy contains the expected
+        /// attributes as prescribed the implementation of the ProxyTypeBuilder.
+        /// </summary>
+        /// 
+        /// <param name="proxyType">
+        /// The type to validate.
+        /// </param>
+        /// 
+        /// <param name="interfaceType">
+        /// The interface that the proxy is expected to implement.
+        /// </param>
+        /// 
+        /// <param name="expectedName">
+        /// The expected proxy name.
+        /// </param>
+        /// 
+        /// <param name="expectedNamespace">
+        /// The expected proxy namespace.
+        /// </param>
+        private static void AssertProxyAttributes(Type proxyType, Type interfaceType, string expectedName, string expectedNamespace)
+        {
+            Assert.IsNotNull(proxyType);
+            Assert.That(proxyType.Name, Is.EqualTo(expectedName));
+            Assert.That(proxyType.Namespace, Is.EqualTo(expectedNamespace));
+            Assert.That(proxyType.Namespace, Is.EqualTo(interfaceType.Namespace));
+            Assert.That(proxyType.IsClass);
+            Assert.That(!proxyType.IsAbstract);
+            Assert.That(proxyType.IsPublic);
+            Assert.That(proxyType.IsSealed);
+            Assert.That(proxyType.GetInterfaces(), List.Contains(interfaceType));
         }
 
         /// <summary>
@@ -1054,9 +1503,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static void AssertPropertyState(PropertyInfo expectedProperty, PropertyInfo actualProperty)
         {
             Assert.That(actualProperty, Is.Not.Null);
-            Assert.That(actualProperty.PropertyType, Is.EqualTo(expectedProperty.PropertyType));
             Assert.That(actualProperty.CanRead, Is.EqualTo(expectedProperty.CanRead));
             Assert.That(actualProperty.CanWrite, Is.EqualTo(expectedProperty.CanWrite));
+
+            if (actualProperty.PropertyType.IsGenericParameter)
+            {
+                Assert.That(actualProperty.PropertyType.Name, Is.EqualTo(expectedProperty.PropertyType.Name));
+            }
+            else
+            {
+                Assert.That(actualProperty.PropertyType, Is.EqualTo(expectedProperty.PropertyType));
+            }
         }
 
         /// <summary>
@@ -1073,8 +1530,16 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static void AssertEventState(EventInfo expectedEvent, EventInfo actualEvent)
         {
             Assert.That(actualEvent, Is.Not.Null);
-            Assert.That(actualEvent.EventHandlerType, Is.EqualTo(expectedEvent.EventHandlerType));
             Assert.That(actualEvent.GetRaiseMethod(), Is.Null);
+
+            if (actualEvent.EventHandlerType.IsGenericType)
+            {
+                Assert.That(actualEvent.EventHandlerType.Name, Is.EqualTo(expectedEvent.EventHandlerType.Name));
+            }
+            else
+            {
+                Assert.That(actualEvent.EventHandlerType, Is.EqualTo(expectedEvent.EventHandlerType));
+            }
         }
 
         /// <summary>
@@ -1097,13 +1562,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
             builder.AddMethod(realSubjectType.GetMethod(sMethodName, methodParamterTypes));
-
-            Type proxyInterface = builder.CreateInterface();
-            Type proxy = builder.CreateProxy();
-
-            string sProxyMethodName = String.Concat(proxyInterface.Name, '.', sMethodName);
-
-            assertMethodInvocation(proxy, sProxyMethodName);
+            assertMethodInvocation(builder.CreateProxy(), sMethodName);
         }
 
         /// <summary>
@@ -1125,22 +1584,20 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="assertPropertyInvocation">
         /// Delegate that asserts the expected behavior of the generated proxy property.
         /// </param>
-        private static void AssertAddPropertyBehavior(Type realSubjectType, string sPropertyName, Type[] propertyParamerterTypes,
+        private static void AssertAddPropertyBehavior(Type realSubjectType, string propertyName, Type[] propertyParameterTypes,
             AssertDynamicPropertyInvocationDelegate assertPropertyInvocation)
         {
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
-            PropertyInfo expectedProperty = realSubjectType.GetProperty(sPropertyName, propertyParamerterTypes);
+            PropertyInfo expectedProperty = realSubjectType.GetProperty(propertyName, propertyParameterTypes);
             builder.AddProperty(expectedProperty);
 
             // Verify the property on the proxy inteface.
             Type proxyInterface = builder.CreateInterface();
-            AssertPropertyState(expectedProperty, proxyInterface.GetProperty(sPropertyName));
+            AssertPropertyState(expectedProperty, proxyInterface.GetProperty(propertyName));
 
             // Verify the property on the proxy.
             Type proxy = builder.CreateProxy();
-            PropertyInfo proxyProperty = proxy.GetProperty(String.Concat(proxyInterface.Name, '.', sPropertyName),
-                BindingFlags.NonPublic | BindingFlags.Instance,
-                null, expectedProperty.PropertyType, propertyParamerterTypes, null);
+            PropertyInfo proxyProperty = proxy.GetProperty(propertyName);
 
             AssertPropertyState(expectedProperty, proxyProperty);
             
@@ -1202,13 +1659,21 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             // Verify the event on the proxy.
             Type proxy = builder.CreateProxy();
-            EventInfo proxyEvent = proxy.GetEvent(String.Concat(proxyInterface.Name, '.', sEventName),
-                BindingFlags.NonPublic | BindingFlags.Instance);
+            EventInfo proxyEvent = proxy.GetEvent(sEventName);
             AssertEventState(expectedEvent, proxyEvent);
             
             // Verify the behavior of the generated event.
-            assertEventInvocation(proxy, proxyEvent, proxy.GetMethod(String.Concat(proxyInterface.Name, '.', sRaiseEventMethodName),
-                BindingFlags.Instance | BindingFlags.NonPublic));
+            assertEventInvocation(proxy, proxyEvent, proxy.GetMethod(sRaiseEventMethodName));
+        }
+
+        /// <summary>
+        /// Creates a transient ModuleBuilder for testing purposes.
+        /// </summary>
+        private static ModuleBuilder CreateTransientModule()
+        {
+            return AppDomain.CurrentDomain
+                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.ReflectionOnly)
+                .DefineDynamicModule("__transientModule");
         }
 
         #endregion
@@ -1217,13 +1682,13 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         private static readonly string DefaultNamespace = "root";
         private static readonly BindingFlags ProxyMethodInvocationFlags =
-            BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic;
+            BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public;
 
         #endregion
 
         #region delegate types supporting unit tests ----------------------------------------------
 
-        private delegate void AssertDynamicMethodInvocationDelegate(Type proxy, string sProxyMethodName);
+        private delegate void AssertDynamicMethodInvocationDelegate(Type proxy, string proxyMethodName);
         private delegate void AssertDynamicPropertyInvocationDelegate(Type proxy, PropertyInfo proxyProperty);
         private delegate void AssertDynamicEventInvocationDelegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod);
 

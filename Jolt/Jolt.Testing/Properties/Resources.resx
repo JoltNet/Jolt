@@ -123,6 +123,9 @@
   <data name="Error_DuplicateMember" xml:space="preserve">
     <value>Duplicate method, property, or event detected within a type.</value>
   </data>
+  <data name="Error_GenericMethodDefinition" xml:space="preserve">
+    <value>The method '{0}' was not included as part of the proxy type as it is a generic method definition and is not supported by the proxy builder.</value>
+  </data>
   <data name="Error_InstanceMethodAddedFromAbstractType" xml:space="preserve">
     <value>Can not add non-static method '{0}' to the proxy builder as the real subject type is abstract.</value>
   </data>
@@ -138,23 +141,11 @@
   <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
     <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
   </data>
-  <data name="Error_NonSupportedGenericConstructor" xml:space="preserve">
-    <value>The constructor '{0}' contains generic parameters, and is not supported by this constructor declarer.</value>
-  </data>
-  <data name="Error_NonSupportedGenericMethod" xml:space="preserve">
-    <value>The method '{0}' contains generic parameters, and is not supported by this method declarer implementation.</value>
-  </data>
-  <data name="Error_NonSupportedNnonGenericConstructor" xml:space="preserve">
-    <value>The constructor '{0}' does not contain generic parameters, and is not supported by this constructor declarer.</value>
-  </data>
-  <data name="Error_NonSupportedNonGenericMethod" xml:space="preserve">
-    <value>The method '{0}' does not contain generic parameters, and is not supported by this method declarer implementation.</value>
-  </data>
   <data name="Info_SkipDefinedEventMethod" xml:space="preserve">
-    <value>The method '{0}' was not included as part of proxy type as it is already defined as an event.</value>
+    <value>The method '{0}' was not included as part of the proxy type as it is already defined as an event.</value>
   </data>
   <data name="Info_SkipDefinedPropertyMethod" xml:space="preserve">
-    <value>The method '{0}' was not included as part of proxy type as it is already defined as a property.</value>
+    <value>The method '{0}' was not included as part of the proxy type as it is already defined as a property.</value>
   </data>
   <data name="Warn_TypeNotLoaded" xml:space="preserve">
     <value>Could not load the type '{0}'.</value>

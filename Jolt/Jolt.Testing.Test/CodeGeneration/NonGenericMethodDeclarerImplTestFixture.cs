@@ -36,25 +36,13 @@ namespace Jolt.Testing.Test.CodeGeneration
         #endregion
 
         /// <summary>
-        /// Verifies the behavior of the DeclareMethod() method when the
-        /// given method is invalid (contains generic type arguments).
+        /// Verifies the behavior fo the DeclareMethod() method when the
+        /// given is method is non-generic, but the encompassing type is generic.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
-        public void DeclareMethod_InvalidMethod_GenericTypeArgs()
+        [Test]
+        public void DeclareMethod_GenericType_NonGenericMethod()
         {
-            IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction"));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the DeclareMethod() method when the
-        /// given method is invalid (contains generic method arguments).
-        /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
-        public void DeclareMethod_InvalidMethod_GenericMethodArgs()
-        {
-            IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, typeof(__GenericTestType<,,>).GetMethod("GenericFunction"));
+            AssertDeclareMethod(typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters"));
         }
 
         /// <summary>
@@ -118,25 +106,13 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the behavior of the DefineMethodParameters() method when the
-        /// given method is invalid (contains generic type arguments).
+        /// Verifies the behavior fo the DefineMethodParameters() method when the
+        /// given is method is non-generic, but the encompassing type is generic.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
-        public void DefineMethodParameters_InvalidMethod_GenericTypeArgs()
+        [Test]
+        public void DefineMethodParameters_GenericType_NonGenericMethod()
         {
-            IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DefineMethodParameters(m_defaultMethodBuilder, typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction"));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the DefineMethodParameters() method when the
-        /// given method is invalid (contains generic method arguments).
-        /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
-        public void DefineMethodParameters_InvalidMethod_GenericMethodArgs()
-        {
-            IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DefineMethodParameters(m_defaultMethodBuilder, typeof(__GenericTestType<,,>).GetMethod("GenericFunction"));
+            AssertDefineMethodParameters(typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters"));
         }
 
         /// <summary>

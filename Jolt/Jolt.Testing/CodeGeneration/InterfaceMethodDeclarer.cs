@@ -44,8 +44,7 @@ namespace Jolt.Testing.CodeGeneration
 
         // All interface methods are public, abstract and virtual.
         private static readonly MethodAttributes InterfaceMethodAttributes =
-            MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.Public |
-            MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.SpecialName;
+            MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.Public;
 
         #endregion
     }

@@ -88,6 +88,26 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(declarer.RealSubjectTypeMethod, Is.SameAs(expectedConstructor));
         }
 
+        /// <summary>
+        /// Verifies the behavior of the Create() method for constructing
+        /// a generic constructor declarer.
+        /// </summary>
+        [Test]
+        public void Create_ConstructorDeclarer_Generic()
+        {
+            Type realSubjectType = typeof(__ConstructorTestType<,>);
+            Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
+            Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1], typeof(int) };
+
+            ConstructorInfo expectedConstructor = realSubjectType.GetConstructor(constructorParameterTypes);
+            MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
+            AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = factory.Create(expectedConstructor);
+
+            Assert.That(declarer, Is.InstanceOfType(typeof(GenericConstructorDeclarer)));
+            Assert.That(declarer.Builder, Is.SameAs(m_proxyBuilder));
+            Assert.That(declarer.Implementation, Is.InstanceOfType(typeof(ConstructorDeclarerImpl)));
+            Assert.That(declarer.RealSubjectTypeMethod, Is.SameAs(expectedConstructor));
+        }
         #endregion
 
         #region private instance data -------------------------------------------------------------

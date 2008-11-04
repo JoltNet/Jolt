@@ -27,8 +27,6 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
-            MethodDeclarerHelper.ValidateMethod(realSubjectTypeMethod, IsValid, Resources.Error_NonSupportedGenericMethod);
-            
             ParameterInfo[] methodParameters = realSubjectTypeMethod.GetParameters();
             builder.SetParameters(JTCG.Convert.ToParameterTypes(methodParameters));
             builder.SetReturnType(realSubjectTypeMethod.ReturnType);
@@ -37,25 +35,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo>"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DefineMethodParameters(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
-            MethodDeclarerHelper.ValidateMethod(realSubjectTypeMethod, IsValid, Resources.Error_NonSupportedGenericMethod);
             MethodDeclarerHelper.DefineParametersWith(builder.DefineParameter, realSubjectTypeMethod.GetParameters());
-        }
-
-        #endregion
-
-        #region private class methods -------------------------------------------------------------
-
-        /// <summary>
-        /// Returns TRUE when the given method does not contain generic parameters,
-        /// FALSE otherwise.
-        /// </summary>
-        /// 
-        /// <param name="method">
-        /// The method to validate.
-        /// </param>
-        private static bool IsValid(MethodInfo method)
-        {
-            return !method.ContainsGenericParameters;
         }
 
         #endregion

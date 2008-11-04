@@ -26,7 +26,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public virtual void TestFixtureSetup()
         {
             m_defaultModuleBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
-                AssemblyBuilderAccess.ReflectionOnly).DefineDynamicModule("__transientModule");
+                AssemblyBuilderAccess.Run).DefineDynamicModule("__transientModule");
         }
         
         [SetUp]

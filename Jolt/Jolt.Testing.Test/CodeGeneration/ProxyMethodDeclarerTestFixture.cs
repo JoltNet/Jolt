@@ -54,19 +54,18 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
 
-                string sInterfaceName = "IProxyInterface";
-                ProxyMethodDeclarer declarer = new ProxyMethodDeclarer(sInterfaceName, CurrentTypeBuilder, expectedMethod, implementation);
+                ProxyMethodDeclarer declarer = new ProxyMethodDeclarer(CurrentTypeBuilder, expectedMethod, implementation);
                 MethodBuilder proxyMethod = declarer.Declare();
 
                 Assert.That(proxyMethod.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
-                Assert.That(proxyMethod.Name, Is.EqualTo(sInterfaceName + '.' + expectedMethod.Name));
-                Assert.That(proxyMethod.IsPrivate);
+                Assert.That(proxyMethod.Name, Is.EqualTo(expectedMethod.Name));
+                Assert.That(proxyMethod.IsPublic);
                 Assert.That(proxyMethod.IsVirtual);
                 Assert.That(!proxyMethod.IsStatic);
                 Assert.That(proxyMethod.IsFinal);
-                Assert.That(proxyMethod.IsHideBySig);
-                Assert.That(proxyMethod.IsSpecialName);
-                Assert.That(proxyMethod.Attributes & MethodAttributes.NewSlot, Is.EqualTo(MethodAttributes.NewSlot));
+                Assert.That(!proxyMethod.IsHideBySig);
+                Assert.That(!proxyMethod.IsSpecialName);
+                Assert.That(proxyMethod.Attributes & MethodAttributes.NewSlot, Is.Not.EqualTo(MethodAttributes.NewSlot));
                 Assert.That(implementationArgs.TrueForAll(delegate(MethodBuilder method)
                 {
                     // The interface method created by the type builder is passed to each implementation

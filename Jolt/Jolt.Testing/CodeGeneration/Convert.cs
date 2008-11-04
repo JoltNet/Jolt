@@ -27,8 +27,53 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         internal static Type[] ToParameterTypes(ParameterInfo[] parameters)
         {
-            return Array.ConvertAll<ParameterInfo, Type>(parameters,
-                delegate(ParameterInfo methodParam) { return methodParam.ParameterType; });
+            return Array.ConvertAll<ParameterInfo, Type>(parameters, delegate(ParameterInfo methodParam)
+            {
+                return methodParam.ParameterType;
+            });
+        }
+
+        /// <summary>
+        /// Converts an array of ParameterInfo types to an array of
+        /// types repesenting the type of each paramater.  Refers to
+        /// the type from a generic type parameter collection when a
+        /// parameter is deemed to be generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameters to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeParameters">
+        /// The generic parameters of the method's declaring type.
+        /// </param>
+        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeParameters)
+        {
+            return Array.ConvertAll<ParameterInfo, Type>(parameters, delegate(ParameterInfo methodParam)
+            {
+                Type parameterType = methodParam.ParameterType;
+                if (parameterType.IsGenericParameter)
+                {
+                    // alternatively: if parameterType.DeclaringMethod == null
+                    return genericTypeParameters[parameterType.GenericParameterPosition];
+                }
+                
+                return parameterType;
+            });
+        }
+
+        /// <summary>
+        /// Converts an array of Type types to an array of
+        /// strings repesenting the names of each paramater.
+        /// </summary>
+        /// 
+        /// <param name="types">
+        /// The types to convert.
+        /// </param>
+        internal static string[] ToTypeNames(Type[] types)
+        {
+            return Array.ConvertAll<Type, string>(types,
+                delegate(Type type) { return type.Name; });
         }
     }
 }

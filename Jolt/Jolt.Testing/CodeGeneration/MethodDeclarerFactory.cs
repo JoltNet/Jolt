@@ -51,6 +51,8 @@ namespace Jolt.Testing.CodeGeneration
 
             // Initialize factory method registry.
             m_methodDeclarerFactoryMethods = new Dictionary<MethodDeclarerTypes, CreateMethodDeclarerDelegate>();
+
+            // TODO: Collapse these types and distinguish by method attributes.
             m_methodDeclarerFactoryMethods.Add(MethodDeclarerTypes.Interface, delegate(MethodInfo realSubjectTypeMethod)
             {
                 //if (realSubjectTypeMethod.ContainsGenericParameters)
@@ -67,7 +69,7 @@ namespace Jolt.Testing.CodeGeneration
                 //    return new ProxyMethodDeclarer(interfaceBuilder, GenericMethodDeclarerImpl());
                 //}
 
-                return new ProxyMethodDeclarer(m_interface.Name, m_proxy, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl());
+                return new ProxyMethodDeclarer(m_proxy, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl());
             });
         }
 
@@ -100,10 +102,10 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         internal AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> Create(ConstructorInfo realSubjectTypeConstructor)
         {
-            //if (MethodDeclarerHelper.ContainsGenericParameters(realSubjectTypeConstructor.GetParameters())
-            //{
-            //    return new GenericConstructorDeclarer(proxyBuilder, new ConstructorDeclarerImpl());
-            //}
+            if (MethodDeclarerHelper.ContainsGenericParameters(realSubjectTypeConstructor.GetParameters()))
+            {
+                return new GenericConstructorDeclarer(m_proxy, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
+            }
 
             return new NonGenericConstructorDeclarer(m_proxy, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
         }

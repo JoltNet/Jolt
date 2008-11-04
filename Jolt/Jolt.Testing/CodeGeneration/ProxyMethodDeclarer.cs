@@ -7,7 +7,6 @@
 // File created: 7/21/2008 20:32:07
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -21,20 +20,9 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region constructors ----------------------------------------------------------------------
 
-        /// <summary>
-        /// Initializes the proxy method declarer.
-        /// </summary>
-        /// 
-        /// <param name="interfaceName">
-        /// The name of the interface that is explicitly implemented by the proxy type.
-        /// </param>
-        /// 
         /// <see cref="AbstractMethodDeclarer&lt;MethodBuilder, MethodInfo&gt;.ctor(TypeBuilder, MethodInfo, AbstractMethodDeclarerImpl&lt;MethodBuilder,  MethodInfo&gt;"/>
-        internal ProxyMethodDeclarer(string interfaceName, TypeBuilder builder, MethodInfo realSubjectTypeMethod, IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation)
-            : base(builder, realSubjectTypeMethod, implementation)
-        {
-            m_sInterfaceName = interfaceName;
-        }
+        internal ProxyMethodDeclarer(TypeBuilder builder, MethodInfo realSubjectTypeMethod, IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation)
+            : base(builder, realSubjectTypeMethod, implementation) { }
 
         #endregion
 
@@ -43,8 +31,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="AbstractMethodDeclarer&lt;MethodBuilder, MethodInfo&gt;.Declare()"/>
         internal override MethodBuilder Declare()
         {
-            // The method explicity implements the interface method.
-            MethodBuilder method = Builder.DefineMethod(String.Concat(m_sInterfaceName, '.', RealSubjectTypeMethod.Name), ProxyMethodAttributes);
+            MethodBuilder method = Builder.DefineMethod(RealSubjectTypeMethod.Name, ProxyMethodAttributes);
             Implementation.DeclareMethod(method, RealSubjectTypeMethod);
             Implementation.DefineMethodParameters(method, RealSubjectTypeMethod);
 
@@ -53,17 +40,11 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
-
-        private readonly string m_sInterfaceName;
-
-        #endregion
-
         #region private class data ----------------------------------------------------------------
 
+        // All proxy methods are public, virtual, and explicitly sealed.
         private static readonly MethodAttributes ProxyMethodAttributes =
-            MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-            MethodAttributes.SpecialName | MethodAttributes.Virtual | MethodAttributes.Final;
+            MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.Virtual;
 
         #endregion
     }
