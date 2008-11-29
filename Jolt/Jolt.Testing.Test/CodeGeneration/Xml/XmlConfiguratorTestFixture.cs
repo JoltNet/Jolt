@@ -9,7 +9,6 @@
 
 using System;
 using System.IO;
-using System.Xml;
 using System.Xml.Schema;
 
 using Jolt.Testing.CodeGeneration.Xml;

@@ -7,12 +7,20 @@
 // File created: 7/28/2008 21:01:47
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Jolt.Testing.CodeGeneration
 {
+    /// <summary>
+    /// Represents a factory method for creating an AbstractMethodDeclarer
+    /// that is specialized for methods.
+    /// </summary>
+    using CreateMethodDeclarerDelegate = Func<MethodInfo, AbstractMethodDeclarer<MethodBuilder, MethodInfo>>;
+
+
     /// <summary>
     /// Enumerates the AbstractMethodDeclarer types specialized
     /// for creating methods.
@@ -52,25 +60,13 @@ namespace Jolt.Testing.CodeGeneration
             // Initialize factory method registry.
             m_methodDeclarerFactoryMethods = new Dictionary<MethodDeclarerTypes, CreateMethodDeclarerDelegate>();
 
-            // TODO: Collapse these types and distinguish by method attributes.
-            m_methodDeclarerFactoryMethods.Add(MethodDeclarerTypes.Interface, delegate(MethodInfo realSubjectTypeMethod)
-            {
-                //if (realSubjectTypeMethod.ContainsGenericParameters)
-                //{
-                //    return new InterfaceMethodDeclarer(interfaceBuilder, GenericMethodDeclarerImpl());
-                //}
-
-                return new InterfaceMethodDeclarer(m_interface, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl());
-            });
-            m_methodDeclarerFactoryMethods.Add(MethodDeclarerTypes.Proxy, delegate(MethodInfo realSubjectTypeMethod)
-            {
-                //if (realSubjectTypeMethod.ContainsGenericParameters)
-                //{
-                //    return new ProxyMethodDeclarer(interfaceBuilder, GenericMethodDeclarerImpl());
-                //}
-
-                return new ProxyMethodDeclarer(m_proxy, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl());
-            });
+            m_methodDeclarerFactoryMethods.Add(MethodDeclarerTypes.Interface, realSubjectTypeMethod => realSubjectTypeMethod.IsGenericMethod ?
+                new MethodDeclarer(m_interface, InterfaceMethodAttributes, realSubjectTypeMethod, new GenericMethodDeclarerImpl()) :
+                new MethodDeclarer(m_interface, InterfaceMethodAttributes, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl()));
+            
+            m_methodDeclarerFactoryMethods.Add(MethodDeclarerTypes.Proxy, realSubjectTypeMethod => realSubjectTypeMethod.IsGenericMethod ?
+                new MethodDeclarer(m_proxy, ProxyMethodAttributes, realSubjectTypeMethod, new GenericMethodDeclarerImpl()) :
+                new MethodDeclarer(m_proxy, ProxyMethodAttributes, realSubjectTypeMethod, new NonGenericMethodDeclarerImpl()));
         }
 
         #endregion
@@ -102,27 +98,13 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         internal AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> Create(ConstructorInfo realSubjectTypeConstructor)
         {
-            if (MethodDeclarerHelper.ContainsGenericParameters(realSubjectTypeConstructor.GetParameters()))
+            if (DeclarationHelper.ContainsGenericParameters(realSubjectTypeConstructor.GetParameters()))
             {
-                return new GenericConstructorDeclarer(m_proxy, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
+                return new GenericConstructorDeclarer(m_proxy, ConstructorAttributes, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
             }
 
-            return new NonGenericConstructorDeclarer(m_proxy, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
+            return new NonGenericConstructorDeclarer(m_proxy, ConstructorAttributes, realSubjectTypeConstructor, new ConstructorDeclarerImpl());
         }
-
-        #endregion
-
-        #region private delegate types ------------------------------------------------------------
-
-        /// <summary>
-        /// Represents a factory method for creating an AbstractMethodDeclarer
-        /// that is specialized for methods.
-        /// </summary>
-        /// 
-        /// <param name="realSubjectTypeMethod">
-        /// The real subject type that is used by the created method declarer.
-        /// </param>
-        private delegate AbstractMethodDeclarer<MethodBuilder, MethodInfo> CreateMethodDeclarerDelegate(MethodInfo realSubjectTypeMethod);
 
         #endregion
 
@@ -131,6 +113,17 @@ namespace Jolt.Testing.CodeGeneration
         private readonly TypeBuilder m_interface;
         private readonly TypeBuilder m_proxy;
         private readonly IDictionary<MethodDeclarerTypes, CreateMethodDeclarerDelegate> m_methodDeclarerFactoryMethods;
+
+        #endregion
+
+        #region private class data ----------------------------------------------------------------
+
+        private static readonly MethodAttributes InterfaceMethodAttributes =
+            MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract;
+        private static readonly MethodAttributes ProxyMethodAttributes =
+            MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final;
+        private static readonly MethodAttributes ConstructorAttributes =
+            MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 
         #endregion
     }

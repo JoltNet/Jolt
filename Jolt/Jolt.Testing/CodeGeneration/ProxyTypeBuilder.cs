@@ -12,8 +12,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-using JTCG = Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Properties;
+using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -327,7 +327,7 @@ namespace Jolt.Testing.CodeGeneration
             // Generate the IL that represents the proxy's method call.
             ILGenerator codeGenerator = proxyMethodBuilder.GetILGenerator();
             OpCode methodCallOpCode = OpCodes.Call;
-
+            
             if (!method.IsStatic)
             {
                 // Load the instance field on the stack as this is the target
@@ -374,12 +374,6 @@ namespace Jolt.Testing.CodeGeneration
             {
                 throw new InvalidOperationException(
                     String.Format(Resources.Error_MethodNotMemberOfRealSubject, method.Name));
-            }
-
-            if (method.IsGenericMethodDefinition)
-            {
-                throw new InvalidOperationException(
-                    String.Format(Resources.Error_GenericMethodDefinition, method.Name));
             }
 
             if (m_addedMembers.ContainsKey(method))
@@ -441,22 +435,7 @@ namespace Jolt.Testing.CodeGeneration
         private static GenericTypeParameterBuilder[] InitializeGenericTypeArguments(Type[] genericTypeArguments, TypeBuilder typeBuilder)
         {
             GenericTypeParameterBuilder[] genericParameterBuilders = typeBuilder.DefineGenericParameters(Convert.ToTypeNames(genericTypeArguments));
-
-            // Initialize generic type constraints.
-            for (int i = 0; i < genericTypeArguments.Length; ++i)
-            {
-                genericParameterBuilders[i].SetGenericParameterAttributes(genericTypeArguments[i].GenericParameterAttributes);
-
-                Type[] parameterConstraints = genericTypeArguments[i].GetGenericParameterConstraints();
-                genericParameterBuilders[i].SetInterfaceConstraints(
-                    Array.FindAll(parameterConstraints, delegate(Type constraint) { return constraint.IsInterface; }));
-
-                Type baseType = Array.Find(parameterConstraints, delegate(Type constraint) { return constraint.IsClass; });
-                if (baseType != null)
-                {
-                    genericParameterBuilders[i].SetBaseTypeConstraint(baseType);
-                }
-            }
+            DeclarationHelper.CopyTypeConstraints(genericTypeArguments, genericParameterBuilders);
 
             return genericParameterBuilders;
         }

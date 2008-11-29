@@ -1,14 +1,20 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Jolt.Testing.Test</RootNamespace>
     <AssemblyName>Jolt.Testing.Test</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,19 +34,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeGeneration\AbstractConstructorDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\ConstructorDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\ConvertTestFixture.cs" />
+    <Compile Include="CodeGeneration\DeclationHelperTestFixture.cs" />
     <Compile Include="CodeGeneration\GenericConstructorDeclarerTestFixture.cs" />
-    <Compile Include="CodeGeneration\InterfaceMethodDeclarerTestFixture.cs" />
+    <Compile Include="CodeGeneration\GenericMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\MethodDeclarerFactoryTestFixture.cs" />
-    <Compile Include="CodeGeneration\MethodDeclarerHelperTestFixture.cs" />
+    <Compile Include="CodeGeneration\MethodDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\NonGenericConstructorDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\NonGenericMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderSettingsTextFixture.cs" />
-    <Compile Include="CodeGeneration\ProxyMethodDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\ProxyTypeBuilderTestFixture.cs" />
     <Compile Include="CodeGeneration\Xml\XmlConfiguratorTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +68,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>

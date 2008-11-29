@@ -11,6 +11,7 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
 using log4net.Config;
@@ -20,6 +21,9 @@ using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
+    using CreateProxyTypeBuilderDelegate = Func<string, Type, ModuleBuilder, IProxyTypeBuilder>;
+
+
     [TestFixture]
     public sealed class ProxyAssemblyBuilderTestFixture
     {

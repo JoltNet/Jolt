@@ -10,8 +10,8 @@
 using System;
 using System.Configuration;
 using System.IO;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 
 using Jolt.Testing.Properties;
 using log4net;
@@ -21,15 +21,9 @@ namespace Jolt.Testing.CodeGeneration
     /// <summary>
     /// Represents a factory method that constructs a ProxyTypeBuilder
     /// class using the constructor overload matching the delegate
-    /// paramter signature.
+    /// parameter signature.
     /// </summary>
-    /// 
-    /// <see cref="ProxyTypeBuilder.ProxyTypeBuilder(string, Type, ModuleBuilder)"/>
-    /// 
-    /// <remarks>
-    /// Internal type to support testing.
-    /// </remarks>
-    internal delegate IProxyTypeBuilder CreateProxyTypeBuilderDelegate(string sRootNamespace, Type realSubjectType, ModuleBuilder module);
+    using CreateProxyTypeBuilderDelegate = Func<string, Type, ModuleBuilder, IProxyTypeBuilder>;
 
 
     /// <summary>
@@ -91,8 +85,7 @@ namespace Jolt.Testing.CodeGeneration
         /// The configuration settings for the class.
         /// </param>
         public ProxyAssemblyBuilder(string sRootNamespace, string sAssemblyFullPath, ProxyAssemblyBuilderSettings settings)
-            : this(sRootNamespace, sAssemblyFullPath, settings, delegate(string ns, Type t, ModuleBuilder mb)
-                   { return new ProxyTypeBuilder(ns, t, mb); }) { }
+            : this(sRootNamespace, sAssemblyFullPath, settings, (ns, t, mb) => new ProxyTypeBuilder(ns, t, mb)) { }
 
         /// <summary>
         /// Initializes the assembly builder, overriding the default ProxyTypeBuilder
@@ -178,7 +171,7 @@ namespace Jolt.Testing.CodeGeneration
             IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_module);
             Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), builder.AddProperty);
             Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), builder.AddEvent);
-            Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), delegate(MethodInfo m) { AddMethod(m, builder); });
+            Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, builder));
 
             builder.CreateProxy();
         }

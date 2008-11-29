@@ -79,15 +79,6 @@ namespace Jolt.Testing.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The method &apos;{0}&apos; was not included as part of the proxy type as it is a generic method definition and is not supported by the proxy builder..
-        /// </summary>
-        internal static string Error_GenericMethodDefinition {
-            get {
-                return ResourceManager.GetString("Error_GenericMethodDefinition", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Can not add non-static method &apos;{0}&apos; to the proxy builder as the real subject type is abstract..
         /// </summary>
         internal static string Error_InstanceMethodAddedFromAbstractType {

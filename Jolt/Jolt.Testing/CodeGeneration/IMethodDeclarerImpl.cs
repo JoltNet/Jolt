@@ -7,9 +7,7 @@
 // File created: 7/21/2008 18:41:01
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -54,9 +52,9 @@ namespace Jolt.Testing.CodeGeneration
         /// The method builder used to define the method's parameters.
         /// </param>
         /// 
-        /// <param name="realSubjecTypeMethod">
+        /// <param name="realSubjectTypeMethod">
         /// The method whose parameters are modelled.
         /// </param>
-        void DefineMethodParameters(TMethodBuilder builder, TMethod realSubjecTypeMethod);
+        void DefineMethodParameters(TMethodBuilder builder, TMethod realSubjectTypeMethod);
     }
 }

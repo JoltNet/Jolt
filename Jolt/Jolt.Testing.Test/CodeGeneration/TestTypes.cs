@@ -34,6 +34,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         public string ManyArgumentsMethod(string s, int x, double y, DateTime d) { return String.Concat("many-args:", s, x, y, d); }
         public string ParamsArrayArgumentsMethod(string s, params object[] i) { return "params-args:" + String.Concat(i); }
         public void OutParameterMethod(out string s) { s = "out-param"; }
+        public void GenericMethod<A>() { throw new ApplicationException("generic-method"); }
 
         private void PrivateMethod() { }
     }
@@ -45,10 +46,25 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     {
         public R InstanceMethod() { return default(R); }     // Also covers return-value, and no-args method test cases.
         public R InstanceMethod(S s) { return default(R); }
+        public A InstanceMethod<A>() where A : struct { return default(A); }
+        public void InstanceMethod<A>(A a) { throw new ArgumentException("one-parameter"); }
         public static S StaticMethod() { return new S(); }
+        public static A StaticMethod<A>() where A : new() { return new A(); }
         public void VoidReturnValueMethod() { throw new ApplicationException("void-return"); }
+        public void VoidReturnValueMethod<A, B>() { throw new ApplicationException("void-return"); }
         public string ManyArgumentsMethod(R r, S s, double y, T t) { return String.Concat("many-args:", r, s, y, t.ReadByte()); }
+        public string ManyArgumentsMethod<A, B>(R r, S s, A a, double y, T t, B b) { return String.Concat("many-args:", r, s, a, y, t.ReadByte(), b); }
         public void OutParameterMethod(out S s) { s = new S(); }
+        
+        public void OutParameterMethod<A, B>(out A a, out B b, out S s)
+            where A : new()
+            where B : new()
+        {
+            a = new A();
+            b = new B();
+            s = new S();
+        }
+
         public string ParamsArrayArgumentsMethod(T t, params R[] r)
         {
             StringBuilder result = new StringBuilder("params-args:");
@@ -57,6 +73,19 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
             for (int i = 0; i < r.Length; ++i)
             {
                 result.Append(r[i].ToString());
+            }
+
+            return result.ToString();
+        }
+
+        public string ParamsArrayArgumentsMethod<A>(T t, params A[] a) where A : struct
+        {
+            StringBuilder result = new StringBuilder("params-args:");
+            result.Append(t.ReadByte().ToString());
+
+            for (int i = 0; i < a.Length; ++i)
+            {
+                result.Append(a[i].ToString());
             }
 
             return result.ToString();
@@ -259,9 +288,17 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     {
         public R NonGenericFunction(S s, T t) { throw new ApplicationException("non-generic-function"); }
         public R NonGenericFunction_MixedArgs(S s, T t, int i) { throw new ApplicationException("non-generic-function-mixed-args"); }
-        public R GenericFunction_MixedArgs<A, B, C>(A a, B b, C c, S s, T t, int i) { throw new ApplicationException("generic-function"); }
-        public R GenericFunction<A, B, C>(A a, B b, C c) { throw new ApplicationException("generic-function"); }
+        public R GenericFunction_MixedArgs<A, B, C>(C c, A a, B b, T t, S s, int i) { throw new ApplicationException("generic-function"); }
+        public R GenericFunction<A, B, C>(A a, B b, C c)
+            where A : struct
+            where B : class, C, new()
+            where C : MarshalByRefObject, ICloneable, IDisposable
+        {
+            throw new ApplicationException("generic-function");
+        }
+
         public void NoGenericParameters(int x) { throw new ApplicationException("non-generic-function-parameters"); }
         public void NoParameters() { throw new ApplicationException("no-parameters"); }
+        public void NoParameters<A>() { throw new ApplicationException("no-parameters-generic"); }
     }
 }

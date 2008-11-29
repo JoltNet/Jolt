@@ -7,12 +7,10 @@
 // File created: 7/21/2008 20:07:35
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
 using JTCG = Jolt.Testing.CodeGeneration;
-using Jolt.Testing.Properties;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -22,20 +20,19 @@ namespace Jolt.Testing.CodeGeneration
     /// </summary>
     internal sealed class NonGenericMethodDeclarerImpl : IMethodDeclarerImpl<MethodBuilder, MethodInfo>
     {
-        #region IMethodDeclarerImpl implementation ------------------------------------------------
+        #region IMethodDeclarerImpl<MethodBuilder,MethodInfo> implementation ----------------------
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
-            ParameterInfo[] methodParameters = realSubjectTypeMethod.GetParameters();
-            builder.SetParameters(JTCG.Convert.ToParameterTypes(methodParameters));
+            builder.SetParameters(JTCG.Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
             builder.SetReturnType(realSubjectTypeMethod.ReturnType);
         }
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo>"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DefineMethodParameters(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
-            MethodDeclarerHelper.DefineParametersWith(builder.DefineParameter, realSubjectTypeMethod.GetParameters());
+            DeclarationHelper.DefineParametersWith(builder.DefineParameter, realSubjectTypeMethod.GetParameters());
         }
 
         #endregion

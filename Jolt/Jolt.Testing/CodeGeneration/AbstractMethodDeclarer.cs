@@ -40,6 +40,10 @@ namespace Jolt.Testing.CodeGeneration
         /// The type builder used to create the resulting method.
         /// </param>
         /// 
+        /// <param name="methodAttributes">
+        /// The attributes applied to the method upon declaration.
+        /// </param>
+        /// 
         /// <param name="realSubjectTypeMethod">
         /// The real subject type method from which the resulting method is modelled.
         /// </param>
@@ -47,40 +51,16 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="implementation">
         /// The declarer implementation.
         /// </param>
-        internal AbstractMethodDeclarer(TypeBuilder builder, TMethod realSubjectTypeMethod, IMethodDeclarerImpl<TMethodBuilder, TMethod> implementation)
+        internal AbstractMethodDeclarer(
+            TypeBuilder builder,
+            MethodAttributes methodAttributes,
+            TMethod realSubjectTypeMethod,
+            IMethodDeclarerImpl<TMethodBuilder, TMethod> implementation)
         {
             m_builder = builder;
+            m_methodAttributes = methodAttributes;
             m_realSubjectTypeMethod = realSubjectTypeMethod;
             m_implementation = implementation;
-        }
-
-        #endregion
-
-        // TODO: consider making these properties protected, then testing via reflection.
-        #region internal instance properties ------------------------------------------------------
-
-        /// <summary>
-        /// Gets the associated type builder .
-        /// </summary>
-        internal TypeBuilder Builder
-        {
-            get { return m_builder; }
-        }
-
-        /// <summary>
-        /// Gets the associated real subject type method.
-        /// </summary>
-        internal TMethod RealSubjectTypeMethod
-        {
-            get { return m_realSubjectTypeMethod; }
-        }
-
-        /// <summary>
-        /// Gets the implementation of the declarer.
-        /// </summary>
-        internal IMethodDeclarerImpl<TMethodBuilder, TMethod> Implementation
-        {
-            get { return m_implementation; }
         }
 
         #endregion
@@ -95,9 +75,46 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
+        #region protected instance properties -----------------------------------------------------
+
+        /// <summary>
+        /// Gets the associated type builder .
+        /// </summary>
+        protected TypeBuilder Builder
+        {
+            get { return m_builder; }
+        }
+
+        /// <summary>
+        /// Gets the associated method attributes.
+        /// </summary>
+        protected MethodAttributes MethodAttributes
+        {
+            get { return m_methodAttributes; }
+        }
+
+        /// <summary>
+        /// Gets the associated real subject type method.
+        /// </summary>
+        protected TMethod RealSubjectTypeMethod
+        {
+            get { return m_realSubjectTypeMethod; }
+        }
+
+        /// <summary>
+        /// Gets the implementation of the declarer.
+        /// </summary>
+        protected IMethodDeclarerImpl<TMethodBuilder, TMethod> Implementation
+        {
+            get { return m_implementation; }
+        }
+
+        #endregion
+
         #region private instance fields -----------------------------------------------------------
 
         private readonly TypeBuilder m_builder;
+        private readonly MethodAttributes m_methodAttributes;
         private readonly TMethod m_realSubjectTypeMethod;
         private readonly IMethodDeclarerImpl<TMethodBuilder, TMethod> m_implementation;
 

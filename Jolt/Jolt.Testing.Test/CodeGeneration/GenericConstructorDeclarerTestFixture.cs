@@ -8,22 +8,18 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
-using JTCG = Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using Rhino.Mocks;
-using RMC = Rhino.Mocks.Constraints;
+using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
     [TestFixture]
-    public class GenericConstructorDeclarerTestFixture : AbstractMethodDeclarerTestFixture<ConstructorBuilder, ConstructorInfo>
+    public class GenericConstructorDeclarerTestFixture : AbstractConstructorDeclarerTestFixture
     {
         #region public methods --------------------------------------------------------------------
 
@@ -36,7 +32,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Type realSubjectType = typeof(__ConstructorTestType<,>);
             InitializeCurrentTypeBuilder(realSubjectType);
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(Type.EmptyTypes));
+
+            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(Type.EmptyTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -50,7 +47,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             InitializeCurrentTypeBuilder(realSubjectType);
 
             Type[] constructorParameterTypes = { realSubjectType.GetGenericArguments()[0] };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes));
+            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -65,7 +62,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
             Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1] };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes));
+            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -80,7 +77,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
             Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1], typeof(int) };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes));
+            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
         }
 
         #endregion
@@ -101,69 +98,36 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the behavior of the Create() method for a given
-        /// constructor.
+        /// Asserts on the attributes of the given constructors.  Verifies
+        /// that the actual attributes match the expected attributes.
         /// </summary>
         /// 
-        /// <param name="expectedConstructor">
-        /// The real subject type constructor used as input to the Create()
-        /// method.
+        /// <param name="actualConstructor">
+        /// The constructor to verify.
         /// </param>
-        private void AssertConstructorDeclaredFrom(ConstructorInfo expectedConstructor)
+        /// 
+        /// <param name="expectedConstructor">
+        /// The constructor with the expected values.
+        /// </param>
+        private void AssertConstructorAttributes(ConstructorInfo actualConstructor, ConstructorInfo expectedConstructor)
         {
-            // TODO: Move this method to base class.
-            With.Mocks(delegate
+            Type[] constructorParameterTypes = JTCG.Convert.ToParameterTypes(actualConstructor.GetParameters());
+            Type[] expectedConstructorParameterTypes = JTCG.Convert.ToParameterTypes(expectedConstructor.GetParameters());
+            Assert.That(constructorParameterTypes, Has.Length(expectedConstructorParameterTypes.Length));
+
+            for (int i = 0; i < constructorParameterTypes.Length; ++i)
             {
-                IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation = Mocker.Current.CreateMock<IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>>();
-
-                List<ConstructorBuilder> implementationArgs = new List<ConstructorBuilder>();
-                Delegate storeConstructorBuilderParameter = CreateDeclareMethodsAttributeDelegate(implementationArgs);
-
-                // Expectations
-                // The constructor's parameters are defined.
-                implementation.DefineMethodParameters(null, expectedConstructor);
-                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedConstructor))
-                    .Do(storeConstructorBuilderParameter);
-
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                GenericConstructorDeclarer declarer = new GenericConstructorDeclarer(CurrentTypeBuilder, expectedConstructor, implementation);
-                ConstructorBuilder constructorBuilder = declarer.Declare();
-                constructorBuilder.GetILGenerator().Emit(OpCodes.Ret);
-                CurrentTypeBuilder.CreateType();
-                Assert.That(constructorBuilder.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
-
-                ConstructorInfo constructor = CurrentTypeBuilder.GetConstructors()[0];
-                Type[] constructorParameterTypes = JTCG.Convert.ToParameterTypes(constructor.GetParameters());
-                Type[] expectedConstructorParameterTypes = JTCG.Convert.ToParameterTypes(expectedConstructor.GetParameters());
-                Assert.That(constructorParameterTypes.Length, Is.EqualTo(expectedConstructorParameterTypes.Length));
-
-                for (int i = 0; i < constructorParameterTypes.Length; ++i)
+                if (constructorParameterTypes[i].IsGenericParameter)
                 {
-                    if (constructorParameterTypes[i].IsGenericParameter)
-                    {
-                        Assert.That(expectedConstructorParameterTypes[i].IsGenericParameter);
-                        Assert.That(constructorParameterTypes[i].DeclaringType, Is.EqualTo(CurrentTypeBuilder));
-                        Assert.That(constructorParameterTypes[i].GenericParameterPosition, Is.EqualTo(expectedConstructorParameterTypes[i].GenericParameterPosition));
-                    }
-                    else
-                    {
-                        Assert.That(constructorParameterTypes[i], Is.EqualTo(expectedConstructorParameterTypes[i]));
-                    }
+                    Assert.That(expectedConstructorParameterTypes[i].IsGenericParameter);
+                    Assert.That(constructorParameterTypes[i].DeclaringType, Is.EqualTo(CurrentTypeBuilder));
+                    Assert.That(constructorParameterTypes[i].GenericParameterPosition, Is.EqualTo(expectedConstructorParameterTypes[i].GenericParameterPosition));
                 }
-
-                Assert.That(constructor.CallingConvention, Is.EqualTo(CallingConventions.Standard | CallingConventions.HasThis));
-                Assert.That(constructor.IsPublic);
-                Assert.That(constructor.IsSpecialName);
-                Assert.That(constructor.Attributes & MethodAttributes.RTSpecialName, Is.EqualTo(MethodAttributes.RTSpecialName));
-                Assert.That(implementationArgs.TrueForAll(delegate(ConstructorBuilder storedConstructorBuilder)
+                else
                 {
-                    // The constructor created by the type builder is passed to each implementation
-                    // function call.
-                    return constructorBuilder == storedConstructorBuilder;
-                }));
-            });
+                    Assert.That(constructorParameterTypes[i], Is.EqualTo(expectedConstructorParameterTypes[i]));
+                }
+            }
         }
 
         #endregion

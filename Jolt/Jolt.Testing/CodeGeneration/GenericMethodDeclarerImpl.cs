@@ -1,0 +1,57 @@
+// ----------------------------------------------------------------------------
+// GenericMethodDeclarerImpl.cs
+//
+// Contains the definition of the GenericMethodDeclarerImpl class.
+// Copyright 2008 Steve Guidi.
+//
+// File created: 11/8/2008 15:01:27
+// ----------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
+
+using JTCG = Jolt.Testing.CodeGeneration;
+
+namespace Jolt.Testing.CodeGeneration
+{
+    /// <summary>
+    /// Implements the IMethodDeclarerImpl contract and provides methods
+    /// that declare a generic method.
+    /// </summary>
+    internal sealed class GenericMethodDeclarerImpl : IMethodDeclarerImpl<MethodBuilder, MethodInfo>
+    {
+        #region IMethodDeclarerImpl<MethodBuilder,MethodInfo> implementation ----------------------
+
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
+        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
+        {
+            // Obtain all generic arguments that may be required by the method.
+            Type[] genericTypeArguments = builder.DeclaringType.GetGenericArguments();
+            Type[] realSubjectGenericMethodArguments = realSubjectTypeMethod.GetGenericArguments();
+
+            // Create any generic method arguments required by the method.
+            GenericTypeParameterBuilder[] genericMethodArguments = builder.DefineGenericParameters(
+                JTCG.Convert.ToTypeNames(realSubjectGenericMethodArguments));
+            DeclarationHelper.CopyTypeConstraints(realSubjectGenericMethodArguments, genericMethodArguments);
+
+            // Initialize the signature of the method.
+            builder.SetParameters(JTCG.Convert.ToParameterTypes(
+                realSubjectTypeMethod.GetParameters(),
+                genericTypeArguments,
+                genericMethodArguments));
+            builder.SetReturnType(JTCG.Convert.ToParameterType(
+                realSubjectTypeMethod.ReturnParameter,
+                genericTypeArguments,
+                genericMethodArguments));
+        }
+
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo>"/>
+        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DefineMethodParameters(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
+        {
+            DeclarationHelper.DefineParametersWith(builder.DefineParameter, realSubjectTypeMethod.GetParameters());
+        }
+
+        #endregion
+    }
+}

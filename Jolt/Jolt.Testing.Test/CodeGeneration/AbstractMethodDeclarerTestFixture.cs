@@ -67,13 +67,10 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </remarks>
         protected static DeclareMethodAttributesDelegate CreateDeclareMethodsAttributeDelegate(List<TMethodBuilder> implementationArgs)
         {
-            return new DeclareMethodAttributesDelegate(delegate(TMethodBuilder builder, TMethod method)
-            {
-                // Stores method builder parameter passed to mock methods for future verification.
-                // Required as a TypeBuilder created from a dynamic modules can not be queried prior
-                // to being persisted or having its construction finalized.
-                implementationArgs.Add(builder);
-            });
+            // Stores method builder parameter passed to mock methods for future verification.
+            // Required as a TypeBuilder created from a dynamic modules can not be queried prior
+            // to being persisted or having its construction finalized.
+            return new DeclareMethodAttributesDelegate((TMethodBuilder builder, TMethod method) => implementationArgs.Add(builder));
         }
 
         #endregion

@@ -26,7 +26,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public virtual void TestFixtureSetup()
         {
             m_defaultModuleBuilder = AppDomain.CurrentDomain
-                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.ReflectionOnly)
+                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.Run)
                 .DefineDynamicModule("__transientModule");
         }
 
@@ -68,7 +68,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         protected void AssertMethodParametersEqual(ParameterInfo[] actualParameters, ParameterInfo[] expectedParameters)
         {
-            Assert.That(actualParameters.Length, Is.EqualTo(expectedParameters.Length));
+            Assert.That(actualParameters, Has.Length(expectedParameters.Length));
 
             for (int i = 0; i < actualParameters.Length; ++i)
             {

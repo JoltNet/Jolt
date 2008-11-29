@@ -27,10 +27,26 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         internal static Type[] ToParameterTypes(ParameterInfo[] parameters)
         {
-            return Array.ConvertAll<ParameterInfo, Type>(parameters, delegate(ParameterInfo methodParam)
-            {
-                return methodParam.ParameterType;
-            });
+            return ToParameterTypes(parameters, Type.EmptyTypes, Type.EmptyTypes);
+        }
+
+        /// <summary>
+        /// Converts an array of ParameterInfo types to an array of
+        /// types repesenting the type of each paramater.  Refers to
+        /// the type from a generic type argument collection when a
+        /// parameter is deemed to be generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameters to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments)
+        {
+            return ToParameterTypes(parameters, genericTypeArguments, Type.EmptyTypes);
         }
 
         /// <summary>
@@ -44,22 +60,53 @@ namespace Jolt.Testing.CodeGeneration
         /// The parameters to convert.
         /// </param>
         /// 
-        /// <param name="genericTypeParameters">
-        /// The generic parameters of the method's declaring type.
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
         /// </param>
-        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeParameters)
+        /// 
+        /// <param name="genericMethodArguments">
+        /// The generic arguments from the parameter's method.
+        /// </param>
+        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments, Type[] genericMethodArguments)
         {
-            return Array.ConvertAll<ParameterInfo, Type>(parameters, delegate(ParameterInfo methodParam)
+            return Array.ConvertAll(parameters, methodParam => ToParameterType(methodParam, genericTypeArguments, genericMethodArguments));
+        }
+
+        /// <summary>
+        /// Converts a ParameterInfo to the type that repesents the
+        /// type of the paramater.  Refers to the type from a generic
+        /// type parameter collection when a parameter is deemed to be
+        /// generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameter to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        /// 
+        /// <param name="genericMethodArguments">
+        /// The generic arguments from the parameter's method.
+        /// </param>
+        internal static Type ToParameterType(ParameterInfo parameter, Type[] genericTypeArguments, Type[] genericMethodArguments)
+        {
+            Type parameterType = parameter.ParameterType;
+            if (parameterType.IsGenericParameter)
             {
-                Type parameterType = methodParam.ParameterType;
-                if (parameterType.IsGenericParameter)
+                if (parameterType.DeclaringMethod != null && genericMethodArguments.Length > 0)
                 {
-                    // alternatively: if parameterType.DeclaringMethod == null
-                    return genericTypeParameters[parameterType.GenericParameterPosition];
+                    return genericMethodArguments[parameterType.GenericParameterPosition];
                 }
-                
-                return parameterType;
-            });
+
+                if (genericTypeArguments.Length > 0)
+                {
+                    return genericTypeArguments[parameterType.GenericParameterPosition];
+                }
+            }
+
+            return parameterType;
         }
 
         /// <summary>
@@ -72,8 +119,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         internal static string[] ToTypeNames(Type[] types)
         {
-            return Array.ConvertAll<Type, string>(types,
-                delegate(Type type) { return type.Name; });
+            return Array.ConvertAll(types, type => type.Name);
         }
     }
 }

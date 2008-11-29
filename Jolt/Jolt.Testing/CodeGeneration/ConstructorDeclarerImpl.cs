@@ -30,7 +30,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(ConstructorBuilder, ConstructorInfo>"/>
         void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DefineMethodParameters(ConstructorBuilder builder, ConstructorInfo realSubjecTypeConstructor)
         {
-            MethodDeclarerHelper.DefineParametersWith(builder.DefineParameter, realSubjecTypeConstructor.GetParameters());
+            DeclarationHelper.DefineParametersWith(builder.DefineParameter, realSubjecTypeConstructor.GetParameters());
         }
 
         #endregion

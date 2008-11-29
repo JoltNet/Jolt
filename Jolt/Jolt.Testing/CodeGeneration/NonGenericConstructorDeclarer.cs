@@ -7,7 +7,6 @@
 // File created: 7/21/2008 22:15:41
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -23,10 +22,13 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region constructors ----------------------------------------------------------------------
 
-        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.ctor(TypeBuilder, ConstructorInfo, AbstractMethodDeclarerImpl&lt;ConstructorBuilder,  ConstructorInfo&gt;"/>
-        internal NonGenericConstructorDeclarer(TypeBuilder proxyTypeBuilder, ConstructorInfo realSubjectTypeConstructor,
+        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.ctor(TypeBuilder, MethodAttributes, ConstructorInfo, AbstractMethodDeclarerImpl&lt;ConstructorBuilder,  ConstructorInfo&gt;"/>
+        internal NonGenericConstructorDeclarer(
+            TypeBuilder proxyTypeBuilder,
+            MethodAttributes constructorAttributes,
+            ConstructorInfo realSubjectTypeConstructor,
             IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation)
-            : base(proxyTypeBuilder, realSubjectTypeConstructor, implementation) { }
+            : base(proxyTypeBuilder, constructorAttributes, realSubjectTypeConstructor, implementation) { }
 
         #endregion
 
@@ -36,20 +38,13 @@ namespace Jolt.Testing.CodeGeneration
         internal override ConstructorBuilder Declare()
         {
             ParameterInfo[] constructorParameters = RealSubjectTypeMethod.GetParameters();
-            ConstructorBuilder builder = Builder.DefineConstructor(
-                ConstructorAttributes, CallingConventions.HasThis, JTCG.Convert.ToParameterTypes(constructorParameters));
+
+            ConstructorBuilder builder = Builder.DefineConstructor(MethodAttributes, CallingConventions.HasThis,
+                JTCG.Convert.ToParameterTypes(constructorParameters));
             Implementation.DefineMethodParameters(builder, RealSubjectTypeMethod);
 
             return builder;
         }
-
-        #endregion
-
-        #region private class fields --------------------------------------------------------------
-
-        // TODO: Move to a shared or base class.
-        private static readonly MethodAttributes ConstructorAttributes =
-            MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 
         #endregion
     }
