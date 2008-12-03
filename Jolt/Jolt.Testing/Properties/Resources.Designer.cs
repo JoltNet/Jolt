@@ -88,7 +88,7 @@ namespace Jolt.Testing.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property &apos;{0}&apos; has neither a getter or a setter..
+        ///   Looks up a localized string similar to The property &apos;{0}&apos; has neither a public getter or a public setter..
         /// </summary>
         internal static string Error_InvalidProperty {
             get {
@@ -120,6 +120,15 @@ namespace Jolt.Testing.Properties {
         internal static string Error_MethodNotMemberOfRealSubject {
             get {
                 return ResourceManager.GetString("Error_MethodNotMemberOfRealSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The non-abstract real subject type &apos;{0}&apos; requires at least one public constructor..
+        /// </summary>
+        internal static string Error_RealSubjectType_LackingConstructor {
+            get {
+                return ResourceManager.GetString("Error_RealSubjectType_LackingConstructor", resourceCulture);
             }
         }
         

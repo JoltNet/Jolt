@@ -127,7 +127,7 @@
     <value>Can not add non-static method '{0}' to the proxy builder as the real subject type is abstract.</value>
   </data>
   <data name="Error_InvalidProperty" xml:space="preserve">
-    <value>The property '{0}' has neither a getter or a setter.</value>
+    <value>The property '{0}' has neither a public getter or a public setter.</value>
   </data>
   <data name="Error_InvalidRealSubjectType" xml:space="preserve">
     <value>The real subject type '{0}' is invalid.  It can not be a delegate or interface type.</value>
@@ -137,6 +137,9 @@
   </data>
   <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
     <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
+  </data>
+  <data name="Error_RealSubjectType_LackingConstructor" xml:space="preserve">
+    <value>The non-abstract real subject type '{0}' requires at least one public constructor.</value>
   </data>
   <data name="Info_SkipDefinedEventMethod" xml:space="preserve">
     <value>The method '{0}' was not included as part of the proxy type as it is already defined as an event.</value>

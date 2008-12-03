@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
+using Jolt.Testing.Test.CodeGeneration.Types;
 using log4net.Config;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -578,6 +579,126 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies the behavior of the AddType() method when the
+        /// underlying type builder throws an exception on  processing
+        /// a method.
+        /// </summary>
+        [Test]
+        public void AddType_InvalidMethod()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false));
+                Type expectedType = typeof(__FirstEmptySubjectType);
+
+                // Expectations
+                // The proxy type builder is created.
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy builder is invoked for each public method
+                // on the subject type, each call raising an exception.
+                foreach (MethodInfo method in expectedType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    proxyTypeBuilder.AddMethod(method);
+                    LastCall.Throw(new InvalidOperationException());
+                }
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedType);
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddType() method when the
+        /// underlying type builder throws an exception on processing
+        /// a property.
+        /// </summary>
+        [Test]
+        public void AddType_InvalidProperty()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false));
+                Type expectedType = typeof(__PropertyTestType);
+
+                // Expectations
+                // The proxy type builder is created.
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy builder is invoked for each public method
+                // on the subject type, each call raising an exception.
+                foreach (PropertyInfo property in expectedType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    proxyTypeBuilder.AddProperty(property);
+                    LastCall.Throw(new InvalidOperationException());
+                }
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedType);
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddType() method when the
+        /// underlying type builder throws an exception on processing
+        /// an event.
+        /// </summary>
+        [Test]
+        public void AddType_InvalidEvent()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true));
+                Type expectedType = typeof(__EventTestType);
+
+                // Expectations
+                // The proxy type builder is created.
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy builder is invoked for each public method
+                // on the subject type, each call raising an exception.
+                foreach (EventInfo evt in expectedType.GetEvents(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    proxyTypeBuilder.AddEvent(evt);
+                    LastCall.Throw(new InvalidOperationException());
+                }
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedType);
+            });
+        }
+
+        /// <summary>
         /// Verifies the behavior of the CreateAssembly() method.
         /// </summary>
         [Test]
@@ -629,46 +750,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private class data ----------------------------------------------------------------
 
         private static readonly string WorkingDirectoryName = Path.Combine(Path.GetTempPath(), MethodBase.GetCurrentMethod().DeclaringType.Name);
-
-        #endregion
-
-        #region nested types supporting unit tests ------------------------------------------------
-
-        public class __FirstEmptySubjectType { }
-        public class __SecondEmptySubjectType { }
-
-        public class __RealSubjectType
-        {
-            public void PublicMethod_1() { }
-            public void PublicMethod_2() { }
-            public static void PublicMethod_3() { }
-            public static void PublicMethod_4() { }
-
-            public int PublicProperty_1 { get { return 0; } set { } }
-            public int PublicProperty_2 { get { return 0; } set { } }
-            public static int PublicProperty_3 { get { return 0; } set { } }
-            public static int PublicProperty_4 { get { return 0; } set { } }
-            
-            public event EventHandler<EventArgs> PublicEvent_1;
-            public event EventHandler<EventArgs> PublicEvent_2;
-            public static event EventHandler<EventArgs> PublicEvent_3;
-            public static event EventHandler<EventArgs> PublicEvent_4;
-
-            internal void InternalMethod() { }
-            protected void ProtectedMethod() { }
-            private void PrivateMethod() { }
-            private static void PrivateStaticMethod() { }
-
-            internal int InternalProperty { get { return 0; } set { } }
-            protected int ProtectedProperty { get { return 0; } set { } }
-            private int PrivateProperty { get { return 0; } set { } }
-            private static int PrivateStaticProperty { get { return 0; } set { } }
-
-            internal event EventHandler<EventArgs> InternalEvent;
-            protected event EventHandler<EventArgs> ProtectedEvent;
-            private event EventHandler<EventArgs> PrivateEvent;
-            private static event EventHandler<EventArgs> PrivateStaticEvent;
-        }
 
         #endregion
     }

@@ -25,6 +25,13 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
 
     public abstract class __AbstractType<T> { }
 
+    public class __HiddenConstructorType
+    {
+        protected __HiddenConstructorType() { }
+        internal __HiddenConstructorType(int x) { }
+        private __HiddenConstructorType(byte y) { }
+    }
+
     public class __MethodTestType
     {
         public DateTime InstanceMethod() { return DateTime.Today; }     // Also covers return-value, and no-args method test cases.
@@ -114,6 +121,18 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         public uint Setter
         {
             set { m_instancePropertyValue = value; }
+        }
+
+        public uint InternalGetter
+        {
+            internal get { return m_instancePropertyValue; }
+            set { m_instancePropertyValue = value; }
+        }
+
+        public uint PrivateSetter
+        {
+            get { return m_instancePropertyValue; }
+            private set { m_instancePropertyValue = value; }
         }
 
         public int this[int x, int y, int z]
@@ -301,4 +320,41 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         public void NoParameters() { throw new ApplicationException("no-parameters"); }
         public void NoParameters<A>() { throw new ApplicationException("no-parameters-generic"); }
     }
+
+    public class __FirstEmptySubjectType { }
+    public class __SecondEmptySubjectType { }
+
+    public class __RealSubjectType
+    {
+        public void PublicMethod_1() { }
+        public void PublicMethod_2() { }
+        public static void PublicMethod_3() { }
+        public static void PublicMethod_4() { }
+
+        public int PublicProperty_1 { get { return 0; } set { } }
+        public int PublicProperty_2 { get { return 0; } set { } }
+        public static int PublicProperty_3 { get { return 0; } set { } }
+        public static int PublicProperty_4 { get { return 0; } set { } }
+
+        public event EventHandler<EventArgs> PublicEvent_1;
+        public event EventHandler<EventArgs> PublicEvent_2;
+        public static event EventHandler<EventArgs> PublicEvent_3;
+        public static event EventHandler<EventArgs> PublicEvent_4;
+
+        internal void InternalMethod() { }
+        protected void ProtectedMethod() { }
+        private void PrivateMethod() { }
+        private static void PrivateStaticMethod() { }
+
+        internal int InternalProperty { get { return 0; } set { } }
+        protected int ProtectedProperty { get { return 0; } set { } }
+        private int PrivateProperty { get { return 0; } set { } }
+        private static int PrivateStaticProperty { get { return 0; } set { } }
+
+        internal event EventHandler<EventArgs> InternalEvent;
+        protected event EventHandler<EventArgs> ProtectedEvent;
+        private event EventHandler<EventArgs> PrivateEvent;
+        private static event EventHandler<EventArgs> PrivateStaticEvent;
+    }
+
 }

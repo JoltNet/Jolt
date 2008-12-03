@@ -169,8 +169,8 @@ namespace Jolt.Testing.CodeGeneration
         public void AddType(Type realSubjectType)
         {
             IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_module);
-            Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), builder.AddProperty);
-            Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), builder.AddEvent);
+            Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => builder.AddProperty(property)));
+            Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), evt => HandleExceptionsIn(() => builder.AddEvent(evt)));
             Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, builder));
 
             builder.CreateProxy();
@@ -244,14 +244,7 @@ namespace Jolt.Testing.CodeGeneration
             }
             else
             {
-                try
-                {
-                    builder.AddMethod(method);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    Log.Warn(ex.Message);
-                }
+                HandleExceptionsIn(() => builder.AddMethod(method));
             }
         }
 
@@ -314,6 +307,25 @@ namespace Jolt.Testing.CodeGeneration
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Invokes a given delegate logging any caught InvalidOperationException.
+        /// </summary>
+        /// 
+        /// <param name="action">
+        /// The function to invoke.
+        /// </param>
+        private static void HandleExceptionsIn(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Warn(ex.Message);
+            }
         }
 
         #endregion

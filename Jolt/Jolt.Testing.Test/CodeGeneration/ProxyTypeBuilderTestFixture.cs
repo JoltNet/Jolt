@@ -245,6 +245,16 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that an appropriate exception is thrown when a real
+        /// subject type does not contain a public constructor.
+        /// </summary>
+        [Test, ExpectedException(typeof(NotSupportedException))]
+        public void Construction_NonConstructable()
+        {
+            new ProxyTypeBuilder(DefaultNamespace, typeof(__HiddenConstructorType));
+        }
+
+        /// <summary>
         /// Verifies the default behavior of the CreateInterface() method,
         /// prior to adding methods.
         /// </summary>
@@ -925,7 +935,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when the AddProperty()
         /// method is invoked with a private property.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test, ExpectedException(typeof(NotSupportedException))]
         public void AddProperty_PrivateProperty()
         {
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
@@ -1020,13 +1030,25 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the behavior of the AddProperty() method when
-        /// a proprety with no getter or setter is added to the builder.
+        /// Verifies the behavior of the AddProperty() method when the
+        /// getter is less accessible (non-public) than the corresponding
+        /// setter.
         /// </summary>
-        [Test, Ignore]
-        public void AddProperty_UnsupportedProperty()
+        [Test]
+        public void AddProperty_InaccessibleGetter()
         {
-            throw new NotImplementedException();
+            AssertInaccessiblePropertyBehavior(typeof(__PropertyTestType).GetProperty("InternalGetter"));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when the
+        /// setter is less accessible (non-public) than the corresponding
+        /// getter.
+        /// </summary>
+        [Test]
+        public void AddProperty_InaccessibleSetter()
+        {
+            AssertInaccessiblePropertyBehavior(typeof(__PropertyTestType).GetProperty("PrivateSetter"));
         }
 
         /// <summary>
@@ -1698,6 +1720,27 @@ namespace Jolt.Testing.Test.CodeGeneration
             
             // Verify the behavior of the generated proxy.
             assertPropertyInvocation(proxy, proxyProperty);
+        }
+
+        /// <summary>
+        /// Asserts the expected behavior of the AddProperty() method when the
+        /// given property contains a getter/setter that is less accessible than
+        /// the access modifier of the given property.
+        /// </summary>
+        /// 
+        /// <param name="realSubjectTypeProperty">
+        /// The property from the real subject type that is passed to the
+        /// proxy type builder.
+        /// </param>
+        private static void AssertInaccessiblePropertyBehavior(PropertyInfo realSubjectTypeProperty)
+        {
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
+
+            builder.AddProperty(realSubjectTypeProperty);
+            PropertyInfo property = builder.CreateProxy().GetProperty(realSubjectTypeProperty.Name);
+
+            Assert.That(property.CanRead, Is.EqualTo(realSubjectTypeProperty.GetGetMethod() != null));
+            Assert.That(property.CanWrite, Is.EqualTo(realSubjectTypeProperty.GetSetMethod() != null));
         }
 
         /// <summary>

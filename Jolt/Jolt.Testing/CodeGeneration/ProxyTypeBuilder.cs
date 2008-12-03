@@ -75,7 +75,7 @@ namespace Jolt.Testing.CodeGeneration
 
             m_realSubjectType = realSubjectType;
             m_module = targetModule;
-            m_addedMembers = new Dictionary<MemberInfo, bool>();
+            m_addedMembers = new HashSet<MemberInfo>();
 
             // Create the type holders for the generated interface and proxy.
             m_proxy = m_module.DefineType(CreateProxyName(sRootNamespace, m_realSubjectType), TypeAttributes.Public | TypeAttributes.Sealed);
@@ -160,23 +160,26 @@ namespace Jolt.Testing.CodeGeneration
                 property.Attributes, property.PropertyType, indexerParameterTypes);
 
             // Add the property to the proxy.
-            // The property explicitly implements the interface method.
             PropertyBuilder proxyPropertyBuilder = m_proxy.DefineProperty(property.Name,
                 property.Attributes, property.PropertyType, indexerParameterTypes);
 
-            // Define the property methods (get/set) for the interface and proxy.
-            MethodBuilder interfaceMethodBuilder, proxyMethodBuilder; 
-            
-            if (property.CanRead)
+            // Define the property methods (get/set) for the interface and proxy,
+            // when applicable.
+            MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
+
+            MethodInfo getMethod = property.GetGetMethod();
+            MethodInfo setMethod = property.GetSetMethod();
+
+            if (getMethod != null)
             {
-                DefineInterfaceAndProxyMethod(property.GetGetMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+                DefineInterfaceAndProxyMethod(getMethod, out interfaceMethodBuilder, out proxyMethodBuilder);
                 interfacePropertyBuilder.SetGetMethod(interfaceMethodBuilder);
                 proxyPropertyBuilder.SetGetMethod(proxyMethodBuilder);
             }
 
-            if (property.CanWrite)
+            if (setMethod != null)
             {
-                DefineInterfaceAndProxyMethod(property.GetSetMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+                DefineInterfaceAndProxyMethod(setMethod, out interfaceMethodBuilder, out proxyMethodBuilder);
                 interfacePropertyBuilder.SetSetMethod(interfaceMethodBuilder);
                 proxyPropertyBuilder.SetSetMethod(proxyMethodBuilder);
             }
@@ -351,7 +354,8 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that the given method is legal for input into the builder.
+        /// Verifies that the given method is accessible and legal for input into
+        /// the builder.
         /// </summary>
         /// 
         /// <param name="method">
@@ -364,10 +368,21 @@ namespace Jolt.Testing.CodeGeneration
                 throw new InvalidOperationException(Resources.Error_MemberNotPublic);
             }
 
-            if (m_realSubjectType.IsAbstract && !method.IsStatic)
+            ValidateAccessibleMethod(method);
+        }
+
+        /// <summary>
+        /// Verifies that the given method is legal for input into the builder.
+        /// </summary>
+        /// 
+        /// <param name="method">
+        /// The method to validate.
+        /// </param>
+        private void ValidateAccessibleMethod(MethodInfo method)
+        {
+            if (m_addedMembers.Contains(method))
             {
-                throw new InvalidOperationException(
-                    String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, method.Name));
+                throw new ArgumentException(Resources.Error_DuplicateMember);
             }
 
             if (method.DeclaringType != m_realSubjectType && !m_realSubjectType.IsSubclassOf(method.DeclaringType))
@@ -376,12 +391,13 @@ namespace Jolt.Testing.CodeGeneration
                     String.Format(Resources.Error_MethodNotMemberOfRealSubject, method.Name));
             }
 
-            if (m_addedMembers.ContainsKey(method))
+            if (m_realSubjectType.IsAbstract && !method.IsStatic)
             {
-                throw new ArgumentException(Resources.Error_DuplicateMember);
+                throw new InvalidOperationException(
+                    String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, method.Name));
             }
 
-            m_addedMembers.Add(method, true);
+            m_addedMembers.Add(method);
         }
 
         /// <summary>
@@ -393,13 +409,16 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         private void ValidateProperty(PropertyInfo property)
         {
-            if (!property.CanRead && !property.CanWrite)
+            MethodInfo getMethod = property.GetGetMethod();
+            MethodInfo setMethod = property.GetSetMethod();
+            
+            if (getMethod == null && setMethod == null)
             {
                 throw new NotSupportedException(String.Format(Resources.Error_InvalidProperty, property.Name));
             }
 
-            if (property.CanRead)   { ValidateMethod(property.GetGetMethod(true)); }
-            if (property.CanWrite)  { ValidateMethod(property.GetSetMethod(true)); }
+            if (getMethod != null) { ValidateAccessibleMethod(getMethod); }
+            if (setMethod != null) { ValidateAccessibleMethod(setMethod); }
         }
 
         /// <summary>
@@ -407,7 +426,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </summary>
         /// 
         /// <param name="eventInfo">
-        /// The property to validate.
+        /// The event to validate.
         /// </param>
         private void ValidateEvent(EventInfo eventInfo)
         {
@@ -483,8 +502,14 @@ namespace Jolt.Testing.CodeGeneration
             {
                 throw new NotSupportedException(String.Format(Resources.Error_InvalidRealSubjectType, realSubjectType.Name));
             }
+            
+            // In order for the proxy to forward/emulate construction,
+            // a non-abstract class must have at least one public constructor.
+            if (!realSubjectType.IsAbstract && realSubjectType.GetConstructors().Length == 0)
+            {
+                throw new NotSupportedException(String.Format(Resources.Error_RealSubjectType_LackingConstructor, realSubjectType.Name));   
+            }
 
-            // TODO: a non-static public class must have at least one public constructor.
             // TODO: Validate accessibility of realSubjectType, including its parent types (for nested types).
         }
 
@@ -551,7 +576,7 @@ namespace Jolt.Testing.CodeGeneration
         private readonly ModuleBuilder m_module;
         private readonly TypeBuilder m_proxyInterface;
         private readonly TypeBuilder m_proxy;
-        private readonly IDictionary<MemberInfo, bool> m_addedMembers;  // TODO: Replace with .NET 3.5 ISet.
+        private readonly HashSet<MemberInfo> m_addedMembers;
         private readonly MethodDeclarerFactory m_methodDeclarerFactory;
 
         #endregion
