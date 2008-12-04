@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  xmlns:jolt="urn:Jolt.Testing.CodeGeneration.Xml" targetNamespace="urn:Jolt.Testing.CodeGeneration.Xml" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="TypeReferenceType">
+		<xs:annotation>
+			<xs:documentation>Describes a type by its namespace and assembly location, as prescribed by .NET conventions.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:element name="RealSubjects">
+		<xs:annotation>
+			<xs:documentation>Container of type descriptors for which an interface and proxy class are generated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Type" type="jolt:TypeReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:unique name="uniqueTypes">
+			<xs:selector xpath="jolt:Type"/>
+			<xs:field xpath="@name"/>
+		</xs:unique>
+	</xs:element>
+</xs:schema>
