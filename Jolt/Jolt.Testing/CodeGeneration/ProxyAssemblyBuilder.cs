@@ -166,7 +166,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="realSubjectType">
         /// The type for which a proxy and interface are created.
         /// </param>
-        public void AddType(Type realSubjectType)
+        public virtual void AddType(Type realSubjectType)
         {
             IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_module);
             Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => builder.AddProperty(property)));
@@ -180,7 +180,7 @@ namespace Jolt.Testing.CodeGeneration
         /// Saves the state of the assembly builder to disk in the form
         /// of an assembly.
         /// </summary>
-        public Assembly CreateAssembly()
+        public virtual Assembly CreateAssembly()
         {
             m_assembly.Save(Path.GetFileName(m_sAssemblyFullPath));
             return m_assembly;

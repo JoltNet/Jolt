@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Jolt.Testing.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CodeGeneration\DeclarationHelper.cs" />

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Jolt Testing Library")]
-[assembly: AssemblyDescription("Contains classes supporting the development of strong unit tests and injectable components.")]
+[assembly: AssemblyTitle("Jolt Library")]
+[assembly: AssemblyDescription("Contains what?")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Jolt.Testing")]
-[assembly: AssemblyCopyright("Copyright © Steve Guidi 2007")]
+[assembly: AssemblyProduct("Jolt")]
+[assembly: AssemblyCopyright("Copyright © Steve Guidi 2008")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]
 
@@ -32,5 +32,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.1.*")]
 
 // Friend assemblies.
-[assembly: InternalsVisibleTo("Jolt.Testing.Test")]
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: InternalsVisibleTo("Jolt.Test")]
