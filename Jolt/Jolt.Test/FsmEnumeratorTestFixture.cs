@@ -102,5 +102,45 @@ namespace Jolt.Test
             IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(startState);
             enumerator.NextState('a');
         }
+
+        /// <summary>
+        /// Verifies the behavior of the NextState() method when the
+        /// transitions in the FSM contain transition-event subcribers.
+        /// </summary>
+        [Test]
+        public void NextState_TransitionEventFired()
+        {
+            // Create an FSM that determines the length of a character sequence.
+            // An event is raised each time a transition from odd to even occurs.
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string oddState = "odd-length";
+            string evenState = "even-length";
+
+            fsm.AddState(oddState);
+            fsm.AddState(evenState);
+            fsm.AddTransition(new Transition<char>(evenState, oddState, ch => true));
+
+            byte raiseEventCount = 0;
+            string inputSymbols = "1234567890";
+
+            Transition<char> oddToEvenLength = new Transition<char>(oddState, evenState, ch => true);
+            oddToEvenLength.OnTransition += delegate(object sender, StateTransitionEventArgs<char> eventArgs)
+            {
+                Assert.That(eventArgs.SourceState, Is.SameAs(oddState));
+                Assert.That(eventArgs.InputSymbol, Is.EqualTo(inputSymbols[2 * raiseEventCount + 1]));
+                ++raiseEventCount;
+            };
+
+            fsm.AddTransition(oddToEvenLength);
+
+
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(evenState);
+            foreach (char symbol in inputSymbols)
+            {
+                Assert.That(enumerator.NextState(symbol), "Test FSM is incorrectly initialized");
+            }
+
+            Assert.That(raiseEventCount, Is.EqualTo(inputSymbols.Length / 2));
+        }
     }
 }

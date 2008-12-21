@@ -53,6 +53,7 @@ namespace Jolt
 
             try
             {
+                // Find the single transtrition that is accepted by the input symbol.
                 transition = m_graph.OutEdges(CurrentState).SingleOrDefault(t => t.TransitionPredicate(inputSymbol));
             }
             catch (InvalidOperationException)
@@ -64,6 +65,7 @@ namespace Jolt
             bool foundTransition = transition != null;
             if (foundTransition)
             {
+                transition.RaiseOnTransitionEvent(new StateTransitionEventArgs<TAlphabet>(transition.Source, inputSymbol));
                 CurrentState = transition.Target;
             }
 

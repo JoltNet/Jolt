@@ -22,6 +22,7 @@ namespace Jolt
     /// <typeparam name="TAlphabet">
     /// The type that represents the alphabet operated upon by the FSM.
     /// </typeparam>
+    [Serializable]
     public sealed class Transition<TAlphabet> : Edge<string>
     {
         #region constructors ----------------------------------------------------------------------
@@ -58,6 +59,33 @@ namespace Jolt
         public Predicate<TAlphabet> TransitionPredicate
         {
             get { return m_transitionPredicate; }
+        }
+
+        #endregion
+
+        #region public events ---------------------------------------------------------------------
+
+        /// <summary>
+        /// The OnTransition event is raised each time the transition's
+        /// TransitionPredicate evaluates to TRUE, as a result of input
+        /// symbol consumption.
+        /// </summary>
+        public event EventHandler<StateTransitionEventArgs<TAlphabet>> OnTransition;
+
+        #endregion
+
+        #region internal methods ------------------------------------------------------------------
+
+        /// <summary>
+        /// Raises the OnTransition event with the given arugument.
+        /// </summary>
+        /// 
+        /// <param name="eventArgs">
+        /// The arguments raised by the event.
+        /// </param>
+        internal void RaiseOnTransitionEvent(StateTransitionEventArgs<TAlphabet> eventArgs)
+        {
+            if (OnTransition != null) { OnTransition(null, eventArgs); }
         }
 
         #endregion

@@ -50,6 +50,7 @@
     <Compile Include="FiniteStateMachineTestFixture.cs" />
     <Compile Include="FsmEnumeratorTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateTransitionEventArgsTestFixture.cs" />
     <Compile Include="TransitionTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>
