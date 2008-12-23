@@ -8,8 +8,6 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 using Jolt.Properties;
@@ -36,7 +34,7 @@ namespace Jolt
         /// <param name="graph">
         /// The FSM to navigate, represented as a graph.
         /// </param>
-        internal FsmEnumerator(string startState, BidirectionalGraph<string, Transition<TAlphabet>> graph)
+        internal FsmEnumerator(string startState, IImplicitGraph<string, Transition<TAlphabet>> graph)
         {
             m_graph = graph;
             CurrentState = startState;
@@ -49,27 +47,33 @@ namespace Jolt
         /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.NextState"/>
         public bool NextState(TAlphabet inputSymbol)
         {
-            Transition<TAlphabet> transition;
-
-            try
+            if (!m_isInErrorState)
             {
-                // Find the single transtrition that is accepted by the input symbol.
-                transition = m_graph.OutEdges(CurrentState).SingleOrDefault(t => t.TransitionPredicate(inputSymbol));
-            }
-            catch (InvalidOperationException)
-            {
-                throw new NotSupportedException(
-                    String.Format(Resources.Error_NDFSM_NotSupported, CurrentState, inputSymbol.ToString()));
+                Transition<TAlphabet> transition;
+
+                try
+                {
+                    // Find the single transtrition that is accepted by the input symbol.
+                    transition = m_graph.OutEdges(CurrentState).SingleOrDefault(t => t.TransitionPredicate(inputSymbol));
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new NotSupportedException(
+                        String.Format(Resources.Error_NDFSM_NotSupported, CurrentState, inputSymbol.ToString()));
+                }
+
+                if (transition != null)
+                {
+                    transition.RaiseOnTransitionEvent(new StateTransitionEventArgs<TAlphabet>(transition.Source, inputSymbol));
+                    CurrentState = transition.Target;
+                    return true;
+                }
+
+                CurrentState = ErrorState;
+                m_isInErrorState = true;
             }
 
-            bool foundTransition = transition != null;
-            if (foundTransition)
-            {
-                transition.RaiseOnTransitionEvent(new StateTransitionEventArgs<TAlphabet>(transition.Source, inputSymbol));
-                CurrentState = transition.Target;
-            }
-
-            return foundTransition;
+            return false;
         }
 
         /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.CurrentState"/>
@@ -77,9 +81,16 @@ namespace Jolt
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private instance data -------------------------------------------------------------
 
-        private readonly BidirectionalGraph<string, Transition<TAlphabet>> m_graph;
+        private readonly IImplicitGraph<string, Transition<TAlphabet>> m_graph;
+        private bool m_isInErrorState;
+
+        #endregion
+
+        #region private class data ----------------------------------------------------------------
+
+        private static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
 
         #endregion
     }

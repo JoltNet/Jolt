@@ -11,8 +11,6 @@ using System;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using QuickGraph;
-using Rhino.Mocks;
 
 namespace Jolt.Test
 {

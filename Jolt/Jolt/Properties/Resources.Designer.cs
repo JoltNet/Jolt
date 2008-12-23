@@ -63,9 +63,9 @@ namespace Jolt.Properties {
         /// <summary>
         ///   Looks up a localized string similar to An FSM enumerator could not be created because the given start state &apos;{0}&apos; is not present in the FSM..
         /// </summary>
-        internal static string Error_InvalidStartState {
+        internal static string Error_CreateEnumerator_InvalidStartState {
             get {
-                return ResourceManager.GetString("Error_InvalidStartState", resourceCulture);
+                return ResourceManager.GetString("Error_CreateEnumerator_InvalidStartState", resourceCulture);
             }
         }
         
@@ -84,6 +84,33 @@ namespace Jolt.Properties {
         internal static string Error_NDFSM_NotSupported {
             get {
                 return ResourceManager.GetString("Error_NDFSM_NotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The state &apos;{0}&apos; can not be marked as a final state as it does not exist within the state machine..
+        /// </summary>
+        internal static string Error_SetFinalState_InvalidState {
+            get {
+                return ResourceManager.GetString("Error_SetFinalState_InvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given states could not be marked as final states as there is at least one state in the collection that does not exist within the state machine..
+        /// </summary>
+        internal static string Error_SetFinalStates_InvalidState {
+            get {
+                return ResourceManager.GetString("Error_SetFinalStates_InvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The state &apos;{0}&apos; can not be marked as the start state as it does not exist within the state machine..
+        /// </summary>
+        internal static string Error_SetStartState_InvalidState {
+            get {
+                return ResourceManager.GetString("Error_SetStartState_InvalidState", resourceCulture);
             }
         }
     }

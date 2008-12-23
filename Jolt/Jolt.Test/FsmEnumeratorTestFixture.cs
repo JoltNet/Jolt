@@ -25,24 +25,41 @@ namespace Jolt.Test
         public void NextState_ValidTransition()
         {
             // Create an FSM that determines the length of a character sequence.
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            string oddState = "odd-length";
-            string evenState = "even-length";
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
 
-            fsm.AddState(oddState);
-            fsm.AddState(evenState);
-            fsm.AddTransition(new Transition<char>(oddState, evenState, ch => true));
-            fsm.AddTransition(new Transition<char>(evenState, oddState, ch => true));
+            string inputSymbols = "mod3";
+            string[] expectedStates = { "mod3(len) = 2", "mod3(len) = 1", "mod3(len) = 0", "mod3(len) = 2" };
 
-            string inputSymbols = "even";
-            string[] expectedStates = { oddState, evenState, oddState, evenState };
-
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(evenState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
 
             for (int i = 0; i < inputSymbols.Length; ++i)
             {
                 Assert.That(enumerator.NextState(inputSymbols[i]));
                 Assert.That(enumerator.CurrentState, Is.EqualTo(expectedStates[i]));
+            }
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the NextState() method when a
+        /// valid transition occurs from a user-defined state having
+        /// the same name as the internal error state.
+        /// </summary>
+        [Test]
+        public void NextState_ValidTransition_InternalStateName()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string startState = "start";
+            string errorStateCopy = "Jolt.FSM.ImplicitErrorState";
+
+            fsm.AddStates(new string[] { startState, errorStateCopy });
+            fsm.AddTransition(new Transition<char>(startState, errorStateCopy, Char.IsDigit));
+            fsm.AddTransition(new Transition<char>(errorStateCopy, startState, Char.IsDigit));
+
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(startState);
+
+            for (int i = 0; i < 10; ++i)
+            {
+                Assert.That(enumerator.NextState('0'));
             }
         }
 
@@ -56,28 +73,21 @@ namespace Jolt.Test
         {
             // Create an FSM that determines if an input string has an odd
             // or even number of zeroes.
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
+
+            string implicitErrorState = "Jolt.FSM.ImplicitErrorState";
             string oddState = "odd-number";
-            string evenState = "even-number";
-
-            fsm.AddState(oddState);
-            fsm.AddState(evenState);
-            fsm.AddTransition(new Transition<char>(oddState, oddState, ch => ch == '1'));
-            fsm.AddTransition(new Transition<char>(evenState, evenState, ch => ch == '1'));
-            fsm.AddTransition(new Transition<char>(oddState, evenState, ch => ch == '0'));
-            fsm.AddTransition(new Transition<char>(evenState, oddState, ch => ch == '0'));
-
             string inputSymbols = "0120";
             
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(evenState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
             Assert.That(enumerator.NextState(inputSymbols[0]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(oddState));
             Assert.That(enumerator.NextState(inputSymbols[1]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(oddState));
             Assert.That(!enumerator.NextState(inputSymbols[2]));
-            Assert.That(enumerator.CurrentState, Is.EqualTo(oddState));
-            Assert.That(enumerator.NextState(inputSymbols[3]));
-            Assert.That(enumerator.CurrentState, Is.EqualTo(evenState));
+            Assert.That(enumerator.CurrentState, Is.EqualTo(implicitErrorState));
+            Assert.That(!enumerator.NextState(inputSymbols[3]));
+            Assert.That(enumerator.CurrentState, Is.EqualTo(implicitErrorState));
         }
 
         /// <summary>
@@ -87,19 +97,9 @@ namespace Jolt.Test
         [Test, ExpectedException(typeof(NotSupportedException))]
         public void NextState_NonDeterministic()
         {
-            // Create an non-deterministic FSM.
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            string startState = "start";
-            string aState = "a";
-            string bState = "b";
+            FiniteStateMachine<char> fsm = FsmFactory.CreateNonDeterministicMachine();
 
-            fsm.AddState(startState);
-            fsm.AddState(aState);
-            fsm.AddState(bState);
-            fsm.AddTransition(new Transition<char>(startState, aState, ch => true));
-            fsm.AddTransition(new Transition<char>(startState, bState, ch => true));
-
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(startState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
             enumerator.NextState('a');
         }
 
@@ -116,8 +116,7 @@ namespace Jolt.Test
             string oddState = "odd-length";
             string evenState = "even-length";
 
-            fsm.AddState(oddState);
-            fsm.AddState(evenState);
+            fsm.AddStates(new string[] { oddState, evenState });
             fsm.AddTransition(new Transition<char>(evenState, oddState, ch => true));
 
             byte raiseEventCount = 0;

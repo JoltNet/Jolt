@@ -8,6 +8,8 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -33,9 +35,10 @@ namespace Jolt.Test
             Assert.That(fsm.Graph.AllowParallelEdges);
             Assert.That(fsm.Graph.IsDirected);
 
-            BidirectionalGraph<string, Transition<char>> graph = fsm.Graph as BidirectionalGraph<string, Transition<char>>;
-            Assert.That(graph.EdgeCount, Is.EqualTo(0));
-            Assert.That(graph.VertexCount, Is.EqualTo(0));
+            Assert.That(fsm.Graph.EdgeCount, Is.EqualTo(0));
+            Assert.That(fsm.Graph.VertexCount, Is.EqualTo(0));
+            Assert.That(fsm.StartState, Is.Null);
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
         }
 
         /// <summary>
@@ -48,11 +51,13 @@ namespace Jolt.Test
             FiniteStateMachine<Version> fsm = new FiniteStateMachine<Version>(graph);
 
             Assert.That(fsm.Graph, Is.SameAs(graph));
+            Assert.That(fsm.StartState, Is.Null);
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
         }
 
         /// <summary>
         /// Verifies the behavior of the AddState() method when adding
-        /// a new state to the FiniteStateMachine.
+        /// a new state to an FSM.
         /// </summary>
         [Test]
         public void AddState()
@@ -75,8 +80,32 @@ namespace Jolt.Test
         }
 
         /// <summary>
+        /// Verifies the behavior of the AddStates() method when adding
+        /// new states to an FSM.
+        /// </summary>
+        [Test]
+        public void AddStates()
+        {
+            With.Mocks(delegate
+            {
+                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+
+                // Expectations
+                // The states are added to the graph.
+                string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+                graph.AddVertexRange(expectedStates);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+                fsm.AddStates(expectedStates);
+            });
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddTransition() method when
-        /// adding a new transition to the FiniteStateMachine.
+        /// adding a new transition to an FSM.
         /// </summary>
         [Test]
         public void AddTransition()
@@ -96,6 +125,218 @@ namespace Jolt.Test
                 FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
                 fsm.AddTransition(expectedTransition);
             });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the RemoveState() opereation
+        /// when the requested state exists.
+        /// </summary>
+        [Test]
+        public void RemoveState()
+        {
+            AssertRemoveState(true);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the RemoveState() opereation
+        /// when the requested state does not exist.
+        /// </summary>
+        [Test]
+        public void RemoveState_StateDoesNotExist()
+        {
+            AssertRemoveState(false);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the RemoveState() operation when
+        /// the requested state is a final state.
+        /// </summary>
+        [Test]
+        public void RemoveState_FinalState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string expectedState = "final-state";
+
+            fsm.AddState(expectedState);
+            fsm.SetFinalState(expectedState);
+
+            Assert.That(fsm.RemoveState(expectedState));
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the RemoveTransition() operation
+        /// when the requested transition exists.
+        /// </summary>
+        [Test]
+        public void RemoveTransition()
+        {
+            AssertRemoveTransition(true);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the RemoveTransition() operation
+        /// when the requested transition does not exist.
+        /// </summary>
+        [Test]
+        public void RemoveTransition_TransitionDoesNotExist()
+        {
+            AssertRemoveTransition(false);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the SetFinalState() method.
+        /// </summary>
+        [Test]
+        public void SetFinalState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string expectedState = "final-state";
+
+            fsm.AddState(expectedState);
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+
+            fsm.SetFinalState(expectedState);
+            Assert.That(fsm.FinalStates.Contains(expectedState));
+        }
+
+        /// <summary>
+        /// Verifies the idempotency property of the SetFinalState() method.
+        /// </summary>
+        [Test]
+        public void SetFinalState_Idempotent()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string expectedState = "final-state";
+
+            fsm.AddState(expectedState);
+            fsm.SetFinalState(expectedState);
+            fsm.SetFinalState(expectedState);
+
+            Assert.That(fsm.FinalStates.Contains(expectedState));
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(1));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the SetFinalState() method when
+        /// the given state is not a valid state in the FSM.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void SetFinalState_InvalidState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            fsm.SetFinalState("final-state");
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the SetFinalStates() method.
+        /// </summary>
+        [Test]
+        public void SetFinalStates()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+            
+            fsm.AddStates(expectedStates);
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+
+            fsm.SetFinalStates(expectedStates);
+            Assert.That(fsm.FinalStates.ToList(), Is.EquivalentTo(expectedStates));
+        }
+
+        /// <summary>
+        /// Verifies the idempotency property of the SetFinalStates() method.
+        /// </summary>
+        [Test]
+        public void SetFinalStates_Idempotent()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+            
+            fsm.AddStates(expectedStates);
+            fsm.SetFinalStates(expectedStates);
+            fsm.SetFinalStates(expectedStates);
+
+            Assert.That(fsm.FinalStates.ToList(), Is.EquivalentTo(expectedStates));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the SetFinalStateS() method when at
+        /// least one of the given states is not a valid state in the FSM.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void SetFinalStates_InvalidState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+            
+            fsm.AddStates(expectedStates.TakeWhile(state => state.StartsWith("s")));
+            fsm.SetFinalStates(expectedStates);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ClearFinalState() method.
+        /// </summary>
+        [Test]
+        public void ClearFinalState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string expectedState = "final-state";
+
+            fsm.AddState(expectedState);
+            fsm.SetFinalState(expectedState);
+
+            Assert.That(fsm.ClearFinalState(expectedState));
+            Assert.That(!fsm.FinalStates.Contains(expectedState));
+            Assert.That(fsm.Graph.Vertices.Contains(expectedState));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ClearFinalState() method when
+        /// the given state is not valid in the FSM.
+        /// </summary>
+        [Test]
+        public void ClearFinalState_InvalidState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string expectedState = "final-state";
+
+            Assert.That(!fsm.ClearFinalState(expectedState));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ClearFinalStates() method.
+        /// </summary>
+        [Test]
+        public void ClearFinalStates()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+
+            fsm.AddStates(expectedStates);
+            fsm.SetFinalStates(expectedStates);
+            fsm.ClearFinalStates(expectedStates);
+
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.Graph.Vertices, Is.EquivalentTo(expectedStates));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ClearFinalStates() method when
+        /// at least one of the given states is not valid in the FSM.
+        /// </summary>
+        [Test]
+        public void ClearFinalStates_InvalidStates()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+
+            fsm.AddStates(expectedStates.TakeWhile(state => Char.IsDigit(state, state.Length - 1)));
+            fsm.SetFinalStates(expectedStates.TakeWhile(state => Char.IsDigit(state, state.Length - 1)));
+            fsm.ClearFinalStates(expectedStates);
+
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(!fsm.Graph.Vertices.Contains("end-state"));
         }
 
         /// <summary>
@@ -127,6 +368,148 @@ namespace Jolt.Test
 
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
             IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator("end-state");
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Accepts() method when an FSM
+        /// accepts a sequence of input symbols.
+        /// </summary>
+        [Test]
+        public void Accepts()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            Assert.That(fsm.Accepts(String.Empty));
+            Assert.That(fsm.Accepts(Enumerable.Repeat('a', 369)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Accepts() method when an FSM
+        /// rejects a sequence of input symbols.
+        /// </summary>
+        [Test]
+        public void Accepts_RejectSymbols()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            Assert.That(!fsm.Accepts(Enumerable.Repeat('a', 416)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Accepts() method when an invalid
+        /// character is detected in the sequence of input symbols.
+        /// </summary>
+        [Test]
+        public void Accepts_InvalidInputSymbols()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
+            Assert.That(!fsm.Accepts("01001123450000"));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Accepts() mehtod when the FSM
+        /// contains an invalid start state.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Accepts_InvalidStartState()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            fsm.Accepts(Enumerable.Repeat('a', 10));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the StartState property.
+        /// </summary>
+        [Test]
+        public void StartState()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string expectedState = "start-state";
+
+            fsm.AddState(expectedState);
+            fsm.StartState = expectedState;
+
+            Assert.That(fsm.StartState, Is.SameAs(expectedState));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the StartState property when
+        /// the given state is not valid in the FSM.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void StartState_InvalidState()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            fsm.StartState = "start-state";
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the FinalStates property.
+        /// </summary>
+        [Test]
+        public void FinalStates()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string[] expectedStates = { "start-state", "state-0", "final-state" };
+            fsm.AddStates(expectedStates);
+            fsm.SetFinalStates(expectedStates);
+
+            ICollection<string> finalStates = fsm.FinalStates;
+            Assert.That(finalStates, Is.InstanceOfType(typeof(HashSet<string>)));
+            Assert.That(finalStates, Is.Not.SameAs(fsm.FinalStates));
+            Assert.That(finalStates.ToList(), Is.EquivalentTo(expectedStates));
+        }
+
+        #endregion
+
+        #region private class methods -------------------------------------------------------------
+
+        /// <summary>
+        /// Asserts that a state is removed from an FSM, if it exists.
+        /// </summary>
+        /// 
+        /// <param name="stateExists">
+        /// Denotes if the state-to-remove exists in the FSM.
+        /// </param>
+        private static void AssertRemoveState(bool stateExists)
+        {
+            With.Mocks(delegate
+            {
+                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+
+                // Attempt to remove the state from the graph.
+                string expectedState = "start-state";
+                Expect.Call(graph.RemoveVertex(expectedState)).Return(stateExists);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+                Assert.That(fsm.RemoveState(expectedState), Is.EqualTo(stateExists));
+            });
+        }
+
+        /// <summary>
+        /// Asserts that a transition is removed from an FSM, if it exists.
+        /// </summary>
+        /// 
+        /// <param name="transitionExists">
+        /// Denotes if the transition-to-remove exists in the FSM.
+        /// </param>
+        private static void AssertRemoveTransition(bool transitionExists)
+        {
+            With.Mocks(delegate
+            {
+                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+
+                // Attempt to remove the transition from the graph.
+                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", n => n == 100);
+                Expect.Call(graph.RemoveEdge(expectedTransition)).Return(transitionExists);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+                Assert.That(fsm.RemoveTransition(expectedTransition), Is.EqualTo(transitionExists));
+            });
         }
 
         #endregion
