@@ -80,6 +80,17 @@ namespace Jolt.Test
         }
 
         /// <summary>
+        /// Verifies the behavior of the AddState() method when
+        /// the given state is the implicit error state.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void AddState_InvalidState()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            fsm.AddState(FiniteStateMachine<char>.ErrorState);
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddStates() method when adding
         /// new states to an FSM.
         /// </summary>
@@ -101,6 +112,17 @@ namespace Jolt.Test
                 FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
                 fsm.AddStates(expectedStates);
             });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddState() method when
+        /// the given state is the implicit error state.
+        /// </summary>
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void AddStates_InvalidState()
+        {
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            fsm.AddStates(new string[] { "start-state", "state-0", FiniteStateMachine<int>.ErrorState, "state-2", "end-state" });
         }
 
         /// <summary>
@@ -371,48 +393,71 @@ namespace Jolt.Test
         }
 
         /// <summary>
-        /// Verifies the behavior of the Accepts() method when an FSM
+        /// Verifies the behavior of the Consume() method when an FSM
         /// accepts a sequence of input symbols.
         /// </summary>
         [Test]
-        public void Accepts()
+        public void Consume()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
-            Assert.That(fsm.Accepts(String.Empty));
-            Assert.That(fsm.Accepts(Enumerable.Repeat('a', 369)));
+            
+            ConsumptionResult<char> result = fsm.Consume(String.Empty);
+            Assert.That(result.IsAccepted);
+            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastSymbol, Is.EqualTo(default(char)));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(0));
+
+            string inputSymbols = "abcdefghijklmnopqrstuvwxyz!";
+            result = fsm.Consume(inputSymbols);
+            Assert.That(result.IsAccepted);
+            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastSymbol, Is.EqualTo('!'));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.Length));
         }
 
         /// <summary>
-        /// Verifies the behavior of the Accepts() method when an FSM
+        /// Verifies the behavior of the Consume() method when an FSM
         /// rejects a sequence of input symbols.
         /// </summary>
         [Test]
-        public void Accepts_RejectSymbols()
+        public void Consume_RejectSymbols()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
-            Assert.That(!fsm.Accepts(Enumerable.Repeat('a', 416)));
+            string inputSymbols = "abcdefghijklmnopqrstuvwxyz";
+
+            ConsumptionResult<char> result = fsm.Consume(inputSymbols);
+            Assert.That(!result.IsAccepted);
+            Assert.That(result.LastState, Is.EqualTo("mod3(len) = 1"));
+            Assert.That(result.LastSymbol, Is.EqualTo('z'));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.Length));
         }
 
         /// <summary>
-        /// Verifies the behavior of the Accepts() method when an invalid
+        /// Verifies the behavior of the Consume() method when an invalid
         /// character is detected in the sequence of input symbols.
         /// </summary>
         [Test]
-        public void Accepts_InvalidInputSymbols()
+        public void Consume_InvalidInputSymbols()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
-            Assert.That(!fsm.Accepts("01001123450000"));
+            string inputSymbols = "01001123450000";
+
+            ConsumptionResult<char> result = fsm.Consume(inputSymbols);
+            Assert.That(!result.IsAccepted);
+            Assert.That(result.LastState, Is.SameAs(FiniteStateMachine<char>.ErrorState));
+            Assert.That(result.LastSymbol, Is.EqualTo('2'));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.IndexOf('2') + 1));
         }
 
         /// <summary>
-        /// Verifies the behavior of the Accepts() mehtod when the FSM
+        /// Verifies the behavior of the Consume() mehtod when the FSM
         /// contains an invalid start state.
         /// </summary>
         [Test, ExpectedException(typeof(ArgumentNullException))]
-        public void Accepts_InvalidStartState()
+        public void Consume_InvalidStartState()
         {
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            fsm.Accepts(Enumerable.Repeat('a', 10));
+            fsm.Consume(Enumerable.Repeat('a', 10));
         }
 
         /// <summary>

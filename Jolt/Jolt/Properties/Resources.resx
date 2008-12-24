@@ -135,4 +135,10 @@
   <data name="Error_SetStartState_InvalidState" xml:space="preserve">
     <value>The state '{0}' can not be marked as the start state as it does not exist within the state machine.</value>
   </data>
+  <data name="Error_AddStates_ImplicitErrorState" xml:space="preserve">
+    <value>The given collection contains the reserved state name '{0}', which can not be added to the finite state machine.</value>
+  </data>
+  <data name="Error_AddState_ImplicitErrorState" xml:space="preserve">
+    <value>The state '{0}' is a reserved state name and can not be added to the finite state machine.</value>
+  </data>
 </root>

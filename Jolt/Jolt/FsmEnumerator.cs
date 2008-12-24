@@ -69,7 +69,7 @@ namespace Jolt
                     return true;
                 }
 
-                CurrentState = ErrorState;
+                CurrentState = FiniteStateMachine<TAlphabet>.ErrorState;
                 m_isInErrorState = true;
             }
 
@@ -85,12 +85,6 @@ namespace Jolt
 
         private readonly IImplicitGraph<string, Transition<TAlphabet>> m_graph;
         private bool m_isInErrorState;
-
-        #endregion
-
-        #region private class data ----------------------------------------------------------------
-
-        private static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
 
         #endregion
     }

@@ -47,6 +47,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsumptionResultTestFixture.cs" />
     <Compile Include="FiniteStateMachineTestFixture.cs" />
     <Compile Include="FsmEnumeratorTestFixture.cs" />
     <Compile Include="FsmFactory.cs" />

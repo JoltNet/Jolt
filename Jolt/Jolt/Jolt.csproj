@@ -32,6 +32,7 @@
     <DocumentationFile>bin\Release\Jolt.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConsumptionResult.cs" />
     <Compile Include="FiniteStateMachine.cs" />
     <Compile Include="FsmEnumerator.cs" />
     <Compile Include="IFsmEnumerator.cs" />

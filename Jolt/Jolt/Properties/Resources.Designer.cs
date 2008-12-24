@@ -61,6 +61,24 @@ namespace Jolt.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The state &apos;{0}&apos; is a reserved state name and can not be added to the finite state machine..
+        /// </summary>
+        internal static string Error_AddState_ImplicitErrorState {
+            get {
+                return ResourceManager.GetString("Error_AddState_ImplicitErrorState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given collection contains the reserved state name &apos;{0}&apos;, which can not be added to the finite state machine..
+        /// </summary>
+        internal static string Error_AddStates_ImplicitErrorState {
+            get {
+                return ResourceManager.GetString("Error_AddStates_ImplicitErrorState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An FSM enumerator could not be created because the given start state &apos;{0}&apos; is not present in the FSM..
         /// </summary>
         internal static string Error_CreateEnumerator_InvalidStartState {

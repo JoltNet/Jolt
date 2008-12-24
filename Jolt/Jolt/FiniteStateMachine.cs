@@ -71,6 +71,11 @@ namespace Jolt
         /// </remarks>
         public virtual void AddState(string state)
         {
+            if (state == ErrorState)
+            {
+                throw new ArgumentException(String.Format(Resources.Error_AddState_ImplicitErrorState, ErrorState));
+            }
+
             m_graph.AddVertex(state);
         }
 
@@ -88,6 +93,11 @@ namespace Jolt
         /// </remarks>
         public virtual void AddStates(IEnumerable<string> states)
         {
+            if (states.Contains(ErrorState))
+            {
+                throw new ArgumentException(String.Format(Resources.Error_AddStates_ImplicitErrorState, ErrorState));
+            }
+
             m_graph.AddVertexRange(states);
         }
 
@@ -213,17 +223,28 @@ namespace Jolt
         /// given sequence of input symbols.
         /// </summary>
         /// 
-        /// <param name="startState">
-        /// The from which the acceptance processing begins.
-        /// </param>
-        /// 
         /// <param name="inputSymbols">
         /// The symbols to process.
         /// </param>
-        public virtual bool Accepts(IEnumerable<TAlphabet> inputSymbols)
+        public virtual ConsumptionResult<TAlphabet> Consume(IEnumerable<TAlphabet> inputSymbols)
         {
+            ulong numberOfSymbols = 0;
+            TAlphabet lastSymbol = default(TAlphabet);
             IFsmEnumerator<TAlphabet> enumerator = CreateStateEnumerator(m_startState);
-            return inputSymbols.All(enumerator.NextState) && m_finalStates.Contains(enumerator.CurrentState);
+
+            foreach (TAlphabet symbol in inputSymbols)
+            {
+                ++numberOfSymbols;
+                lastSymbol = symbol;
+
+                if (!enumerator.NextState(symbol)) { break; }
+            }
+
+            return new ConsumptionResult<TAlphabet>(
+                m_finalStates.Contains(enumerator.CurrentState),
+                lastSymbol,
+                numberOfSymbols,
+                enumerator.CurrentState);
         }
 
         #endregion
@@ -257,6 +278,12 @@ namespace Jolt
             get { return new HashSet<string>(m_finalStates); }
         }
 
+        #endregion
+
+        #region internal data ---------------------------------------------------------------------
+        
+        internal static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
+        
         #endregion
 
         #region internal properties ---------------------------------------------------------------
