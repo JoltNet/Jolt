@@ -34,7 +34,10 @@
   <ItemGroup>
     <Compile Include="ConsumptionResult.cs" />
     <Compile Include="FiniteStateMachine.cs" />
+    <Compile Include="FsmConverter.cs" />
     <Compile Include="FsmEnumerator.cs" />
+    <Compile Include="GraphMLState.cs" />
+    <Compile Include="GraphMLTransition.cs" />
     <Compile Include="IFsmEnumerator.cs" />
     <Compile Include="StateTransitionEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +57,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

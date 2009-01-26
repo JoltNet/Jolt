@@ -31,6 +31,7 @@ namespace Jolt
     /// </remarks>
     public class FiniteStateMachine<TAlphabet>
     {
+        // TODO: class needs to be serializable.
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
@@ -38,6 +39,21 @@ namespace Jolt
         /// </summary>
         public FiniteStateMachine()
             : this(new BidirectionalGraph<string, Transition<TAlphabet>>()) { }
+
+        /// <summary>
+        /// Initializes a new instance of the finite state machine,
+        /// copying all vertices and edges from the given graph.
+        /// </summary>
+        /// 
+        /// <param name="graph">
+        /// The graph to import into the new finite state machine.
+        /// </param>
+        public FiniteStateMachine(IBidirectionalGraph<string, Transition<TAlphabet>> graph)
+            : this()
+        {
+            AddStates(graph.Vertices);
+            m_graph.AddEdgeRange(graph.Edges);
+        }
 
         /// <summary>
         /// Initializes a new instance of a finite state machine
@@ -50,15 +66,17 @@ namespace Jolt
         internal FiniteStateMachine(IMutableBidirectionalGraph<string, Transition<TAlphabet>> graph)
         {
             m_graph = graph;
+            m_graph.VertexRemoved += v => ClearFinalState(v);
             m_finalStates = new HashSet<string>();
         }
 
         #endregion
 
-        #region public methods --------------------------------------------------------------------
+        #region public instance methods -----------------------------------------------------------
 
         /// <summary>
-        /// Adds a state with the given name to the finite state machine.
+        /// Adds a state with the given name to the finite state machine,
+        /// returning a value denoting if the state was indeed added.
         /// </summary>
         /// 
         /// <param name="state">
@@ -69,18 +87,19 @@ namespace Jolt
         /// The given state name must be unique within the set of states in
         /// the finite state machine.
         /// </remarks>
-        public virtual void AddState(string state)
+        public virtual bool AddState(string state)
         {
             if (state == ErrorState)
             {
                 throw new ArgumentException(String.Format(Resources.Error_AddState_ImplicitErrorState, ErrorState));
             }
 
-            m_graph.AddVertex(state);
+            return m_graph.AddVertex(state);
         }
 
         /// <summary>
-        /// Adds states with the given names to the finite state machine.
+        /// Adds states with the given names to the finite state machine,
+        /// returning a value denoting the number of states added.
         /// </summary>
         /// 
         /// <param name="states">
@@ -91,14 +110,14 @@ namespace Jolt
         /// The given state names must be unique within the set of states in
         /// the finite state machine.
         /// </remarks>
-        public virtual void AddStates(IEnumerable<string> states)
+        public virtual int AddStates(IEnumerable<string> states)
         {
             if (states.Contains(ErrorState))
             {
                 throw new ArgumentException(String.Format(Resources.Error_AddStates_ImplicitErrorState, ErrorState));
             }
 
-            m_graph.AddVertexRange(states);
+            return m_graph.AddVertexRange(states);
         }
 
         /// <summary>
@@ -112,10 +131,7 @@ namespace Jolt
         /// </param>
         public virtual bool RemoveState(string state)
         {
-            bool isRemoved = m_graph.RemoveVertex(state);
-            if (isRemoved) { ClearFinalState(state); }
-
-            return isRemoved;
+            return m_graph.RemoveVertex(state);
         }
 
         /// <summary>
@@ -252,6 +268,14 @@ namespace Jolt
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
+        /// Gets the internal representation of the graph.
+        /// </summary>
+        public virtual IBidirectionalGraph<string, Transition<TAlphabet>> AsGraph
+        {
+            get { return m_graph; }
+        }
+
+        /// <summary>
         /// Gets/marks an existing state with the finite state machine as the start state.
         /// </summary>
         public virtual string StartState
@@ -284,18 +308,6 @@ namespace Jolt
         
         internal static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
         
-        #endregion
-
-        #region internal properties ---------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the internal representation of the graph.
-        /// </summary>
-        internal IBidirectionalGraph<string, Transition<TAlphabet>> Graph
-        {
-            get { return m_graph; }
-        }
-
         #endregion
 
         #region private data ----------------------------------------------------------------------

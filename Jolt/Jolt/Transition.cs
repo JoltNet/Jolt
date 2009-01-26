@@ -28,7 +28,8 @@ namespace Jolt
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the state of the transition.
+        /// Initializes the state of the transition, setting the transition's
+        /// description to the name of the method stored in the transition predicate.
         /// </summary>
         /// 
         /// <param name="sourceState">
@@ -44,9 +45,33 @@ namespace Jolt
         /// given an input value from the FSM alphabet.
         /// </param>
         public Transition(string sourceState, string targetState, Predicate<TAlphabet> transitionPredicate)
+            : this(sourceState, targetState, transitionPredicate, transitionPredicate.Method.Name) { }
+
+        /// <summary>
+        /// Initializes the state of the transition.
+        /// </summary>
+        /// 
+        /// <param name="sourceState">
+        /// The source state of the transition.
+        /// </param>
+        /// 
+        /// <param name="targetState">
+        /// The destination state of the transition.
+        /// </param>
+        /// 
+        /// <param name="transitionPredicate">
+        /// A predicate that determines if the state transition is valid,
+        /// given an input value from the FSM alphabet.
+        /// </param>
+        /// 
+        /// <param name="description">
+        /// A name or description for the transition.
+        /// </param>
+        public Transition(string sourceState, string targetState, Predicate<TAlphabet> transitionPredicate, string description)
             : base(sourceState, targetState)
         {
             m_transitionPredicate = transitionPredicate;
+            Description = description;
         }
 
         #endregion
@@ -60,6 +85,11 @@ namespace Jolt
         {
             get { return m_transitionPredicate; }
         }
+
+        /// <summary>
+        /// Gets/sets the transition's description.
+        /// </summary>
+        public string Description { get; set; }
 
         #endregion
 
@@ -90,7 +120,7 @@ namespace Jolt
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private instance data -------------------------------------------------------------
 
         private readonly Predicate<TAlphabet> m_transitionPredicate;
 

@@ -30,13 +30,13 @@ namespace Jolt.Test
         public void Construction()
         {
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            Assert.That(fsm.Graph, Is.Not.Null);
-            Assert.That(fsm.Graph, Is.InstanceOfType(typeof(BidirectionalGraph<string, Transition<char>>)));
-            Assert.That(fsm.Graph.AllowParallelEdges);
-            Assert.That(fsm.Graph.IsDirected);
+            Assert.That(fsm.AsGraph, Is.Not.Null);
+            Assert.That(fsm.AsGraph, Is.InstanceOfType(typeof(BidirectionalGraph<string, Transition<char>>)));
+            Assert.That(fsm.AsGraph.AllowParallelEdges);
+            Assert.That(fsm.AsGraph.IsDirected);
 
-            Assert.That(fsm.Graph.EdgeCount, Is.EqualTo(0));
-            Assert.That(fsm.Graph.VertexCount, Is.EqualTo(0));
+            Assert.That(fsm.AsGraph.EdgeCount, Is.EqualTo(0));
+            Assert.That(fsm.AsGraph.VertexCount, Is.EqualTo(0));
             Assert.That(fsm.StartState, Is.Null);
             Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
         }
@@ -50,7 +50,38 @@ namespace Jolt.Test
             BidirectionalGraph<string, Transition<Version>> graph = new BidirectionalGraph<string, Transition<Version>>();
             FiniteStateMachine<Version> fsm = new FiniteStateMachine<Version>(graph);
 
-            Assert.That(fsm.Graph, Is.SameAs(graph));
+            Assert.That(fsm.AsGraph, Is.SameAs(graph));
+            Assert.That(fsm.StartState, Is.Null);
+            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+        }
+
+        /// <summary>
+        /// Verifies the construction ofhte FiniteStateMachine class,
+        /// when importing a copy of a graph.
+        /// </summary>
+        [Test]
+        public void Construction_CopyGraph()
+        {
+            string[] expectedStates = { "start", "abc", "def", "final" };
+            Transition<char>[] expectedTransitions = {
+                 new Transition<char>("start", "abc", ch => true),
+                 new Transition<char>("abc", "def", ch => true),
+                 new Transition<char>("def", "final", ch => true)
+            };
+
+            BidirectionalGraph<string, Transition<char>> graph = new BidirectionalGraph<string, Transition<char>>();
+            graph.AddVertexRange(expectedStates);
+            graph.AddEdgeRange(expectedTransitions);
+
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>(graph as IBidirectionalGraph<string, Transition<char>>);
+            Assert.That(fsm.AsGraph, Is.Not.Null);
+            Assert.That(fsm.AsGraph, Is.Not.SameAs(graph));
+            Assert.That(fsm.AsGraph, Is.InstanceOfType(typeof(BidirectionalGraph<string, Transition<char>>)));
+            Assert.That(fsm.AsGraph.AllowParallelEdges);
+            Assert.That(fsm.AsGraph.IsDirected);
+
+            Assert.That(fsm.AsGraph.Edges.ToList(), Is.EquivalentTo(expectedTransitions));
+            Assert.That(fsm.AsGraph.Vertices.ToList(), Is.EquivalentTo(expectedStates));
             Assert.That(fsm.StartState, Is.Null);
             Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
         }
@@ -62,21 +93,17 @@ namespace Jolt.Test
         [Test]
         public void AddState()
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            AssertAddState(false);
+        }
 
-                // Expectations
-                // The state is added to the graph.
-                string expectedState = "start-state";
-                graph.AddVertex(expectedState);
-
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                fsm.AddState(expectedState);
-            });
+        /// <summary>
+        /// Verifies the behavior of the AddState() method when adding
+        /// an existing state to an FSM.
+        /// </summary>
+        [Test]
+        public void AddState_StateExists()
+        {
+            AssertAddState(true);
         }
 
         /// <summary>
@@ -104,13 +131,13 @@ namespace Jolt.Test
                 // Expectations
                 // The states are added to the graph.
                 string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
-                graph.AddVertexRange(expectedStates);
+                Expect.Call(graph.AddVertexRange(expectedStates)).Return(expectedStates.Length);
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
 
                 FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                fsm.AddStates(expectedStates);
+                Assert.That(fsm.AddStates(expectedStates), Is.EqualTo(expectedStates.Length));
             });
         }
 
@@ -310,7 +337,7 @@ namespace Jolt.Test
 
             Assert.That(fsm.ClearFinalState(expectedState));
             Assert.That(!fsm.FinalStates.Contains(expectedState));
-            Assert.That(fsm.Graph.Vertices.Contains(expectedState));
+            Assert.That(fsm.AsGraph.Vertices.Contains(expectedState));
         }
 
         /// <summary>
@@ -340,7 +367,7 @@ namespace Jolt.Test
             fsm.ClearFinalStates(expectedStates);
 
             Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
-            Assert.That(fsm.Graph.Vertices, Is.EquivalentTo(expectedStates));
+            Assert.That(fsm.AsGraph.Vertices, Is.EquivalentTo(expectedStates));
         }
 
         /// <summary>
@@ -358,7 +385,7 @@ namespace Jolt.Test
             fsm.ClearFinalStates(expectedStates);
 
             Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
-            Assert.That(!fsm.Graph.Vertices.Contains("end-state"));
+            Assert.That(!fsm.AsGraph.Vertices.Contains("end-state"));
         }
 
         /// <summary>
@@ -450,6 +477,22 @@ namespace Jolt.Test
         }
 
         /// <summary>
+        /// Verifies the behavior of the Consume() method when no
+        /// input symbols are given.
+        /// </summary>
+        [Test]
+        public void Consume_NoSymbols()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
+            ConsumptionResult<char> result = fsm.Consume(Enumerable.Empty<char>());
+
+            Assert.That(result.IsAccepted);
+            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastSymbol, Is.EqualTo('\0'));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(0));
+        }
+
+        /// <summary>
         /// Verifies the behavior of the Consume() mehtod when the FSM
         /// contains an invalid start state.
         /// </summary>
@@ -503,9 +546,57 @@ namespace Jolt.Test
             Assert.That(finalStates.ToList(), Is.EquivalentTo(expectedStates));
         }
 
+        /// <summary>
+        /// Verifies that the final states collection is updated when
+        /// the RemoveVertex method is called from the graph representation
+        /// of the FSM.
+        /// </summary>
+        [Test]
+        public void FinalStates_RemoveVertex()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string[] expectedStates = { "start-state", "state-0", "final-state" };
+            fsm.AddStates(expectedStates);
+            fsm.SetFinalState(expectedStates[2]);
+
+            bool isRemoved = (fsm.AsGraph as IMutableBidirectionalGraph<string, Transition<char>>).RemoveVertex(expectedStates[2]);
+            
+            Assert.That(isRemoved);
+            Assert.That(!fsm.AsGraph.Vertices.Contains(expectedStates[2]));
+            Assert.That(!fsm.FinalStates.Contains(expectedStates[2]));
+        }
+
         #endregion
 
         #region private class methods -------------------------------------------------------------
+
+        /// <summary>
+        /// Asserts that a state is added to an FSM, if it does
+        /// not exist.
+        /// </summary>
+        /// 
+        /// <param name="stateExists">
+        /// Denotes if the state-to-add exists in the FSM.
+        /// </param>
+        private static void AssertAddState(bool stateExists)
+        {
+            // TODO: collapse this method with AssertRemoveState(bool).
+            With.Mocks(delegate
+            {
+                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+
+                // Expectations
+                // The state is added to the graph.
+                string expectedState = "start-state";
+                Expect.Call(graph.AddVertex(expectedState)).Return(!stateExists);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+                Assert.That(fsm.AddState(expectedState), Is.EqualTo(!stateExists));
+            });
+        }
 
         /// <summary>
         /// Asserts that a state is removed from an FSM, if it exists.

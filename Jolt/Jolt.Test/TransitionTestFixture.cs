@@ -31,9 +31,47 @@ namespace Jolt.Test
 
             Transition<char> transition = new Transition<char>(sourceState, finalState, transitionPredicate);
 
+            Assert.That(transition.Description, Is.SameAs(transitionPredicate.Method.Name));
             Assert.That(sourceState, Is.SameAs(transition.Source));
             Assert.That(finalState, Is.SameAs(transition.Target));
             Assert.That(transitionPredicate, Is.SameAs(transition.TransitionPredicate));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the transition class when a
+        /// name/description is provided.
+        /// </summary>
+        [Test]
+        public void Construction_NamedTransition()
+        {
+            string sourceState = "start";
+            string finalState = "final";
+            Predicate<char> transitionPredicate = Char.IsDigit;
+            string description = "this is a transition";
+
+            Transition<char> transition = new Transition<char>(sourceState, finalState, transitionPredicate, description);
+
+            Assert.That(transition.Description, Is.SameAs(description));
+            Assert.That(sourceState, Is.SameAs(transition.Source));
+            Assert.That(finalState, Is.SameAs(transition.Target));
+            Assert.That(transitionPredicate, Is.SameAs(transition.TransitionPredicate));
+        }
+
+
+        /// <summary>
+        /// Verifies the behavior of the Description property.
+        /// </summary>
+        [Test]
+        public void Description()
+        {
+            Transition<char> transition = new Transition<char>("a", "b", Char.IsDigit);
+          
+            string initialDescription = transition.Description;
+            string description = "description-text";
+            transition.Description = description;
+
+            Assert.That(transition.Description, Is.Not.EqualTo(initialDescription));
+            Assert.That(transition.Description, Is.SameAs(description));
         }
 
         /// <summary>

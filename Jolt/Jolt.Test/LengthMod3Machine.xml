@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="stateName" for="node" attr.name="stateName" attr.type="string" />
+  <key id="isStartState" for="node" attr.name="isStartState" attr.type="boolean">
+    <default>false</default>
+  </key>
+  <key id="isFinalState" for="node" attr.name="isFinalState" attr.type="boolean">
+    <default>false</default>
+  </key>
+  <key id="description" for="edge" attr.name="description" attr.type="string" />
+  <key id="transitionPredicate" for="edge" attr.name="transitionPredicate" attr.type="string" />
+  <graph id="G" edgedefault="directed" parse.nodes="3" parse.edges="3" parse.order="nodesfirst" parse.nodeids="free" parse.edgeids="free">
+    <node id="1630117402">
+      <data key="stateName">mod3(len) = 2</data>
+    </node>
+      <node id="1630117401">
+      <data key="stateName">mod3(len) = 1</data>
+    </node>
+    <node id="1630117400">
+      <data key="stateName">mod3(len) = 0</data>
+      <data key="isStartState">true</data>
+      <data key="isFinalState">true</data>
+    </node>
+    <edge id="0" source="1630117402" target="1630117401">
+      <data key="description">&lt;CreateLengthMod3Machine&gt;b__1</data>
+      <data key="transitionPredicate">&lt;CreateLengthMod3Machine&gt;b__1;Jolt.Test.FsmFactory, Jolt.Test, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</data>
+    </edge>
+    <edge id="1" source="1630117401" target="1630117400">
+      <data key="description">&lt;CreateLengthMod3Machine&gt;b__2</data>
+      <data key="transitionPredicate">&lt;CreateLengthMod3Machine&gt;b__2;Jolt.Test.FsmFactory, Jolt.Test, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</data>
+    </edge>
+    <edge id="2" source="1630117400" target="1630117402">
+      <data key="description">&lt;CreateLengthMod3Machine&gt;b__0</data>
+      <data key="transitionPredicate">&lt;CreateLengthMod3Machine&gt;b__0;Jolt.Test.FsmFactory, Jolt.Test, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</data>
+    </edge>
+  </graph>
+</graphml>
