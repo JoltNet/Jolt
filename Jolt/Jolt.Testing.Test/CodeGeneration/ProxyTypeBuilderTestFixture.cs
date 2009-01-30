@@ -1703,7 +1703,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="assertPropertyInvocation">
         /// Delegate that asserts the expected behavior of the generated proxy property.
         /// </param>
-        private static void AssertAddPropertyBehavior(PropertyInfo realSubjectTypeProperty, AssertDynamicPropertyInvocationDelegate assertPropertyInvocation)
+        private static void AssertAddPropertyBehavior(PropertyInfo realSubjectTypeProperty, Action<Type, PropertyInfo> assertPropertyInvocation)
         {
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
             builder.AddProperty(realSubjectTypeProperty);
@@ -1755,7 +1755,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="assertEventInvocation">
         /// Delegate that asserts the expected behavior of the generated proxy event.
         /// </param>
-        private static void AssertAddEventBehavior(EventInfo realSubjectTypeEvent, AssertDynamicEventInvocationDelegate assertEventInvocation)
+        private static void AssertAddEventBehavior(EventInfo realSubjectTypeEvent, Action<Type, EventInfo, MethodInfo> assertEventInvocation)
         {
             string raiseEventMethodName = "Raise" + realSubjectTypeEvent.Name;
 
@@ -1793,13 +1793,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static readonly string DefaultNamespace = "root";
         private static readonly BindingFlags ProxyMethodInvocationFlags =
             BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public;
-
-        #endregion
-
-        #region delegate types supporting unit tests ----------------------------------------------
-
-        private delegate void AssertDynamicPropertyInvocationDelegate(Type proxy, PropertyInfo proxyProperty);
-        private delegate void AssertDynamicEventInvocationDelegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod);
 
         #endregion
     }

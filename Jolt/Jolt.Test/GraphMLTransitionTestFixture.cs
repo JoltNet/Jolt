@@ -11,6 +11,7 @@ using System;
 using System.Reflection;
 using System.Xml.Serialization;
 
+using log4net.Config;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
@@ -19,6 +20,16 @@ namespace Jolt.Test
     [TestFixture]
     public sealed class GraphMLTransitionTestFixture
     {
+        #region initialization --------------------------------------------------------------------
+
+        [TestFixtureSetUp]
+        public void FixtureSetup()
+        {
+            BasicConfigurator.Configure();
+        }
+
+        #endregion
+
         /// <summary>
         /// Verifies the construction of the class using
         /// only the required construction arguments.
@@ -215,7 +226,7 @@ namespace Jolt.Test
                 new GraphMLState("finish", false, true));
 
             graphMLtransition.Description = "description";
-            graphMLtransition.TransitionPredicate = "TryParse" + typeof(char).AssemblyQualifiedName;
+            graphMLtransition.TransitionPredicate = "TryParse;" + typeof(char).AssemblyQualifiedName;
 
             AssertToTransition(graphMLtransition);
         }

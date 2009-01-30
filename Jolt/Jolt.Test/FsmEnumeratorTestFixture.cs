@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -24,7 +25,6 @@ namespace Jolt.Test
         [Test]
         public void NextState_ValidTransition()
         {
-            // Create an FSM that determines the length of a character sequence.
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
 
             string inputSymbols = "mod3";
@@ -47,8 +47,6 @@ namespace Jolt.Test
         [Test]
         public void NextState_InvalidTransition()
         {
-            // Create an FSM that determines if an input string has an odd
-            // or even number of zeroes.
             FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
 
             string oddState = "odd-number";
@@ -85,35 +83,28 @@ namespace Jolt.Test
         [Test]
         public void NextState_TransitionEventFired()
         {
-            // Create an FSM that determines the length of a character sequence.
-            // An event is raised each time a transition from odd to even occurs.
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            string oddState = "odd-length";
-            string evenState = "even-length";
+            FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
 
-            fsm.AddStates(new string[] { oddState, evenState });
-            fsm.AddTransition(new Transition<char>(evenState, oddState, ch => true));
-
+            string oddState = "odd-number";
+            string inputSymbols = "101010101010";
             byte raiseEventCount = 0;
-            string inputSymbols = "1234567890";
 
-            Transition<char> oddToEvenLength = new Transition<char>(oddState, evenState, ch => true);
-            oddToEvenLength.OnTransition += delegate(object sender, StateTransitionEventArgs<char> eventArgs)
+            fsm.AsGraph.Edges
+                .Single(e => e.Source == oddState && e.Target == "even-number")
+                .OnTransition += delegate(object sender, StateTransitionEventArgs<char> eventArgs)
             {
                 Assert.That(eventArgs.SourceState, Is.SameAs(oddState));
-                Assert.That(eventArgs.InputSymbol, Is.EqualTo(inputSymbols[2 * raiseEventCount + 1]));
+                Assert.That(eventArgs.InputSymbol, Is.EqualTo(inputSymbols[4 * raiseEventCount + 1]));
                 ++raiseEventCount;
             };
 
-            fsm.AddTransition(oddToEvenLength);
-
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(evenState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
             foreach (char symbol in inputSymbols)
             {
                 Assert.That(enumerator.NextState(symbol), "Test FSM is incorrectly initialized");
             }
 
-            Assert.That(raiseEventCount, Is.EqualTo(inputSymbols.Length / 2));
+            Assert.That(raiseEventCount, Is.EqualTo(inputSymbols.Length / 4));
         }
     }
 }

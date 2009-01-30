@@ -218,6 +218,18 @@ namespace Jolt
         }
 
         /// <summary>
+        /// Determines if the given state is a final state in the FSM.
+        /// </summary>
+        /// 
+        /// <param name="state">
+        /// The state to validate.
+        /// </param>
+        public virtual bool IsFinalState(string state)
+        {
+            return m_finalStates.Contains(state);
+        }
+
+        /// <summary>
         /// Creates an enumerator for exercising the transitions of the FSM.
         /// </summary>
         /// 
@@ -293,13 +305,12 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Gets a the final states that are associated with the finite state machine.
+        /// Gets the final states that are associated with the finite state machine.
         /// </summary>
-        public virtual ICollection<string> FinalStates
+        public virtual IEnumerable<string> FinalStates
         {
-            // Create a shallow copy of the final state collection, preventing external
-            // modification of the private member data.
-            get { return new HashSet<string>(m_finalStates); }
+            // Force creation of an enumerator that can not be down-cast to HashSet<string>.
+            get { return m_finalStates.Select(s => s); }
         }
 
         #endregion

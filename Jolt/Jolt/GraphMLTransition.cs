@@ -12,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
+using Jolt.Properties;
+using log4net;
 using QuickGraph;
 
 namespace Jolt
@@ -70,10 +72,13 @@ namespace Jolt
             Description = description;
             if (predicate.Target == null)
             {
-                TransitionPredicate = String.Concat(predicate.Method.Name, ';',predicate.Method.DeclaringType.AssemblyQualifiedName);
+                TransitionPredicate = String.Concat(predicate.Method.Name, ';', predicate.Method.DeclaringType.AssemblyQualifiedName);
             }
-
-            // TODO: Log discarding of predicate for instance methods.
+            else
+            {
+                // Instance-predicates are invalid, and are discarded.
+                Log.WarnFormat(Resources.Warn_TransitionSerialization_DiscardInstancePredicate, predicate.Method.Name, predicate.Method.DeclaringType.Name);
+            }
         }
 
         #endregion
@@ -119,33 +124,46 @@ namespace Jolt
         /// finite state machine.
         /// </typeparam>
         ///
-        /// <param name="methodName">
+        /// <param name="method">
         /// The serialized method name (methodName;assemblyQualifiedTypeName).
         /// </param>
-        private static Predicate<TAlphabet> DeserializeMethod(string methodName)
+        private Predicate<TAlphabet> DeserializeMethod(string method)
         {
-            // TODO: Log discarding of predicate for invalid methodName
-            if (methodName != null)
+            if (method != null)
             {
-                int delimiterPos = methodName.IndexOf(';');
-                Type declaringType = Type.GetType(methodName.Substring(delimiterPos + 1));
+                int delimiterPos = method.IndexOf(';');
+                string methodName = method.Substring(0, delimiterPos);
+                Type declaringType = Type.GetType(method.Substring(delimiterPos + 1));
+
                 if (declaringType != null)
                 {
-                    MethodInfo predicate = declaringType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                        .FirstOrDefault(m => m.Name == methodName.Substring(0, delimiterPos) &&
+                    MethodInfo predicate = declaringType.GetMethods(PredicateBindingFlags)
+                        .FirstOrDefault(m => m.Name == methodName &&
                              m.GetParameters().Length == 1 &&
                              m.GetParameters()[0].ParameterType == typeof(TAlphabet) &&
                              m.ReturnType == typeof(bool));
 
-                    // TODO: Log discarding of predicate for instance methods
                     if (predicate != null) { return (Predicate<TAlphabet>)Delegate.CreateDelegate(typeof(Predicate<TAlphabet>), predicate); }
                 }
 
-                // TODO: Log discarding of predicate for invalid methodName
+                // Predicate is invalid or could not be loaded.
+                Log.WarnFormat(Resources.Warn_TransitionDeserialization_InvalidPredicate, methodName, Source.Name, Target.Name);
+            }
+            else
+            {
+                // Predicate was not specified.
+                Log.WarnFormat(Resources.Warn_TransitionDeserialization_PredicateNotSpecified, Source.Name, Target.Name);
             }
 
             return inputSymbol => false;
         }
+
+        #endregion
+
+        #region private class data ----------------------------------------------------------------
+
+        private static readonly ILog Log = LogManager.GetLogger(typeof(GraphMLTransition<>));
+        private static BindingFlags PredicateBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         #endregion
     }

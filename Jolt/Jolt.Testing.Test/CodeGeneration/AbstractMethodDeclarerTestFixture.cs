@@ -65,12 +65,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Required as a TypeBuilder created from a dynamic module can not be queried prior
         /// to being persisted or having its construction finalized.
         /// </remarks>
-        protected static DeclareMethodAttributesDelegate CreateDeclareMethodsAttributeDelegate(List<TMethodBuilder> implementationArgs)
+        protected static Action<TMethodBuilder, TMethod> CreateDeclareMethodsAttributeDelegate(List<TMethodBuilder> implementationArgs)
         {
             // Stores method builder parameter passed to mock methods for future verification.
             // Required as a TypeBuilder created from a dynamic modules can not be queried prior
             // to being persisted or having its construction finalized.
-            return new DeclareMethodAttributesDelegate((TMethodBuilder builder, TMethod method) => implementationArgs.Add(builder));
+            return (TMethodBuilder builder, TMethod method) => implementationArgs.Add(builder);
         }
 
         #endregion
@@ -79,12 +79,6 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         private ModuleBuilder m_defaultModuleBuilder;
         private TypeBuilder m_defaultTypeBuilder;
-
-        #endregion
-
-        #region delegate types supporting unit tests ----------------------------------------------
-
-        protected delegate void DeclareMethodAttributesDelegate(TMethodBuilder builder, TMethod method);
 
         #endregion
     }

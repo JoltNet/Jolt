@@ -141,4 +141,13 @@
   <data name="Error_AddState_ImplicitErrorState" xml:space="preserve">
     <value>The state '{0}' is a reserved state name and can not be added to the finite state machine.</value>
   </data>
+  <data name="Warn_TransitionDeserialization_InvalidPredicate" xml:space="preserve">
+    <value>Can not deserialize the transition predicate '{0}' for the transition [{1}-&gt;{2}] as it is invalid.  Verify that the signature of the predicate is valid for the transition type, and that the predicate is static.  The default "false-for-all" predicate will be used.</value>
+  </data>
+  <data name="Warn_TransitionDeserialization_PredicateNotSpecified" xml:space="preserve">
+    <value>Can not deserialize transition predicate for the transition [{0}-&gt;{1}] as it was not specified.  The default "false-for-all" predicate will be used.</value>
+  </data>
+  <data name="Warn_TransitionSerialization_DiscardInstancePredicate" xml:space="preserve">
+    <value>The transition predicate with name '{0}' and from type '{1}' can not be serialized as it is non-static.</value>
+  </data>
 </root>

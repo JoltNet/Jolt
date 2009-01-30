@@ -75,7 +75,5 @@ namespace Jolt.Test
 
             return fsm;
         }
-
-        // TODO: Move more FSMs from FsmEnumeratorTestFixture into this class.
     }
 }

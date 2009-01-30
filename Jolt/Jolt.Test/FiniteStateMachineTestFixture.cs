@@ -38,7 +38,7 @@ namespace Jolt.Test
             Assert.That(fsm.AsGraph.EdgeCount, Is.EqualTo(0));
             Assert.That(fsm.AsGraph.VertexCount, Is.EqualTo(0));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Jolt.Test
 
             Assert.That(fsm.AsGraph, Is.SameAs(graph));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Jolt.Test
             Assert.That(fsm.AsGraph.Edges.ToList(), Is.EquivalentTo(expectedTransitions));
             Assert.That(fsm.AsGraph.Vertices.ToList(), Is.EquivalentTo(expectedStates));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Jolt.Test
             fsm.SetFinalState(expectedState);
 
             Assert.That(fsm.RemoveState(expectedState));
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
         }
 
         /// <summary>
@@ -243,10 +243,10 @@ namespace Jolt.Test
             string expectedState = "final-state";
 
             fsm.AddState(expectedState);
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
 
             fsm.SetFinalState(expectedState);
-            Assert.That(fsm.FinalStates.Contains(expectedState));
+            Assert.That(fsm.FinalStates.First(), Is.SameAs(expectedState));
         }
 
         /// <summary>
@@ -262,8 +262,8 @@ namespace Jolt.Test
             fsm.SetFinalState(expectedState);
             fsm.SetFinalState(expectedState);
 
-            Assert.That(fsm.FinalStates.Contains(expectedState));
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(1));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(1));
+            Assert.That(fsm.FinalStates.First(), Is.SameAs(expectedState));
         }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace Jolt.Test
             string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
             
             fsm.AddStates(expectedStates);
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
 
             fsm.SetFinalStates(expectedStates);
             Assert.That(fsm.FinalStates.ToList(), Is.EquivalentTo(expectedStates));
@@ -366,7 +366,7 @@ namespace Jolt.Test
             fsm.SetFinalStates(expectedStates);
             fsm.ClearFinalStates(expectedStates);
 
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
             Assert.That(fsm.AsGraph.Vertices, Is.EquivalentTo(expectedStates));
         }
 
@@ -384,10 +384,30 @@ namespace Jolt.Test
             fsm.SetFinalStates(expectedStates.TakeWhile(state => Char.IsDigit(state, state.Length - 1)));
             fsm.ClearFinalStates(expectedStates);
 
-            Assert.That(fsm.FinalStates.Count, Is.EqualTo(0));
+            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
             Assert.That(!fsm.AsGraph.Vertices.Contains("end-state"));
         }
 
+        /// <summary>
+        /// Verifies the behavior of the IsFinalState() method.
+        /// </summary>
+        [Test]
+        public void IsFinalState()
+        {
+            string[] states = { "start", "final" };
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
+            fsm.AddStates(states);
+            fsm.SetFinalState(states[1]);
+
+            Assert.That(!fsm.IsFinalState(states[0]));
+            Assert.That(fsm.IsFinalState(states[1]));
+
+            fsm.ClearFinalStates(states);
+
+            Assert.That(!fsm.IsFinalState(states[0]));
+            Assert.That(!fsm.IsFinalState(states[1]));
+        }
+        
         /// <summary>
         /// Verifies the behavior of the CreateStateEnumerator() method.
         /// </summary>
@@ -540,8 +560,8 @@ namespace Jolt.Test
             fsm.AddStates(expectedStates);
             fsm.SetFinalStates(expectedStates);
 
-            ICollection<string> finalStates = fsm.FinalStates;
-            Assert.That(finalStates, Is.InstanceOfType(typeof(HashSet<string>)));
+            IEnumerable<string> finalStates = fsm.FinalStates;
+            Assert.That(finalStates, Is.Not.InstanceOfType(typeof(HashSet<string>)));
             Assert.That(finalStates, Is.Not.SameAs(fsm.FinalStates));
             Assert.That(finalStates.ToList(), Is.EquivalentTo(expectedStates));
         }

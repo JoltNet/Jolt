@@ -33,7 +33,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// The real subject type constructor used as input to the Create()
         /// method.
         /// </param>
-        internal void AssertConstructorDeclaredFrom<TDeclarer>(ConstructorInfo expectedConstructor, AssertConstructorAttributesDelegate assertConstructorAttributes)
+        internal void AssertConstructorDeclaredFrom<TDeclarer>(ConstructorInfo expectedConstructor, Action<ConstructorInfo, ConstructorInfo> assertConstructorAttributes)
             where TDeclarer : AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo>
         {
             With.Mocks(delegate
@@ -74,12 +74,6 @@ namespace Jolt.Testing.Test.CodeGeneration
                 assertConstructorAttributes(constructor, expectedConstructor);
             });
         }
-
-        #endregion
-
-        #region delegate types supporting unit tests ----------------------------------------------
-
-        internal delegate void AssertConstructorAttributesDelegate(ConstructorInfo actualConstructor, ConstructorInfo expectedConstructor);
 
         #endregion
     }

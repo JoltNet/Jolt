@@ -131,5 +131,32 @@ namespace Jolt.Properties {
                 return ResourceManager.GetString("Error_SetStartState_InvalidState", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can not deserialize the transition predicate &apos;{0}&apos; for the transition [{1}-&gt;{2}] as it is invalid.  Verify that the signature of the predicate is valid for the transition type, and that the predicate is static.  The default &quot;false-for-all&quot; predicate will be used..
+        /// </summary>
+        internal static string Warn_TransitionDeserialization_InvalidPredicate {
+            get {
+                return ResourceManager.GetString("Warn_TransitionDeserialization_InvalidPredicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can not deserialize transition predicate for the transition [{0}-&gt;{1}] as it was not specified.  The default &quot;false-for-all&quot; predicate will be used..
+        /// </summary>
+        internal static string Warn_TransitionDeserialization_PredicateNotSpecified {
+            get {
+                return ResourceManager.GetString("Warn_TransitionDeserialization_PredicateNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The transition predicate with name &apos;{0}&apos; and from type &apos;{1}&apos; can not be serialized as it is non-static..
+        /// </summary>
+        internal static string Warn_TransitionSerialization_DiscardInstancePredicate {
+            get {
+                return ResourceManager.GetString("Warn_TransitionSerialization_DiscardInstancePredicate", resourceCulture);
+            }
+        }
     }
 }

@@ -55,10 +55,9 @@ namespace Jolt
             
             // Hash each newly created vertex so that referential integrity
             // is maintained when converting transitions to edges.
-            // TODO: Make the fsm.FinalStates.Contains(s) operation more efficient.
             IDictionary<string, GraphMLState> stateToVertexMap = fsm.AsGraph.Vertices.ToDictionary(
                 state => state,
-                state => new GraphMLState(state, fsm.StartState == state, fsm.FinalStates.Contains(state)));
+                state => new GraphMLState(state, fsm.StartState == state, fsm.IsFinalState(state)));
 
             graph.AddVertexRange(stateToVertexMap.Values);
             graph.AddEdgeRange(fsm.AsGraph.Edges.Select(

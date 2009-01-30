@@ -33,7 +33,7 @@ namespace Jolt.Test
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
             IDictionary<int, GraphMLState> expectedVertices = fsm.AsGraph.Vertices.ToDictionary(
                 state => state.GetHashCode(),
-                state => new GraphMLState(state, fsm.StartState == state, fsm.FinalStates.Contains(state)));
+                state => new GraphMLState(state, fsm.StartState == state, fsm.IsFinalState(state)));
 
             XElement[] nodes = CreateGraphMLFor(fsm).Root.Descendants(GraphMLNamespace + "node").ToArray();
             Assert.That(nodes, Has.Length(expectedVertices.Count));
@@ -138,14 +138,14 @@ namespace Jolt.Test
                     case Mod0State:
 
                         Assert.That(fsm.StartState, Is.EqualTo(states[i]));
-                        Assert.That(fsm.FinalStates.Contains(states[i]));
+                        Assert.That(fsm.IsFinalState(states[i]));
                         break;
 
                     case Mod1State:
                     case Mod2State:
 
                         Assert.That(fsm.StartState, Is.Not.EqualTo(states[i]));
-                        Assert.That(!fsm.FinalStates.Contains(states[i]));
+                        Assert.That(!fsm.IsFinalState(states[i]));
                         break;
 
                     default:
