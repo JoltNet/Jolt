@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsumptionResultTestFixture.cs" />
+    <Compile Include="ConvertTestFixture.cs" />
     <Compile Include="FiniteStateMachineTestFixture.cs" />
     <Compile Include="FsmConverterTestFixture.cs" />
     <Compile Include="FsmEnumeratorTestFixture.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="GraphMLTransitionTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateTransitionEventArgsTestFixture.cs" />
+    <Compile Include="TestTypes.cs" />
     <Compile Include="TransitionTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>

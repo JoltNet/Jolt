@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ConsumptionResult.cs" />
+    <Compile Include="Convert.cs" />
     <Compile Include="FiniteStateMachine.cs" />
     <Compile Include="FsmConverter.cs" />
     <Compile Include="FsmEnumerator.cs" />
