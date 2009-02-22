@@ -13,11 +13,8 @@ using System.Reflection.Emit;
 
 namespace Jolt.Testing.CodeGeneration
 {
-    /// <summary>
-    /// Defines a delegate that matches the method signatures of
-    /// <seealso cref="MethodBuilder.DefineParameter"/> and
-    /// <seealso cref="ConstructorBuilder.DefineParameter"/>.
-    /// </summary>
+    // Defines a delegate that matches the method signatures of
+    // MethodBuilder.DefineParameter and ConstructorBuilder.DefineParameter.
     using DefineParameterDelegate = Func<int, ParameterAttributes, string, ParameterBuilder>;
 
 

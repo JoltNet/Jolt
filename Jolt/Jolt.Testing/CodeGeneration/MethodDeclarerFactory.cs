@@ -14,10 +14,8 @@ using System.Reflection.Emit;
 
 namespace Jolt.Testing.CodeGeneration
 {
-    /// <summary>
-    /// Represents a factory method for creating an AbstractMethodDeclarer
-    /// that is specialized for methods.
-    /// </summary>
+    // Represents a factory method for creating an AbstractMethodDeclarer
+    // that is specialized for methods.
     using CreateMethodDeclarerDelegate = Func<MethodInfo, AbstractMethodDeclarer<MethodBuilder, MethodInfo>>;
 
 

@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="ConsumptionResultTestFixture.cs" />
     <Compile Include="ConvertTestFixture.cs" />
+    <Compile Include="DefaultXDCReadPolicyTestFixture.cs" />
     <Compile Include="FiniteStateMachineTestFixture.cs" />
     <Compile Include="FsmConverterTestFixture.cs" />
     <Compile Include="FsmEnumeratorTestFixture.cs" />
@@ -60,8 +61,16 @@
     <Compile Include="StateTransitionEventArgsTestFixture.cs" />
     <Compile Include="TestTypes.cs" />
     <Compile Include="TransitionTestFixture.cs" />
+    <Compile Include="XmlDocCommentDirectoryElementCollectionTestFixture.cs" />
+    <Compile Include="XmlDocCommentDirectoryElementTestFixture.cs" />
+    <Compile Include="XmlDocCommentReaderSettingsTestFixture.cs" />
+    <Compile Include="XmlDocCommentReaderTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Jolt.Testing.CodeGeneration.Proxies, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\Jolt-Generated\Jolt.Testing.CodeGeneration.Proxies.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\log4net-1.2.10-net-2.0\bin\log4net.dll</HintPath>
@@ -79,6 +88,7 @@
       <HintPath>..\..\external\RhinoMocks-3.3\bin\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -89,5 +99,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LengthMod3Machine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\DocComments.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Construction_ConfigFileSettings.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

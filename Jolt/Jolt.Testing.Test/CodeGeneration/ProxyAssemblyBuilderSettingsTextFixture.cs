@@ -15,6 +15,7 @@ using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
+    // TODO: Static property tests; interrogate ElementInformation.
     [TestFixture]
     public sealed class ProxyAssemblyBuilderSettingsTextFixture
     {

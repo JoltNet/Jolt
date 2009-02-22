@@ -18,11 +18,9 @@ using log4net;
 
 namespace Jolt.Testing.CodeGeneration
 {
-    /// <summary>
-    /// Represents a factory method that constructs a ProxyTypeBuilder
-    /// class using the constructor overload matching the delegate
-    /// parameter signature.
-    /// </summary>
+    // Represents a factory method that constructs a ProxyTypeBuilder
+    // class using the constructor overload matching the delegate
+    // parameter signature.
     using CreateProxyTypeBuilderDelegate = Func<string, Type, ModuleBuilder, IProxyTypeBuilder>;
 
 

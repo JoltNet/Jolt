@@ -150,4 +150,10 @@
   <data name="Warn_TransitionSerialization_DiscardInstancePredicate" xml:space="preserve">
     <value>The transition predicate with name '{0}' and from type '{1}' can not be serialized as it is non-static.</value>
   </data>
+  <data name="Error_XmlDocComments_AssemblyNotResolved" xml:space="preserve">
+    <value>Could not locate an XML doc comments file in the configured search list, for the assembly named '{0}'.</value>
+  </data>
+  <data name="Error_XmlDocComments_FileNotFound" xml:space="preserve">
+    <value>The given XML doc comments file path '{0}' is invalid or inaccessible.</value>
+  </data>
 </root>
