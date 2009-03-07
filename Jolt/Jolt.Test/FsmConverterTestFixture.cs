@@ -180,19 +180,16 @@ namespace Jolt.Test
                     case Mod0State:
 
                         Assert.That(transitions[i].Target, Is.EqualTo(Mod2State));
-                        Assert.That(transitions[i].Description, Is.EqualTo("<CreateLengthMod3Machine>b__0"));
                         break;
 
                     case Mod1State:
 
                         Assert.That(transitions[i].Target, Is.EqualTo(Mod0State));
-                        Assert.That(transitions[i].Description, Is.EqualTo("<CreateLengthMod3Machine>b__2"));
                         break;
 
                     case Mod2State:
 
                         Assert.That(transitions[i].Target, Is.EqualTo(Mod1State));
-                        Assert.That(transitions[i].Description, Is.EqualTo("<CreateLengthMod3Machine>b__1"));
                         break;
 
                     default:
@@ -201,6 +198,7 @@ namespace Jolt.Test
                         break;
                 }
 
+                Assert.That(transitions[i].Description, Is.EqualTo("<.cctor>b__0"));
                 Assert.That(transitions[i].TransitionPredicate, Is.EqualTo(Delegate.CreateDelegate(
                     typeof(Predicate<char>),
                     typeof(FsmFactory).GetMethod(transitions[i].Description, BindingFlags.NonPublic | BindingFlags.Static))));

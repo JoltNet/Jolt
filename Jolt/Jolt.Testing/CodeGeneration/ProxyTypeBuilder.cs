@@ -55,7 +55,7 @@ namespace Jolt.Testing.CodeGeneration
                     AssemblyBuilderAccess.RunAndSave).DefineDynamicModule("__transientModule")) { }
 
         /// <summary>
-        /// Initializes the proxy builder and overrides the module builder.
+        /// Initializes the proxy builder with a user-specified ModuleBuilder.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -69,7 +69,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="targetModule">
         /// The module in which the types are created.
         /// </param>
-        internal ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, ModuleBuilder targetModule)
+        public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, ModuleBuilder targetModule)
         {
             ValidateRealSubjectType(realSubjectType);
 
@@ -340,7 +340,7 @@ namespace Jolt.Testing.CodeGeneration
                 methodCallOpCode = OpCodes.Callvirt;
             }
 
-            // Load each argument to the function call onto the stack.
+            // Load each funciton argument onto the stack.
             for (sbyte i = 1; i <= method.GetParameters().Length; ++i)
             {
                 codeGenerator.Emit(OpCodes.Ldarg_S, i);

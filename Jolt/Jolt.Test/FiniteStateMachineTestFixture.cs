@@ -63,10 +63,12 @@ namespace Jolt.Test
         public void Construction_CopyGraph()
         {
             string[] expectedStates = { "start", "abc", "def", "final" };
+            Predicate<char> trueForAll = ch => true;
+
             Transition<char>[] expectedTransitions = {
-                 new Transition<char>("start", "abc", ch => true),
-                 new Transition<char>("abc", "def", ch => true),
-                 new Transition<char>("def", "final", ch => true)
+                 new Transition<char>("start", "abc", trueForAll),
+                 new Transition<char>("abc", "def", trueForAll),
+                 new Transition<char>("def", "final", trueForAll)
             };
 
             BidirectionalGraph<string, Transition<char>> graph = new BidirectionalGraph<string, Transition<char>>();
@@ -165,7 +167,7 @@ namespace Jolt.Test
 
                 // Expectations
                 // The transition is added to the graph.
-                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", n => n == 100);
+                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
                 Expect.Call(graph.AddEdge(expectedTransition)).Return(true);
 
                 // Verification and assertions.
@@ -379,9 +381,10 @@ namespace Jolt.Test
         {
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
             string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+            Func<string, bool> isLastCharDigit = state => Char.IsDigit(state, state.Length - 1);
 
-            fsm.AddStates(expectedStates.TakeWhile(state => Char.IsDigit(state, state.Length - 1)));
-            fsm.SetFinalStates(expectedStates.TakeWhile(state => Char.IsDigit(state, state.Length - 1)));
+            fsm.AddStates(expectedStates.TakeWhile(isLastCharDigit));
+            fsm.SetFinalStates(expectedStates.TakeWhile(isLastCharDigit));
             fsm.ClearFinalStates(expectedStates);
 
             Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
@@ -657,7 +660,7 @@ namespace Jolt.Test
                 BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
 
                 // Attempt to remove the transition from the graph.
-                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", n => n == 100);
+                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
                 Expect.Call(graph.RemoveEdge(expectedTransition)).Return(transitionExists);
 
                 // Verification and assertions.

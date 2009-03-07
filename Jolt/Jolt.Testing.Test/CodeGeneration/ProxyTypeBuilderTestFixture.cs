@@ -70,21 +70,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the internal construction of the class.
-        /// </summary>
-        [Test]
-        public void Construction_Internal()
-        {
-            Type proxiedType = typeof(string);
-            ModuleBuilder expectedModule = CreateTransientModule();
-
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
-
-            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
-            Assert.That(builder.Module, Is.SameAs(expectedModule));
-        }
-
-        /// <summary>
         /// Verifies the construction of the class when the proxied type is abstract.
         /// The generated proxy must not contain a field reference to the proxied type.
         /// </summary>
