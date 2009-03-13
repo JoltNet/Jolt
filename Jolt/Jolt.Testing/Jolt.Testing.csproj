@@ -52,6 +52,8 @@
     <Compile Include="CodeGeneration\ProxyAssemblyBuilder.cs" />
     <Compile Include="CodeGeneration\ProxyTypeBuilder.cs" />
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderSettings.cs" />
+    <Compile Include="CodeGeneration\XmlDocCommentBuilder.cs" />
+    <Compile Include="CodeGeneration\XmlDocCommentBuilderBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CodeGeneration\Xml\XmlConfigurator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -81,6 +83,15 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jolt\Jolt.csproj">
+      <Project>{DA98557A-159C-4D4B-9663-7E7D479318CE}</Project>
+      <Name>Jolt</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

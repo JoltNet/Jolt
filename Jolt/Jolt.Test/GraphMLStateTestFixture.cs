@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -103,10 +104,8 @@ namespace Jolt.Test
             object[] attributes = property.GetCustomAttributes(false);
 
             Assert.That(attributes, Has.Length(2));
-            Assert.That(attributes[0], Is.InstanceOfType(typeof(DefaultValueAttribute)));
-            Assert.That((attributes[0] as DefaultValueAttribute).Value, Is.False);
-            Assert.That(attributes[1], Is.InstanceOfType(typeof(XmlAttributeAttribute)));
-            Assert.That((attributes[1] as XmlAttributeAttribute).AttributeName, Is.EqualTo("isStartState"));
+            Assert.That(attributes.OfType<DefaultValueAttribute>().Single().Value, Is.False);
+            Assert.That(attributes.OfType<XmlAttributeAttribute>().Single().AttributeName, Is.EqualTo("isStartState"));
         }
 
         /// <summary>
@@ -134,10 +133,8 @@ namespace Jolt.Test
             object[] attributes = property.GetCustomAttributes(false);
 
             Assert.That(attributes, Has.Length(2));
-            Assert.That(attributes[0], Is.InstanceOfType(typeof(DefaultValueAttribute)));
-            Assert.That((attributes[0] as DefaultValueAttribute).Value, Is.False);
-            Assert.That(attributes[1], Is.InstanceOfType(typeof(XmlAttributeAttribute)));
-            Assert.That((attributes[1] as XmlAttributeAttribute).AttributeName, Is.EqualTo("isFinalState"));
+            Assert.That(attributes.OfType<DefaultValueAttribute>().Single().Value, Is.False);
+            Assert.That(attributes.OfType<XmlAttributeAttribute>().Single().AttributeName, Is.EqualTo("isFinalState"));
         }
     }
 }

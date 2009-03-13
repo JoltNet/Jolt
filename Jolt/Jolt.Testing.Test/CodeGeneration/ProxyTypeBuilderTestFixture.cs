@@ -14,14 +14,19 @@ using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Xml;
 
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
+using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
+    using CreateXDCBuilderDelegate = Func<Type, Type, Type, XmlDocCommentBuilderBase>;
+
+
     /// <summary>
     /// Verifies the implementation of the ProxyTypeBuilder class.
     /// The methods CreateProxy() and CreateInterface() are tested indirectly
@@ -51,22 +56,150 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.Module.IsTransient());
             Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
             Assert.That(!builder.Module.Assembly.ReflectionOnly);
+            Assert.That(!builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when only the proxied type, root
+        /// namesace, and a directive to produce XML doc comments are provided.
+        /// </summary>
+        [Test]
+        public void Construction_Namespace_ProxiedType_ProducesXDC()
+        {
+            Type proxiedType = typeof(TestAttribute);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, true);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+
+            Assert.That(builder.Module.IsTransient());
+            Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
+            Assert.That(!builder.Module.Assembly.ReflectionOnly);
+            Assert.That(builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilder)));
+
+            XmlDocCommentReader reader = (builder.XmlDocCommentBuilder as XmlDocCommentBuilder).XmlDocCommentReader as XmlDocCommentReader;
+            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when only the proxied type, root
+        /// namesace, and a directive to produce XML doc comments are provided.
+        /// XML doc comments are not found for the real subject type.
+        /// </summary>
+        [Test]
+        public void Construction_Namespace_ProxiedType_ProducesXDC_XDCNotFound()
+        {
+            Type proxiedType = GetType();
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, true);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+
+            Assert.That(builder.Module.IsTransient());
+            Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
+            Assert.That(!builder.Module.Assembly.ReflectionOnly);
+            Assert.That(!builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when only the proxied type, root
+        /// namesace, and a directive to not produce XML doc comments are provided.
+        /// </summary>
+        [Test]
+        public void Construction_Namespace_ProxiedType_DoesNotProduceXDC()
+        {
+            Type proxiedType = GetType();
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, false);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+
+            Assert.That(builder.Module.IsTransient());
+            Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
+            Assert.That(!builder.Module.Assembly.ReflectionOnly);
+            Assert.That(!builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
         }
 
         /// <summary>
         /// Verifies the construction of the class when the proxied type, root namespace,
-        /// and target module are provided.
+        /// target module,and a directive to produce XML doc comments are provided.
         /// </summary>
         [Test]
-        public void Construction_Namespace_ProxiedType_Module()
+        public void Construction_Namespace_ProxiedType_Module_ProducesXDC()
         {
-            Type proxiedType = typeof(string);
+            Type proxiedType = typeof(TestAttribute);
             ModuleBuilder expectedModule = CreateTransientModule();
 
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, expectedModule);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, true, expectedModule);
 
             Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
             Assert.That(builder.Module, Is.SameAs(expectedModule));
+            Assert.That(builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilder)));
+
+            XmlDocCommentReader reader = (builder.XmlDocCommentBuilder as XmlDocCommentBuilder).XmlDocCommentReader as XmlDocCommentReader;
+            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when the proxied type, root namespace,
+        /// target module,and a directive to produce XML doc comments are provided.
+        /// XML doc comments are not found for the real subject type.
+        /// </summary>
+        [Test]
+        public void Construction_Namespace_ProxiedType_Module_ProducesXDC_XDCNotFound()
+        {
+            Type proxiedType = GetType();
+            ModuleBuilder expectedModule = CreateTransientModule();
+
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, true, expectedModule);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+            Assert.That(builder.Module, Is.SameAs(expectedModule));
+            Assert.That(!builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the class when the proxied type, root namespace,
+        /// target module,and a directive to not produce XML doc comments are provided.
+        /// </summary>
+        [Test]
+        public void Construction_Namespace_ProxiedType_Module_DoesNotProduceXDC()
+        {
+            Type proxiedType = GetType();
+            ModuleBuilder expectedModule = CreateTransientModule();
+
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, false, expectedModule);
+
+            Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+            Assert.That(builder.Module, Is.SameAs(expectedModule));
+            Assert.That(!builder.ProducesXmlDocComments);
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+        }
+
+        /// <summary>
+        /// Verifies the internal construction of the class.
+        /// </summary>
+        [Test]
+        public void Construction_Internal()
+        {
+            With.Mocks(delegate
+            {
+                XmlDocCommentBuilderBase xdcBuilder = Mocker.Current.Stub<XmlDocCommentBuilderBase>();
+                Mocker.Current.ReplayAll();
+
+                Type proxiedType = GetType();
+                ModuleBuilder expectedModule = CreateTransientModule();
+
+                ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType, CreateXDCBuilderFactoryDelegate(xdcBuilder), expectedModule);
+
+                Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
+                Assert.That(builder.Module, Is.SameAs(expectedModule));
+                Assert.That(builder.ProducesXmlDocComments);
+                Assert.That(builder.XmlDocCommentBuilder, Is.SameAs(xdcBuilder));
+            });
         }
 
         /// <summary>
@@ -165,8 +298,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the initialziation of constructors in the proxied type,
-        /// when the proxied type is not static.
+        /// Verifies the initialziation of constructors in the proxy type,
+        /// when the real subject type is not static.
         /// </summary>
         [Test]
         public void Construction_NonStaticClass_ConstructorInitialization()
@@ -187,8 +320,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies the initialziation of constructors in the proxied type,
-        /// when the proxied type is generic and not static.
+        /// Verifies the initialziation of constructors in the proxy type,
+        /// when the real subject type is generic and not static.
         /// </summary>
         [Test]
         public void Construction_NonStaticClass_Generic_ConstructorInitialization()
@@ -240,6 +373,29 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that XML doc comments are produced as part of the constructor
+        /// initialization for the proxy type.
+        /// </summary>
+        [Test]
+        public void Construction_ConstructorInitialization_XmlDocComments()
+        {
+            With.Mocks(delegate
+            {
+                XmlDocCommentBuilderBase xdcBuilder = Mocker.Current.CreateMock<XmlDocCommentBuilderBase>();
+
+                // Expectations
+                // Each real subject type constructor is passed to the
+                // XML doc comment builder.
+                Type realSubjectType = typeof(__ConstructorTestType);
+                Array.ForEach(realSubjectType.GetConstructors(), xdcBuilder.AddConstuctor);
+
+                // Verification and assertions
+                Mocker.Current.ReplayAll();
+                ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType, CreateXDCBuilderFactoryDelegate(xdcBuilder), CreateTransientModule());
+            });
+        }
+
+        /// <summary>
         /// Verifies the default behavior of the CreateInterface() method,
         /// prior to adding methods.
         /// </summary>
@@ -273,6 +429,31 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxyInterface = builder.CreateInterface();
 
             AssertProxyAttributes(proxy, proxyInterface, "StringProxy", DefaultNamespace + ".System");
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the CreateXmlDocCommentReader() method.
+        /// </summary>
+        [Test]
+        public void CreateXmlDocCommentReader()
+        {
+            With.Mocks(delegate
+            {
+                XmlDocCommentBuilderBase xdcBuilder = Mocker.Current.DynamicMock<XmlDocCommentBuilderBase>();
+
+                // Expectations
+                // A call to CreateXmlDocCommentReader() forwards to the corresponding method
+                // on the XML doc comment builder.
+                XmlReader expectedXmlReader = XmlReader.Create(new StringReader("<xml/>"));
+                Expect.Call(xdcBuilder.CreateReader()).Return(expectedXmlReader);
+
+                // Verification and assertions
+                Mocker.Current.ReplayAll();
+
+                ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType), CreateXDCBuilderFactoryDelegate(xdcBuilder), CreateTransientModule());
+
+                Assert.That(builder.CreateXmlDocCommentReader(), Is.SameAs(expectedXmlReader));
+            });
         }
 
         /// <summary>
@@ -775,6 +956,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that XML doc comments are produced as part of adding
+        /// a method to the proxy builder.
+        /// </summary>
+        [Test]
+        public void AddMethod_XmlDocComments()
+        {
+            Type realSubjectType = typeof(__MethodTestType);
+            VerifyBehavior_AddMember_XmlDocComments(realSubjectType, realSubjectType.GetMethods());
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddProperty() method when adding
         /// an instance property to the builder.
         /// </summary>
@@ -1157,6 +1349,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that XML doc comments are produced as part of adding
+        /// a property to the proxy builder.
+        /// </summary>
+        [Test]
+        public void AddProperty_XmlDocComments()
+        {
+            Type realSubjectType = typeof(__PropertyTestType);
+            VerifyBehavior_AddMember_XmlDocComments(realSubjectType, realSubjectType.GetProperties());
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddEvent() method when adding
         /// an instance event to the builder.
         /// </summary>
@@ -1473,6 +1676,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies that XML doc comments are produced as part of adding
+        /// an event to the proxy builder.
+        /// </summary>
+        [Test]
+        public void AddEvent_XmlDocComments()
+        {
+            Type realSubjectType = typeof(__EventTestType);
+            VerifyBehavior_AddMember_XmlDocComments(realSubjectType, realSubjectType.GetEvents());
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddProperty() method when
         /// the given property (get/set methods) matches the signature
         /// of an existing method in the builder.
@@ -1767,8 +1981,78 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static ModuleBuilder CreateTransientModule()
         {
             return AppDomain.CurrentDomain
-                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.ReflectionOnly)
+                .DefineDynamicAssembly(new AssemblyName("__transientAssembly"), AssemblyBuilderAccess.Run)
                 .DefineDynamicModule("__transientModule");
+        }
+
+        /// <summary>
+        /// Creates a factory method that returns the given builder.
+        /// </summary>
+        /// 
+        /// <param name="builderToCreate">
+        /// The builder to return from the factory method.
+        /// </param>
+        private static CreateXDCBuilderDelegate CreateXDCBuilderFactoryDelegate(XmlDocCommentBuilderBase builderToCreate)
+        {
+            return delegate { return builderToCreate; };
+        }
+
+        /// <summary>
+        /// Verfies the XML doc comment production behavior of the
+        /// Add* methods on the ProxyTypeBuilder.
+        /// </summary>
+        /// 
+        /// <typeparam name="TMember">
+        /// The type of member to verify; determines the Add* method overload.
+        /// </typeparam>
+        /// 
+        /// <param name="realSubjectType">
+        /// The real subject type to use as part of the test.
+        /// </param>
+        /// 
+        /// <param name="expectedMembers">
+        /// The members of the real subject type for which XML doc comments are generated.
+        /// </param>
+        private static void VerifyBehavior_AddMember_XmlDocComments<TMember>(Type realSubjectType, TMember[] expectedMembers)
+            where TMember : MemberInfo
+        {
+            With.Mocks(delegate
+            {
+                XmlDocCommentBuilderBase xdcBuilder = Mocker.Current.DynamicMock<XmlDocCommentBuilderBase>();
+
+                // Expectations
+                // Each real subject type property is passed to the
+                // XML doc comment builder.
+                Action<TMember> addMemberToXDCBuilder = Delegate.CreateDelegate(
+                    typeof(Action<TMember>),
+                    xdcBuilder,
+                    typeof(XmlDocCommentBuilderBase)
+                        .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Single(CreateBuilderMethodPredicate<TMember>())) as Action<TMember>;
+                Array.ForEach(expectedMembers, addMemberToXDCBuilder);
+
+                // Verification and assertions
+                Mocker.Current.ReplayAll();
+
+                ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType, CreateXDCBuilderFactoryDelegate(xdcBuilder), CreateTransientModule());
+                Action<TMember> addMemberToProxyTypeBuilder = Delegate.CreateDelegate(
+                    typeof(Action<TMember>),
+                    builder,
+                    builder.GetType().GetMethods().Single(CreateBuilderMethodPredicate<TMember>())) as Action<TMember>;
+
+                Array.ForEach(expectedMembers, addMemberToProxyTypeBuilder);
+            });
+        }
+
+        /// <summary>
+        /// Creates a delegate that is used to filter methods on a builder type.
+        /// A method is returned if the method name starts with "Add" if the
+        /// method contains one argument of type TMember.
+        /// </summary>
+        private static Func<MethodInfo, bool> CreateBuilderMethodPredicate<TMember>()
+            where TMember : MemberInfo
+        {
+            return method => method.Name.StartsWith("Add") && method.GetParameters().Single().ParameterType == typeof(TMember);
         }
 
         #endregion

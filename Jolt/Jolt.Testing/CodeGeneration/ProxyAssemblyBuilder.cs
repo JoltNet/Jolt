@@ -12,6 +12,8 @@ using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Xml;
+using System.Xml.Linq;
 
 using Jolt.Testing.Properties;
 using log4net;
@@ -21,7 +23,7 @@ namespace Jolt.Testing.CodeGeneration
     // Represents a factory method that constructs a ProxyTypeBuilder
     // class using the constructor overload matching the delegate
     // parameter signature.
-    using CreateProxyTypeBuilderDelegate = Func<string, Type, ModuleBuilder, IProxyTypeBuilder>;
+    using CreateProxyTypeBuilderDelegate = Func<string, Type, bool, ModuleBuilder, IProxyTypeBuilder>;
 
 
     /// <summary>
@@ -83,7 +85,7 @@ namespace Jolt.Testing.CodeGeneration
         /// The configuration settings for the class.
         /// </param>
         public ProxyAssemblyBuilder(string sRootNamespace, string sAssemblyFullPath, ProxyAssemblyBuilderSettings settings)
-            : this(sRootNamespace, sAssemblyFullPath, settings, (ns, t, mb) => new ProxyTypeBuilder(ns, t, mb)) { }
+            : this(sRootNamespace, sAssemblyFullPath, settings, (ns, t, xml, mb) => new ProxyTypeBuilder(ns, t, xml, mb)) { }
 
         /// <summary>
         /// Initializes the assembly builder, overriding the default ProxyTypeBuilder
@@ -122,6 +124,16 @@ namespace Jolt.Testing.CodeGeneration
             m_methodBindingFlags = ComputeMemberBindingFlags(m_settings.EmitMethods, m_settings.EmitStatics);
             m_propertyBindingFlags = ComputeMemberBindingFlags(m_settings.EmitProperties, m_settings.EmitStatics);
             m_eventBindingFlags = ComputeMemberBindingFlags(m_settings.EmitEvents, m_settings.EmitStatics);
+
+            m_xmlDocComments = new XDocument();
+            if (m_settings.EmitXmlDocComments)
+            {
+                m_xmlDocComments.Add(
+                    new XElement(XmlDocCommentNames.DocElement,
+                        new XElement(XmlDocCommentNames.AssemblyElement,
+                            new XElement(XmlDocCommentNames.NameElement, assemblyName.Name)),
+                        new XElement(XmlDocCommentNames.MembersElement)));
+            }
         }
 
         #endregion
@@ -166,12 +178,17 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         public virtual void AddType(Type realSubjectType)
         {
-            IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_module);
+            IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_settings.EmitXmlDocComments, m_module);
             Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => builder.AddProperty(property)));
             Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), evt => HandleExceptionsIn(() => builder.AddEvent(evt)));
             Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, builder));
 
             builder.CreateProxy();
+
+            using (XmlReader xmlDocCommentReader = builder.CreateXmlDocCommentReader())
+            {
+                AppendXmlDocComments(xmlDocCommentReader);
+            }
         }
 
         /// <summary>
@@ -181,7 +198,22 @@ namespace Jolt.Testing.CodeGeneration
         public virtual Assembly CreateAssembly()
         {
             m_assembly.Save(Path.GetFileName(m_sAssemblyFullPath));
+
+            // TODO: this condition is not right; check for members.count > 0
+            if (m_xmlDocComments.Root != null)
+            {
+                m_xmlDocComments.Save(Path.ChangeExtension(m_sAssemblyFullPath, "xml"));
+            }
+
             return m_assembly;
+        }
+
+        /// <summary>
+        /// Creates an XmlReader capable of reading any produced XML doc comments.
+        /// </summary>
+        public virtual XmlReader CreateXmlDocCommentReader()
+        {
+            return m_xmlDocComments.CreateReader();
         }
 
         #endregion
@@ -207,6 +239,26 @@ namespace Jolt.Testing.CodeGeneration
         #endregion
 
         #region private methods -------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads the XML doc comments from the given reader, appending
+        /// them to the XML doc comments stored by the class.
+        /// </summary>
+        /// 
+        /// <param name="reader">
+        /// The XmlReader containing the XML doc comments to append.
+        /// </param>
+        private void AppendXmlDocComments(XmlReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.IsStartElement(XmlDocCommentNames.MemberElement))
+                {
+                    m_xmlDocComments.Root.Element(XmlDocCommentNames.MembersElement)
+                        .Add(XElement.Load(reader.ReadSubtree()));
+                }
+            }
+        }
 
         /// <summary>
         /// Adds the given method to the given builder, only if it isn't already part of
@@ -334,6 +386,7 @@ namespace Jolt.Testing.CodeGeneration
         private readonly AssemblyBuilder m_assembly;
         private readonly ModuleBuilder m_module;
         private readonly string m_sAssemblyFullPath;
+        private readonly XDocument m_xmlDocComments;
         private readonly CreateProxyTypeBuilderDelegate m_createProxyTypeBuilder;
         private readonly ProxyAssemblyBuilderSettings m_settings;
         private readonly BindingFlags m_methodBindingFlags;

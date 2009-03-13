@@ -33,3 +33,6 @@ using System.Runtime.InteropServices;
 
 // Friend assemblies.
 [assembly: InternalsVisibleTo("Jolt.Test")]
+[assembly: InternalsVisibleTo("Jolt.Testing")]
+[assembly: InternalsVisibleTo("Jolt.Testing.Test")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

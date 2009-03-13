@@ -48,6 +48,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractXDCReadPolicyTestFixture.cs" />
     <Compile Include="ConsumptionResultTestFixture.cs" />
     <Compile Include="ConvertTestFixture.cs" />
     <Compile Include="DefaultXDCReadPolicyTestFixture.cs" />

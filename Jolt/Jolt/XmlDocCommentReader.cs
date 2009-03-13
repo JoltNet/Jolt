@@ -29,7 +29,7 @@ namespace Jolt
     /// Provides methods to retrieve the XML Documentation Comments for an
     /// object having a metadata type from the System.Reflection namespace.
     /// </summary>
-    public class XmlDocCommentReader
+    public sealed class XmlDocCommentReader : IXmlDocCommentReader
     {
         #region constructors ----------------------------------------------------------------------
 
@@ -43,22 +43,24 @@ namespace Jolt
         /// The assembly whose doc comments are retrieved.
         /// </param>
         public XmlDocCommentReader(Assembly assembly)
-            : this(assembly, ConfigurationManager.GetSection("XmlDocCommentsReader") as XmlDocCommentReaderSettings ?? XmlDocCommentReaderSettings.Default) { }
+            : this(assembly, CreateDefaultReadPolicy) { }
 
         /// <summary>
         /// Initializes the reader by searching for a doc comments file
-        /// that corresponds to the given assembly, from the given search paths.
+        /// that corresponds to the given assembly, from the application's
+        /// configured search paths.  Configures the reader to use a user-defined read policy.
         /// </summary>
         /// 
         /// <param name="assembly">
         /// The assembly whose doc comments are retrieved.
         /// </param>
         /// 
-        /// <param name="settings">
-        /// The configuration object containing the doc comment search paths.
+        /// <param name="createReadPolicy">
+        /// A factory method that accepts the full path to an XML doc comments file,
+        /// returning a user-defined read policy.
         /// </param>
-        public XmlDocCommentReader(Assembly assembly, XmlDocCommentReaderSettings settings)
-            : this(assembly, settings, CreateDefaultReadPolicy) { }
+        public XmlDocCommentReader(Assembly assembly, CreateReadPolicyDelegate createReadPolicy)
+            : this(assembly, ConfigurationManager.GetSection("XmlDocCommentsReader") as XmlDocCommentReaderSettings, createReadPolicy) { }
 
         /// <summary>
         /// Initializes the reader by searching for a doc comments file
@@ -105,10 +107,10 @@ namespace Jolt
         /// </param>
         internal XmlDocCommentReader(Assembly assembly, XmlDocCommentReaderSettings settings, IFile fileProxy, CreateReadPolicyDelegate createReadPolicy)
         {
-            m_docCommentsFullPath = ResolveDocCommentsLocation(assembly, settings.DirectoryNames, fileProxy);
+            m_settings = settings ?? XmlDocCommentReaderSettings.Default;
+            m_docCommentsFullPath = ResolveDocCommentsLocation(assembly, m_settings.DirectoryNames, fileProxy);
             m_fileProxy = fileProxy;
             m_docCommentsReadPolicy = createReadPolicy(m_docCommentsFullPath);
-            m_settings = settings;
         }
 
         /// <summary>

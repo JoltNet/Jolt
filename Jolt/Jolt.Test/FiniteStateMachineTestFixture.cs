@@ -603,7 +603,6 @@ namespace Jolt.Test
         /// </param>
         private static void AssertAddState(bool stateExists)
         {
-            // TODO: collapse this method with AssertRemoveState(bool).
             With.Mocks(delegate
             {
                 BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();

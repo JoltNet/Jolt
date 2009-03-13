@@ -147,6 +147,9 @@
   <data name="Info_SkipDefinedPropertyMethod" xml:space="preserve">
     <value>The method '{0}' was not included as part of the proxy type as it is already defined as a property.</value>
   </data>
+  <data name="Info_XmlDocCommentsDisabled" xml:space="preserve">
+    <value>Could not locate XML doc comments file for assembly '{0}'.  Procuction of XML doc comments is disabled.</value>
+  </data>
   <data name="Warn_TypeNotLoaded" xml:space="preserve">
     <value>Could not load the type '{0}'.</value>
   </data>

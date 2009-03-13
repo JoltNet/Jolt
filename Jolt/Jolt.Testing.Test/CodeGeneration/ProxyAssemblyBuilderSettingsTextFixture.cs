@@ -33,6 +33,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(settings.EmitProperties);
             Assert.That(settings.EmitStatics);
             Assert.That(settings.EmitEvents);
+            Assert.That(!settings.EmitXmlDocComments);
         }
 
         /// <summary>
@@ -45,13 +46,16 @@ namespace Jolt.Testing.Test.CodeGeneration
             bool expectedPropertiesSetting = RandomNumbers.Next(0, 1) == 0;
             bool expectedEventSetting = RandomNumbers.Next(0, 1) == 0;
             bool expectedStaticsSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedXmlDocCommentsSetting = RandomNumbers.Next(0, 1) == 0;
 
-            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(expectedStaticsSetting, expectedMethodSetting, expectedPropertiesSetting, expectedEventSetting);
+            ProxyAssemblyBuilderSettings settings
+                = new ProxyAssemblyBuilderSettings(expectedStaticsSetting, expectedMethodSetting, expectedPropertiesSetting, expectedEventSetting, expectedXmlDocCommentsSetting);
 
             Assert.That(settings.EmitMethods, Is.EqualTo(expectedMethodSetting));
             Assert.That(settings.EmitProperties, Is.EqualTo(expectedPropertiesSetting));
             Assert.That(settings.EmitEvents, Is.EqualTo(expectedEventSetting));
             Assert.That(settings.EmitStatics, Is.EqualTo(expectedStaticsSetting));
+            Assert.That(settings.EmitXmlDocComments, Is.EqualTo(expectedXmlDocCommentsSetting));
         }
 
         /// <summary>
@@ -64,6 +68,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitProperties);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitEvents);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitStatics);
+            Assert.That(!ProxyAssemblyBuilderSettings.Default.EmitXmlDocComments);
         }
 
         #endregion

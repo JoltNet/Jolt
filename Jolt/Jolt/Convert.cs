@@ -20,7 +20,6 @@ namespace Jolt
     public static class Convert
     {
         // TODO: merge this type with Jolt.Testing.Convert
-        // TODO: string/char constants.
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
@@ -299,12 +298,15 @@ namespace Jolt
                 if (rank == 1)
                 {
                     // ELEMENT_TYPE_SZARRAY
-                    builder.Insert(0, "[]");
+                    builder.Insert(0, SZArrayTypeSuffix);
                 }
                 else
                 {
                     // ELEMENT_TYPE_ARRAY
-                    builder.Insert(0, ']').Insert(0, "0:").Insert(0, "0:,", rank - 1).Insert(0, '[');
+                    builder.Insert(0, ']')
+                           .Insert(0, ArrayElementTypeDimension)
+                           .Insert(0, ArrayElementTypeDimension_Delimited, rank - 1)
+                           .Insert(0, '[');
                 }
 
                 type = type.GetElementType();
@@ -323,6 +325,10 @@ namespace Jolt
         #endregion
 
         #region private data ----------------------------------------------------------------------
+
+        private static readonly string SZArrayTypeSuffix = "[]";
+        private static readonly string ArrayElementTypeDimension = "0:";
+        private static readonly string ArrayElementTypeDimension_Delimited = ArrayElementTypeDimension + ',';
 
         private static readonly IDictionary<Type, string> XDCMemberPrefixes;
         private static readonly ParameterInfo[] EmptyParameterList;

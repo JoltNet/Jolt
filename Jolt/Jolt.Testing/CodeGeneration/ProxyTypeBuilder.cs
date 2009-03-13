@@ -9,14 +9,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Xml;
 
 using Jolt.Testing.Properties;
 using JTCG = Jolt.Testing.CodeGeneration;
+using log4net;
 
 namespace Jolt.Testing.CodeGeneration
 {
+    // Represents a factory method for creating an XML doc comment builder.
+    using CreateXDCBuilderDelegate = Func<Type, Type, Type, XmlDocCommentBuilderBase>;
+
+
     /// <summary>
     /// Provides methods to dynamically reverse engineer a proxy and accompanying
     /// interface for a given type.  The proxy and interface are created in a given
@@ -40,7 +47,7 @@ namespace Jolt.Testing.CodeGeneration
 
         /// <summary>
         /// Initializes the proxy builder with a transient assembly in the current
-        /// appdomain.
+        /// appdomain.  Does not produce XML doc comments for generated types.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -51,7 +58,27 @@ namespace Jolt.Testing.CodeGeneration
         /// The type of object for which the proxy forwards to.
         /// </param>
         public ProxyTypeBuilder(string rootNamespace, Type realSubjectType)
-            : this(rootNamespace, realSubjectType, AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
+            : this(rootNamespace, realSubjectType, false) { }
+
+        /// <summary>
+        /// Initializes the proxy builder with a transient assembly in the current
+        /// appdomain.
+        /// </summary>
+        /// 
+        /// <param name="rootNamespace">
+        /// The namespace in which all types are created.
+        /// </param>
+        /// 
+        /// <param name="realSubjectType">
+        /// The type of object for which the proxy forwards to.
+        /// </param>
+        /// 
+        /// <param name="produceXmlDocComments">
+        /// Determines if the proxy builder should attempt to produce
+        /// XML doc comments for each generated type.
+        /// </param>
+        public ProxyTypeBuilder(string rootNamespace, Type realSubjectType, bool produceXmlDocComments)
+            : this(rootNamespace, realSubjectType, produceXmlDocComments, AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("__transientAssembly"),
                     AssemblyBuilderAccess.RunAndSave).DefineDynamicModule("__transientModule")) { }
 
         /// <summary>
@@ -66,10 +93,42 @@ namespace Jolt.Testing.CodeGeneration
         /// The type of object for which the proxy forwards to.
         /// </param>
         /// 
+        /// <param name="produceXmlDocComments">
+        /// Determines if the proxy builder should attempt to produce
+        /// XML doc comments for each generated type.
+        /// </param>
+        /// 
         /// <param name="targetModule">
         /// The module in which the types are created.
         /// </param>
-        public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, ModuleBuilder targetModule)
+        public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, bool produceXmlDocComments, ModuleBuilder targetModule)
+            : this(sRootNamespace,
+                   realSubjectType,
+                   produceXmlDocComments ? CreateXmlDocCommentBuilder : (CreateXDCBuilderDelegate)delegate { return new XmlDocCommentBuilderBase(); },
+                   targetModule) { }
+
+        /// <summary>
+        /// Initializes the proxy builder with a user-specified XML doc comment
+        /// factory method and ModuleBuilder.
+        /// </summary>
+        /// 
+        /// <param name="rootNamespace">
+        /// The namespace in which all types are created.
+        /// </param>
+        /// 
+        /// <param name="realSubjectType">
+        /// The type of object for which the proxy forwards to.
+        /// </param>
+        /// 
+        /// <param name="createXDCBuilder">
+        /// A delegate containing a factory method for creating the proxy
+        /// builder's XML doc comment builder.
+        /// </param>
+        /// 
+        /// <param name="targetModule">
+        /// The module in which the types are created.
+        /// </param>
+        internal ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, CreateXDCBuilderDelegate createXDCBuilder, ModuleBuilder targetModule)
         {
             ValidateRealSubjectType(realSubjectType);
 
@@ -79,10 +138,11 @@ namespace Jolt.Testing.CodeGeneration
 
             // Create the type holders for the generated interface and proxy.
             m_proxy = m_module.DefineType(CreateProxyName(sRootNamespace, m_realSubjectType), TypeAttributes.Public | TypeAttributes.Sealed);
-            m_proxyInterface = m_module.DefineType(CreateInterfaceName(sRootNamespace, m_realSubjectType), 
+            m_proxyInterface = m_module.DefineType(CreateInterfaceName(sRootNamespace, m_realSubjectType),
                 TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract);
 
             m_methodDeclarerFactory = new MethodDeclarerFactory(m_proxyInterface, m_proxy);
+            m_xmlDocCommentBuilder = createXDCBuilder(realSubjectType, m_proxy, m_proxyInterface);
 
             Type realSubjectFieldType = realSubjectType;
             if (realSubjectType.ContainsGenericParameters)
@@ -122,6 +182,14 @@ namespace Jolt.Testing.CodeGeneration
             get { return m_module; }
         }
 
+        /// <summary>
+        /// Determines if the type builder produces XML doc comments.
+        /// </summary>
+        public bool ProducesXmlDocComments
+        {
+            get { return m_xmlDocCommentBuilder.GetType() !=  typeof(XmlDocCommentBuilderBase); }
+        }
+
         #endregion
 
         #region public methods --------------------------------------------------------------------
@@ -137,9 +205,9 @@ namespace Jolt.Testing.CodeGeneration
         {
             ThrowOnNullMember(method);
             ValidateMethod(method);
-            
-            // Define the methods for the interface and proxy.
             DefineInterfaceAndProxyMethod(method);
+
+            m_xmlDocCommentBuilder.AddMethod(method);
         }
 
         /// <summary>
@@ -183,6 +251,8 @@ namespace Jolt.Testing.CodeGeneration
                 interfacePropertyBuilder.SetSetMethod(interfaceMethodBuilder);
                 proxyPropertyBuilder.SetSetMethod(proxyMethodBuilder);
             }
+
+            m_xmlDocCommentBuilder.AddProperty(property);
         }
 
         /// <summary>
@@ -206,6 +276,9 @@ namespace Jolt.Testing.CodeGeneration
                 eventInfo.Attributes, eventInfo.EventHandlerType);
             
             // Define the event methods (add/remove) for the interface and proxy.
+            // NOTE: The raise method on the proxy event is not set since the proxy does
+            // not contain any code to raise the event.  Once the subject's event is raised,
+            // any method subscribed to the proxy event will be notified.
             MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
 
             DefineInterfaceAndProxyMethod(eventInfo.GetAddMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
@@ -216,9 +289,7 @@ namespace Jolt.Testing.CodeGeneration
             interfaceEventBuilder.SetRemoveOnMethod(interfaceMethodBuilder);
             proxyEventBuilder.SetRemoveOnMethod(proxyMethodBuilder);
 
-            // NOTE: The raise method on the proxy event is not set since the proxy does
-            // not contain any code to raise the event.  Once the subject's event is raised,
-            // any method subscribed to the proxy event will be notified.
+            m_xmlDocCommentBuilder.AddEvent(eventInfo);
         }
 
         /// <summary>
@@ -238,6 +309,26 @@ namespace Jolt.Testing.CodeGeneration
             return m_proxy.CreateType();
         }
 
+        /// <summary>
+        /// Creates an XmlReader capable of reading any produced XML doc comments.
+        /// </summary>
+        public virtual XmlReader CreateXmlDocCommentReader()
+        {
+            return m_xmlDocCommentBuilder.CreateReader();
+        }
+
+        #endregion
+
+        #region internal properties ---------------------------------------------------------------
+
+        /// <summary>
+        /// Gets the XmlDocCommentBuilder used by the class.
+        /// </summary>
+        internal XmlDocCommentBuilderBase XmlDocCommentBuilder
+        {
+            get { return m_xmlDocCommentBuilder; }
+        }
+
         #endregion
 
         #region private instance methods ----------------------------------------------------------
@@ -251,11 +342,11 @@ namespace Jolt.Testing.CodeGeneration
         {
             // Initialize the base constructor emit call only when the
             // real subject type is a reference type.
-            Action<ILGenerator> emitBaseClassConstructorCall = EmitObjectDefaultConstructorCall;
-            if (!m_realSubjectType.IsClass) { emitBaseClassConstructorCall = delegate { /* no-op */ }; }
+            Action<ILGenerator> emitBaseClassConstructorCall = m_realSubjectType.IsClass ?
+                EmitObjectDefaultConstructorCall : (Action<ILGenerator>)delegate { /* no-op */ };
 
             // Create a constructor on the proxy for each public constructor
-            // on the real subject type.
+            // on the real subject type and emit XML doc comments.
             foreach (ConstructorInfo constructor in m_realSubjectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
             {
                 ILGenerator codeGenerator = m_methodDeclarerFactory.Create(constructor).Declare().GetILGenerator();
@@ -276,6 +367,8 @@ namespace Jolt.Testing.CodeGeneration
 
                 // Return from the constructor call.
                 codeGenerator.Emit(OpCodes.Ret);
+
+                m_xmlDocCommentBuilder.AddConstuctor(constructor);
             }
         }
 
@@ -439,6 +532,38 @@ namespace Jolt.Testing.CodeGeneration
         #region private class methods -------------------------------------------------------------
 
         /// <summary>
+        /// Creates an XML doc comment builder from the given types,
+        /// </summary>
+        /// 
+        /// <param name="realSubjectType">
+        /// The real subject type.
+        /// </param>
+        /// 
+        /// <param name="proxyType">
+        /// The type containing the generated proxy.
+        /// </param>
+        /// 
+        /// <param name="proxyInterfaceType">
+        /// The type containing the generated proxy interface.
+        /// </param>
+        private static XmlDocCommentBuilderBase CreateXmlDocCommentBuilder(Type realSubjectType, Type proxyType, Type proxyInterfaceType)
+        {
+            // Create an XMLDocCommentReader for the real subject type.
+            // If the XML doc comments are not discovered for the given type,
+            // disable production of XML doc comments for generated types.
+            try
+            {
+                XmlDocCommentReader reader = new XmlDocCommentReader(realSubjectType.Assembly);
+                return new XmlDocCommentBuilder(reader, realSubjectType, proxyType, proxyInterfaceType);
+            }
+            catch (FileNotFoundException)
+            {
+                Log.InfoFormat(Resources.Info_XmlDocCommentsDisabled, realSubjectType.Assembly.GetName().Name);
+                return new XmlDocCommentBuilderBase();
+            }
+        }
+
+        /// <summary>
         /// Copies all of the given generic type arguments of the real
         /// subject type to the given type builder, returning the newly
         /// copied parameters.
@@ -569,7 +694,9 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance fields -----------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
+
+        private static readonly ILog Log = LogManager.GetLogger(MethodInfo.GetCurrentMethod().DeclaringType);
 
         private readonly Type m_realSubjectType;
         private readonly FieldInfo m_realSubjectField;
@@ -578,6 +705,7 @@ namespace Jolt.Testing.CodeGeneration
         private readonly TypeBuilder m_proxy;
         private readonly HashSet<MemberInfo> m_addedMembers;
         private readonly MethodDeclarerFactory m_methodDeclarerFactory;
+        private readonly XmlDocCommentBuilderBase m_xmlDocCommentBuilder;
 
         #endregion
     }

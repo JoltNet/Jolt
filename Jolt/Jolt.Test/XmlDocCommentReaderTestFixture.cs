@@ -90,30 +90,48 @@ namespace Jolt.Test
 
         /// <summary>
         /// Verifies the construction of the class when given an
-        /// assembly reference and a configurations settings object.
+        /// assembly reference and a read policy factory method.
         /// </summary>
         [Test]
-        public void Construction_Assembly_ExplicitSettings()
+        public void Construction_Assembly_ReadPolicy()
         {
-            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
-            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, settings);
+            With.Mocks(delegate
+            {
+                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
+                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
-            Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
-            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
-            Assert.That(reader.Settings, Is.SameAs(settings));
+                // Expectations
+                // The read policy is created via the factory method.
+                string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
+                Expect.Call(createPolicy(expectedDocCommentsFullPath)).Return(readPolicy);
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+                
+                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, createPolicy);
+
+                Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+                Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
+                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+                Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
+            });
         }
 
         /// <summary>
         /// Verifies the construction of the class when given an
         /// assembly reference that has no XML doc comments in the search
-        /// path, and a configuration settings object is provided.
+        /// path, and a read policy factory method.
         /// </summary>
         [Test, ExpectedException(typeof(FileNotFoundException))]
-        public void Construction_Assembly_ExplicitSettings_FileNotFound()
+        public void Construction_Assembly_ReadPolicy_FileNotFound()
         {
-            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
-            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings);
+            With.Mocks(delegate
+            {
+                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
+                Mocker.Current.ReplayAll();
+
+                XmlDocCommentReader reader = new XmlDocCommentReader(GetType().Assembly, createPolicy);
+            });
         }
 
         /// <summary>

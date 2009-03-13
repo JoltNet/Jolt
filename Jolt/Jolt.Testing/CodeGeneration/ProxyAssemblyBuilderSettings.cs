@@ -43,12 +43,17 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="emitEvents">
         /// Determines if events are generated.
         /// </param>
-        public ProxyAssemblyBuilderSettings(bool emitStatics, bool emitMethods, bool emitProperties, bool emitEvents)
+        /// 
+        /// <param name="emitXmlDocComments">
+        /// Determines if XML doc comments are produced.
+        /// </param>
+        public ProxyAssemblyBuilderSettings(bool emitStatics, bool emitMethods, bool emitProperties, bool emitEvents, bool emitXmlDocComments)
         {
             this["emitStatics"] = emitStatics;
             this["emitMethods"] = emitMethods;
             this["emitProperties"] = emitProperties;
             this["emitEvents"] = emitEvents;
+            this["emitXmlDocComments"] = emitXmlDocComments;
         }
 
         #endregion
@@ -93,6 +98,15 @@ namespace Jolt.Testing.CodeGeneration
         public bool EmitEvents
         {
             get { return (bool)this["emitEvents"]; }
+        }
+
+        /// <summary>
+        /// Gets the value that controls XML doc comment generation.
+        /// </summary>
+        [ConfigurationProperty("emitXmlDocComments", IsRequired=false, DefaultValue=false)]
+        public bool EmitXmlDocComments
+        {
+            get { return (bool)this["emitXmlDocComments"]; }
         }
     }
 }

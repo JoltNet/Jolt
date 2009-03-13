@@ -7,11 +7,12 @@
 // File created: 8/9/2007 09:24:59
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Reflection;
 
-using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
+using JTCG = Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
@@ -29,7 +30,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void ToParameterTypes()
         {
             ParameterInfo[] methodParams = GetType().GetMethod("__g", BindingFlags.NonPublic | BindingFlags.Instance).GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams);
 
             Assert.That(methodParamTypes, Has.Length(4));
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -47,7 +48,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void ToParameterTypes_NoParams()
         {
             ParameterInfo[] methodParams = GetType().GetMethod("__f", BindingFlags.NonPublic | BindingFlags.Instance).GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams);
 
             Assert.That(methodParamTypes, Is.Empty);
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -60,9 +61,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ToParameterTypes_GenericTypeArguments()
         {
-            System.Type[] genericTypeArguments = typeof(__GenericTestType<,,>).GetGenericArguments();
+            Type[] genericTypeArguments = typeof(__GenericTestType<,,>).GetGenericArguments();
             ParameterInfo[] methodParams = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction_MixedArgs").GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams, genericTypeArguments);
 
             Assert.That(methodParamTypes, Has.Length(3));
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -81,9 +82,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethods().Single(m => m.Name == "NoParameters" && !m.IsGenericMethod);
 
-            System.Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
+            Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
             ParameterInfo[] methodParams = genericMethod.GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams, genericTypeArguments);
 
             Assert.That(methodParamTypes, Is.Empty);
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -98,11 +99,11 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void ToParameterTypes_GenericTypeAndMethodArguments()
         {
             MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction_MixedArgs");
-            System.Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
-            System.Type[] genericMethodArguments = genericMethod.GetGenericArguments();
+            Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
+            Type[] genericMethodArguments = genericMethod.GetGenericArguments();
             
             ParameterInfo[] methodParams = genericMethod.GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
 
             Assert.That(methodParamTypes, Has.Length(6));
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -124,11 +125,11 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethods().Single(m => m.Name == "NoParameters" && m.IsGenericMethod);
 
-            System.Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
-            System.Type[] genericMethodArguments = genericMethod.GetGenericArguments();
+            Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
+            Type[] genericMethodArguments = genericMethod.GetGenericArguments();
 
             ParameterInfo[] methodParams = genericMethod.GetParameters();
-            System.Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
+            Type[] methodParamTypes = JTCG.Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
 
             Assert.That(methodParamTypes, Is.Empty);
             Assert.That(methodParamTypes, Has.Length(methodParams.Length));
@@ -141,10 +142,10 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ToParameterType()
         {
-            System.Type parameterType = Convert.ToParameterType(
+            Type parameterType = JTCG.Convert.ToParameterType(
                 typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters").GetParameters()[0],
-                System.Type.EmptyTypes,
-                System.Type.EmptyTypes);
+                Type.EmptyTypes,
+                Type.EmptyTypes);
 
             Assert.That(parameterType, Is.EqualTo(typeof(int)));
         }
@@ -157,12 +158,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void ToParameterType_GenericTypeArgument()
         {
             MethodInfo nonGenericMethod = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction");
-            System.Type[] genericTypeArguments = nonGenericMethod.DeclaringType.GetGenericArguments();
-            
-            System.Type parameterType = Convert.ToParameterType(
+            Type[] genericTypeArguments = nonGenericMethod.DeclaringType.GetGenericArguments();
+
+            Type parameterType = JTCG.Convert.ToParameterType(
                 nonGenericMethod.GetParameters()[0],
                 genericTypeArguments,
-                System.Type.EmptyTypes);
+                Type.EmptyTypes);
 
             Assert.That(parameterType, Is.EqualTo(genericTypeArguments[1]));
         }
@@ -175,12 +176,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void ToParameterType_GenericMethodArgument()
         {
             MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
-            System.Type[] genericMethodArguments = genericMethod.GetGenericArguments();
+            Type[] genericMethodArguments = genericMethod.GetGenericArguments();
 
-            System.Type parameterType = Convert.ToParameterType(
+            Type parameterType = JTCG.Convert.ToParameterType(
                 genericMethod.GetParameters()[0],
                 genericMethodArguments,
-                System.Type.EmptyTypes);
+                Type.EmptyTypes);
 
             Assert.That(parameterType, Is.EqualTo(genericMethodArguments[0]));
         }
@@ -191,8 +192,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ToTypeNames()
         {
-            System.Type[] types = { typeof(int), typeof(int), typeof(double), typeof(byte) };
-            string[] typeNames = Convert.ToTypeNames(types);
+            Type[] types = { typeof(int), typeof(int), typeof(double), typeof(byte) };
+            string[] typeNames = JTCG.Convert.ToTypeNames(types);
 
             Assert.That(typeNames, Has.Length(4));
             Assert.That(typeNames, Has.Length(types.Length));
@@ -209,7 +210,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ToTypeNames_NoTypes()
         {
-            Assert.That(Convert.ToTypeNames(System.Type.EmptyTypes), Is.Empty);
+            Assert.That(JTCG.Convert.ToTypeNames(Type.EmptyTypes), Is.Empty);
         }
 
         #endregion

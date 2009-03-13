@@ -24,7 +24,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="MemberType">
+  <xs:complexType name="MemberType" mixed="true">
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>

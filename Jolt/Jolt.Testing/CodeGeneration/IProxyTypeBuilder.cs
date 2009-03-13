@@ -9,6 +9,7 @@
 
 using System;
 using System.Reflection;
+using System.Xml;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -23,5 +24,6 @@ namespace Jolt.Testing.CodeGeneration
         void AddEvent(EventInfo eventInfo);
         Type CreateInterface();
         Type CreateProxy();
+        XmlReader CreateXmlDocCommentReader();
     }
 }

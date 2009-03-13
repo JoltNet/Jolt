@@ -32,6 +32,7 @@
     <DocumentationFile>bin\Release\Jolt.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AbstractXDCReadPolicy.cs" />
     <Compile Include="ConsumptionResult.cs" />
     <Compile Include="Convert.cs" />
     <Compile Include="DefaultXDCReadPolicy.cs" />
@@ -41,6 +42,7 @@
     <Compile Include="GraphMLState.cs" />
     <Compile Include="GraphMLTransition.cs" />
     <Compile Include="IFsmEnumerator.cs" />
+    <Compile Include="IXmlDocCommentReader.cs" />
     <Compile Include="IXmlDocCommentReadPolicy.cs" />
     <Compile Include="StateTransitionEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Transition.cs" />
     <Compile Include="XmlDocCommentDirectoryElement.cs" />
     <Compile Include="XmlDocCommentDirectoryElementCollection.cs" />
+    <Compile Include="XmlDocCommentNames.cs" />
     <Compile Include="XmlDocCommentReader.cs" />
     <Compile Include="XmlDocCommentReaderSettings.cs" />
   </ItemGroup>

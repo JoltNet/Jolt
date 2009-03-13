@@ -10,8 +10,12 @@
 using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
 
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
@@ -22,7 +26,7 @@ using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
-    using CreateProxyTypeBuilderDelegate = Func<string, Type, ModuleBuilder, IProxyTypeBuilder>;
+    using CreateProxyTypeBuilderDelegate = Func<string, Type, bool, ModuleBuilder, IProxyTypeBuilder>;
 
 
     [TestFixture]
@@ -31,6 +35,22 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region public methods --------------------------------------------------------------------
 
         #region initialization --------------------------------------------------------------------
+
+        static ProxyAssemblyBuilderTestFixture()
+        {
+            WorkingDirectoryName = Path.Combine(Path.GetTempPath(), MethodBase.GetCurrentMethod().DeclaringType.Name);
+            PublicStaticBinding = BindingFlags.Public | BindingFlags.Static;
+            PublicInstanceBinding = BindingFlags.Public | BindingFlags.Instance;
+
+            ReaderSettings = new XmlReaderSettings();
+            ReaderSettings.ValidationType = ValidationType.Schema;
+
+            Type schemaAssemblyType = typeof(AbstractXDCReadPolicy);
+            using (Stream schema = schemaAssemblyType.Assembly.GetManifestResourceStream(schemaAssemblyType, "Xml.DocComments.xsd"))
+            {
+                ReaderSettings.Schemas.Add(XmlSchema.Read(schema, null));
+            }
+        }
 
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -71,6 +91,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
             Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
             Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+            Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
         /// <summary>
@@ -96,6 +117,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
             Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
             Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+            Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
         /// <summary>
@@ -122,6 +144,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
             Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
             Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+            Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
         /// <summary>
@@ -149,6 +172,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
             Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
             Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+            Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
         /// <summary>
@@ -183,12 +207,18 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Assert.That(builder.Settings.EmitProperties);
                 Assert.That(builder.Settings.EmitEvents);
                 Assert.That(!builder.Settings.EmitStatics);
+                Assert.That(builder.Settings.EmitXmlDocComments);
 
                 Module[] assemblyModules = builder.Assembly.GetModules();
                 Assert.That(assemblyModules, Is.Not.Empty);
                 Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
                 Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
                 Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+
+                XElement validatedDocComments = XElement.Load(XmlReader.Create(builder.CreateXmlDocCommentReader(), ReaderSettings));
+                Assert.That(validatedDocComments, Is.Not.Null);
+                Assert.That(validatedDocComments.Element(XmlDocCommentNames.AssemblyElement).Element(XmlDocCommentNames.NameElement).Value, Is.EqualTo(sExpectedAssemblyName));
+                Assert.That(validatedDocComments.Element(XmlDocCommentNames.MembersElement).IsEmpty);
             }
             finally
             {
@@ -214,23 +244,23 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // Expectations 
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method and property
                 // on the real subject type.
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetType"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetHashCode"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("ToString"));
@@ -240,9 +270,12 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
 
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
+
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
-
+                
                 assemblyBuilder.AddType(expectedSubjectType);
             });
         }
@@ -259,12 +292,12 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
@@ -279,6 +312,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -299,12 +335,12 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public property and method
@@ -315,6 +351,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -335,12 +374,12 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public property and method
@@ -351,6 +390,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -371,28 +413,31 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, true, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, true, true, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public property
                 // on the real subject type.
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding));
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -413,32 +458,35 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, false, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, false, true, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
                 // on the real subject type.
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetType"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetHashCode"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("ToString"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("Equals"));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1"));
                 proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2"));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding));
+                proxyTypeBuilder.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding));
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -459,32 +507,35 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, true, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, true, true, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
                 // on the real subject type.
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding));
+                proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetType"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("GetHashCode"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("ToString"));
                 proxyTypeBuilder.AddMethod(expectedSubjectType.GetMethod("Equals"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"));
                 proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", BindingFlags.Public | BindingFlags.Static));
-                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", BindingFlags.Public | BindingFlags.Static));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding));
+                proxyTypeBuilder.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding));
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -505,17 +556,20 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, false, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(true, false, false, false, false));
 
                 // Expectations
                 // The proxy type builder is created.
                 Type expectedSubjectType = typeof(__RealSubjectType);
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -543,7 +597,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 foreach (Type expectedType in expectedSubjectTypes)
                 {
                     // The proxy type builder for each type is created.
-                    Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                    Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                         .Return(proxyTypeBuilder);
 
                     // The proxy builder is invoked for each public method
@@ -556,13 +610,15 @@ namespace Jolt.Testing.Test.CodeGeneration
                     // The proxy type and its interface are created.
                     Expect.Call(proxyTypeBuilder.CreateProxy())
                         .Return(null);
+
+                    // The XML doc comments for the proxy and interface type are retrieved.
+                    Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
                 }
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
 
-                assemblyBuilder.AddType(expectedSubjectTypes[0]);
-                assemblyBuilder.AddType(expectedSubjectTypes[1]);
+                Array.ForEach(expectedSubjectTypes, assemblyBuilder.AddType);
             });
         }
 
@@ -591,17 +647,17 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, true, false, false, false));
                 Type expectedType = typeof(__FirstEmptySubjectType);
 
                 // Expectations
                 // The proxy type builder is created.
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
                 // on the subject type, each call raising an exception.
-                foreach (MethodInfo method in expectedType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
+                foreach (MethodInfo method in expectedType.GetMethods(PublicInstanceBinding))
                 {
                     proxyTypeBuilder.AddMethod(method);
                     LastCall.Throw(new InvalidOperationException());
@@ -610,6 +666,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -631,17 +690,17 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, true, false, false));
                 Type expectedType = typeof(__PropertyTestType);
 
                 // Expectations
                 // The proxy type builder is created.
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
                 // on the subject type, each call raising an exception.
-                foreach (PropertyInfo property in expectedType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                foreach (PropertyInfo property in expectedType.GetProperties(PublicInstanceBinding))
                 {
                     proxyTypeBuilder.AddProperty(property);
                     LastCall.Throw(new InvalidOperationException());
@@ -650,6 +709,9 @@ namespace Jolt.Testing.Test.CodeGeneration
                 // The proxy type and its interface are created.
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
@@ -671,17 +733,17 @@ namespace Jolt.Testing.Test.CodeGeneration
                 CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
                 IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
 
-                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true));
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, true, false));
                 Type expectedType = typeof(__EventTestType);
 
                 // Expectations
                 // The proxy type builder is created.
-                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Module))
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                     .Return(proxyTypeBuilder);
 
                 // The proxy builder is invoked for each public method
                 // on the subject type, each call raising an exception.
-                foreach (EventInfo evt in expectedType.GetEvents(BindingFlags.Instance | BindingFlags.Public))
+                foreach (EventInfo evt in expectedType.GetEvents(PublicInstanceBinding))
                 {
                     proxyTypeBuilder.AddEvent(evt);
                     LastCall.Throw(new InvalidOperationException());
@@ -691,10 +753,56 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Expect.Call(proxyTypeBuilder.CreateProxy())
                     .Return(null);
 
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateEmptyDocCommentReader());
+
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
 
                 assemblyBuilder.AddType(expectedType);
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddType() method when XML doc comment
+        /// production is enabled.
+        /// </summary>
+        [Test]
+        public void AddType_XmlDocCommentsEnabled()
+        {
+            With.Mocks(delegate
+            {
+                CreateProxyTypeBuilderDelegate createProxyTypeBuilder = Mocker.Current.CreateMock<CreateProxyTypeBuilderDelegate>();
+                IProxyTypeBuilder proxyTypeBuilder = Mocker.Current.CreateMock<IProxyTypeBuilder>();
+
+                ProxyAssemblyBuilder assemblyBuilder = CreateTestAssemblyBuilder(createProxyTypeBuilder, new ProxyAssemblyBuilderSettings(false, false, false, false, true));
+
+                // Expectations 
+                // The proxy type builder is created.
+                Type expectedSubjectType = typeof(__FirstEmptySubjectType);
+                Expect.Call(createProxyTypeBuilder(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
+                    .Return(proxyTypeBuilder);
+
+                // The proxy type and its interface are created.
+                Expect.Call(proxyTypeBuilder.CreateProxy())
+                    .Return(null);
+
+                // The XML doc comments for the proxy and interface type are retrieved.
+                Expect.Call(proxyTypeBuilder.CreateXmlDocCommentReader()).Return(CreateTestDocCommentReader());
+
+                // Verification and assertions.
+                Mocker.Current.ReplayAll();
+
+                assemblyBuilder.AddType(expectedSubjectType);
+
+                XElement memberElement = XElement.Load(XmlReader.Create(assemblyBuilder.CreateXmlDocCommentReader(), ReaderSettings))
+                    .Element(XmlDocCommentNames.MembersElement)
+                    .Element(XmlDocCommentNames.MemberElement);
+
+                Assert.That(memberElement, Is.Not.Null);
+                Assert.That(memberElement.Attribute(XmlDocCommentNames.NameAttribute).Value, Is.EqualTo("member-name"));
+                Assert.That(memberElement.IsEmpty);
+                Assert.That(memberElement.ElementsAfterSelf().Count(), Is.EqualTo(0));
             });
         }
 
@@ -704,20 +812,81 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void CreateAssembly()
         {
-            string sAssemblyFileName = MethodInfo.GetCurrentMethod().Name + ".dll";
+            VerifyBehavior_CreateAssemblyBuilder(true);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the CreateAssembly() method when
+        /// XML doc comments are not created.
+        /// </summary>
+        [Test]
+        public void CreateAssembly_NoXmlDocComments()
+        {
+            VerifyBehavior_CreateAssemblyBuilder(false);
+        }
+
+        /// <summary>
+        /// Verifies the implementation of the CreateXmlCocCommentReader() method.
+        /// </summary>
+        [Test]
+        public void CreateXmlDocCommentReader()
+        {
+            string sAssemblyFileName = Path.GetRandomFileName() + ".dll";
             string sExpectedAssemblyFullPath = Path.Combine(WorkingDirectoryName, sAssemblyFileName);
 
-            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder("Unit.Testing.Namespace", sExpectedAssemblyFullPath);
-            builder.CreateAssembly();
+            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(
+                "Unit.Testing.Namespace",
+                sExpectedAssemblyFullPath,
+                new ProxyAssemblyBuilderSettings(false, false, false, false, true));
 
-            Assert.That(File.Exists(sExpectedAssemblyFullPath));
-            Assert.That(File.Exists(Path.Combine(Path.GetDirectoryName(sExpectedAssemblyFullPath),
-                Path.GetFileNameWithoutExtension(sAssemblyFileName) + ".pdb")));
+            XElement xmlDocComments = XElement.Load(XmlReader.Create(builder.CreateXmlDocCommentReader(), ReaderSettings));
         }
 
         #endregion
 
         #region private class methods -------------------------------------------------------------
+
+        /// <summary>
+        /// Verifies the behavior of the CreateAssembly() method.
+        /// </summary>
+        /// 
+        /// <param name="expectXmlDocComments">
+        /// Determines if an XML doc comment file is expected to be created.
+        /// </param>
+        private static void VerifyBehavior_CreateAssemblyBuilder(bool expectXmlDocComments)
+        {
+            string sAssemblyFileName = Path.GetRandomFileName() + ".dll";
+            string sExpectedAssemblyFullPath = Path.Combine(WorkingDirectoryName, sAssemblyFileName);
+
+            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(
+                "Unit.Testing.Namespace",
+                sExpectedAssemblyFullPath,
+                new ProxyAssemblyBuilderSettings(false, false, false, false, expectXmlDocComments));
+
+            builder.CreateAssembly();
+
+            Assert.That(File.Exists(sExpectedAssemblyFullPath));
+            Assert.That(File.Exists(Path.ChangeExtension(sExpectedAssemblyFullPath, "pdb")));
+            Assert.That(File.Exists(Path.ChangeExtension(sExpectedAssemblyFullPath, "xml")), Is.EqualTo(expectXmlDocComments));
+        }
+
+        /// <summary>
+        /// Creates an XmlReader capable of reading a simple XML
+        /// doc comment member.
+        /// </summary>
+        private static XmlReader CreateTestDocCommentReader()
+        {
+            return new XElement(XmlDocCommentNames.MemberElement, new XAttribute(XmlDocCommentNames.NameAttribute, "member-name")).CreateReader();
+        }
+
+        /// <summary>
+        /// Creates an XmlReader that reads no XML doc comments.
+        /// </summary>
+        /// <returns></returns>
+        private static XmlReader CreateEmptyDocCommentReader()
+        {
+            return new XDocument().CreateReader();
+        }
 
         /// <summary>
         /// Constructs a test ProxyAssemblyBuilder with benign values and a
@@ -749,7 +918,10 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #region private class data ----------------------------------------------------------------
 
-        private static readonly string WorkingDirectoryName = Path.Combine(Path.GetTempPath(), MethodBase.GetCurrentMethod().DeclaringType.Name);
+        private static readonly string WorkingDirectoryName;
+        private static readonly BindingFlags PublicStaticBinding;
+        private static readonly BindingFlags PublicInstanceBinding;
+        private static readonly XmlReaderSettings ReaderSettings;
 
         #endregion
     }

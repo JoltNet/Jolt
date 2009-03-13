@@ -18,12 +18,6 @@ namespace Jolt
     public interface IXmlDocCommentReadPolicy
     {
         /// <summary>
-        /// Creates an XML element containing the assembly
-        /// element from an XML doc comment data store.
-        /// </summary>
-        XElement ReadAssembly();
-
-        /// <summary>
         /// Creates an XML element containing the member element
         /// with the given name from an XML doc comment data store.
         /// </summary>
