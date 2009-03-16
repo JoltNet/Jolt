@@ -99,14 +99,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LengthMod3Machine.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Xml\DocComments.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Construction_ConfigFileSettings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\LengthMod3Machine.xml" />
   </ItemGroup>
 </Project>

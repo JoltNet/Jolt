@@ -15,7 +15,6 @@ using System.Reflection.Emit;
 using System.Xml;
 
 using Jolt.Testing.Properties;
-using JTCG = Jolt.Testing.CodeGeneration;
 using log4net;
 
 namespace Jolt.Testing.CodeGeneration
@@ -223,7 +222,7 @@ namespace Jolt.Testing.CodeGeneration
             ValidateProperty(property);
 
             // Add the property to the interface.
-            Type[] indexerParameterTypes = JTCG.Convert.ToParameterTypes(property.GetIndexParameters());
+            Type[] indexerParameterTypes = Convert.ToParameterTypes(property.GetIndexParameters());
             PropertyBuilder interfacePropertyBuilder = m_proxyInterface.DefineProperty(property.Name,
                 property.Attributes, property.PropertyType, indexerParameterTypes);
 

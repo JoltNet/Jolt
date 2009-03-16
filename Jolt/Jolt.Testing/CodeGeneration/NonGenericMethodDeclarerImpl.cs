@@ -10,8 +10,6 @@
 using System.Reflection;
 using System.Reflection.Emit;
 
-using JTCG = Jolt.Testing.CodeGeneration;
-
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
@@ -25,7 +23,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
-            builder.SetParameters(JTCG.Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
+            builder.SetParameters(Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
             builder.SetReturnType(realSubjectTypeMethod.ReturnType);
         }
 

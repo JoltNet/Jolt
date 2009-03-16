@@ -42,7 +42,6 @@
     <Compile Include="CodeGeneration\GenericMethodDeclarerImpl.cs" />
     <Compile Include="CodeGeneration\IMethodDeclarerImpl.cs" />
     <Compile Include="CodeGeneration\ConstructorDeclarerImpl.cs" />
-    <Compile Include="CodeGeneration\Convert.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarer.cs" />
     <Compile Include="CodeGeneration\IProxyTypeBuilder.cs" />
     <Compile Include="CodeGeneration\MethodDeclarer.cs" />

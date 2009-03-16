@@ -15,7 +15,6 @@ using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -164,7 +163,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             implementation.DeclareMethod(m_defaultMethodBuilder, method);
             FinalizeDefaultMethodBuilder();
 
-            Assert.That(JTCG.Convert.ToParameterTypes(m_defaultMethodBuilder.GetParameters()), Is.EqualTo(JTCG.Convert.ToParameterTypes(method.GetParameters())));
+            Assert.That(Convert.ToParameterTypes(m_defaultMethodBuilder.GetParameters()), Is.EqualTo(Convert.ToParameterTypes(method.GetParameters())));
             Assert.That(m_defaultMethodBuilder.ReturnType, Is.EqualTo(method.ReturnType));
         }
 

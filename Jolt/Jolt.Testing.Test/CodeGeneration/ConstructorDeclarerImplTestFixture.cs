@@ -14,7 +14,6 @@ using System.Reflection.Emit;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -100,7 +99,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         private ConstructorBuilder CreateConstructorBuilder(ConstructorInfo constructor)
         {
             return CurrentTypeBuilder.DefineConstructor(MethodAttributes.Public,
-                CallingConventions.Standard, JTCG.Convert.ToParameterTypes(constructor.GetParameters()));
+                CallingConventions.Standard, Convert.ToParameterTypes(constructor.GetParameters()));
         }
 
         #endregion

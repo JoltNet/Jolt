@@ -10,6 +10,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
 using QuickGraph;
@@ -38,7 +39,7 @@ namespace Jolt
         /// </param>
         /// 
         /// <param name="graphMLWriter">
-        /// The destination of the serialization operation.
+        /// The target of the serialization operation.
         /// </param>
         /// 
         /// <remarks>
@@ -118,6 +119,52 @@ namespace Jolt
                 (source, target, id) => new GraphMLTransition<TAlphabet>(source, target));
 
             return fsm;
+        }
+
+        /// <summary>
+        /// Serializes the given finite state machine to binary.
+        /// </summary>
+        /// 
+        /// <typeparam name="TAlphabet">
+        /// The type that represents the alphabet operated upon by the
+        /// finite state machine.
+        /// </typeparam>
+        ///
+        /// <param name="fsm">
+        /// The finite state machine to convert.
+        /// </param>
+        ///
+        /// <param name="stream">
+        /// The target of the serialization operation.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// The given Stream is not closed by this method.
+        /// </remarks>
+        public static void ToBinary<TAlphabet>(FiniteStateMachine<TAlphabet> fsm, Stream targetStream)
+        {
+            new BinaryFormatter().Serialize(targetStream, fsm);
+        }
+
+        /// <summary>
+        /// Deserializes the given data stream to a FiniteStateMachine object.
+        /// </summary>
+        /// 
+        /// <typeparam name="TAlphabet">
+        /// The type that represents the alphabet operated upon by the
+        /// finite state machine.
+        /// </typeparam>
+        ///
+        /// <param name="stream">
+        /// The binary stream to convert.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// The given Stream is not closed by this method.
+        /// </remarks>
+        public static FiniteStateMachine<TAlphabet> FromBinary<TAlphabet>(Stream binaryStream)
+        {
+            return (FiniteStateMachine<TAlphabet>)(new BinaryFormatter().Deserialize(binaryStream));
         }
 
         #endregion

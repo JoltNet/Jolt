@@ -8,7 +8,6 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 
 namespace Jolt.Test.Types
 {
@@ -57,4 +56,25 @@ namespace Jolt.Test.Types
 
         internal void method<U>(int x, ref T[,] t, out Action<U[][,]>*[,][] a, Action<int**[][, ,]> b) { a = null; }
 	}
+
+    public class __GenericTestType<R, S, T>
+        where R : struct
+        where S : class, T, new()
+        where T : MarshalByRefObject, IDisposable
+    {
+        public R NonGenericFunction(S s, T t) { throw new ApplicationException("non-generic-function"); }
+        public R NonGenericFunction_MixedArgs(S s, T t, int i) { throw new ApplicationException("non-generic-function-mixed-args"); }
+        public R GenericFunction_MixedArgs<A, B, C>(C c, A a, B b, T t, S s, int i) { throw new ApplicationException("generic-function"); }
+        public R GenericFunction<A, B, C>(A a, B b, C c)
+            where A : struct
+            where B : class, C, new()
+            where C : MarshalByRefObject, ICloneable, IDisposable
+        {
+            throw new ApplicationException("generic-function");
+        }
+
+        public void NoGenericParameters(int x) { throw new ApplicationException("non-generic-function-parameters"); }
+        public void NoParameters() { throw new ApplicationException("no-parameters"); }
+        public void NoParameters<A>() { throw new ApplicationException("no-parameters-generic"); }
+    }
 }

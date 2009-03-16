@@ -16,7 +16,6 @@ using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -43,7 +42,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_GenericMethodConstraints()
         {
-            CurrentTypeBuilder.DefineGenericParameters(JTCG.Convert.ToTypeNames(typeof(__GenericTestType<,,>).GetGenericArguments()));
+            CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(typeof(__GenericTestType<,,>).GetGenericArguments()));
             MethodInfo realSubjectTypeMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
             
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
@@ -54,7 +53,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(method.IsGenericMethod);
 
             Type[] genericMethodArguments = method.GetGenericArguments();
-            Assert.That(JTCG.Convert.ToTypeNames(genericMethodArguments), Is.EquivalentTo(JTCG.Convert.ToTypeNames(realSubjectTypeMethod.GetGenericArguments())));
+            Assert.That(Convert.ToTypeNames(genericMethodArguments), Is.EquivalentTo(Convert.ToTypeNames(realSubjectTypeMethod.GetGenericArguments())));
             Assert.That(genericMethodArguments[0].GenericParameterAttributes,
                 Is.EqualTo(GenericParameterAttributes.NotNullableValueTypeConstraint | GenericParameterAttributes.DefaultConstructorConstraint));
 
@@ -192,7 +191,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private void AssertDeclareMethod(MethodInfo realSubjectTypeMethod)
         {
-            CurrentTypeBuilder.DefineGenericParameters(JTCG.Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
+            CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
 
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
             implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod);
@@ -201,8 +200,8 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodInfo method = CurrentTypeBuilder.GetMethod("__transientMethod");
             Assert.That(method.IsGenericMethod);
             AssertTypeEquivalence(
-                JTCG.Convert.ToParameterTypes(method.GetParameters()),
-                JTCG.Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
+                Convert.ToParameterTypes(method.GetParameters()),
+                Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
             AssertTypeEquivalence(method.ReturnType, realSubjectTypeMethod.ReturnType);
         }
 
@@ -217,7 +216,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private void AssertDefineMethodParameters(MethodInfo realSubjectTypeMethod)
         {
-            CurrentTypeBuilder.DefineGenericParameters(JTCG.Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
+            CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
 
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
             implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod);

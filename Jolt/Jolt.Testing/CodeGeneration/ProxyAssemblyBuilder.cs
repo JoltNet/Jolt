@@ -199,8 +199,8 @@ namespace Jolt.Testing.CodeGeneration
         {
             m_assembly.Save(Path.GetFileName(m_sAssemblyFullPath));
 
-            // TODO: this condition is not right; check for members.count > 0
-            if (m_xmlDocComments.Root != null)
+            if (m_xmlDocComments.Root != null &&
+                !m_xmlDocComments.Root.Element(XmlDocCommentNames.MembersElement).IsEmpty)
             {
                 m_xmlDocComments.Save(Path.ChangeExtension(m_sAssemblyFullPath, "xml"));
             }

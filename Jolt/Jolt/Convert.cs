@@ -19,7 +19,6 @@ namespace Jolt
     /// </summary>
     public static class Convert
     {
-        // TODO: merge this type with Jolt.Testing.Convert
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
@@ -125,6 +124,115 @@ namespace Jolt
             return ToXmlDocCommentMember<MethodInfo>(method.DeclaringType, method.Name, method.GetParameters());
         }
 
+        /// <summary>
+        /// Converts an array of ParameterInfo types to an array of
+        /// types repesenting the type of each paramater.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameters to convert.
+        /// </param>
+        public static Type[] ToParameterTypes(ParameterInfo[] parameters)
+        {
+            return ToParameterTypes(parameters, Type.EmptyTypes, Type.EmptyTypes);
+        }
+
+        /// <summary>
+        /// Converts an array of Type types to an array of
+        /// strings repesenting the names of each paramater.
+        /// </summary>
+        /// 
+        /// <param name="types">
+        /// The types to convert.
+        /// </param>
+        public static string[] ToTypeNames(Type[] types)
+        {
+            return Array.ConvertAll(types, type => type.Name);
+        }
+
+        #endregion
+
+        #region internal methods ------------------------------------------------------------------
+
+        /// <summary>
+        /// Converts an array of ParameterInfo types to an array of
+        /// types repesenting the type of each paramater.  Refers to
+        /// the type from a generic type argument collection when a
+        /// parameter is deemed to be generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameters to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments)
+        {
+            return ToParameterTypes(parameters, genericTypeArguments, Type.EmptyTypes);
+        }
+
+        /// <summary>
+        /// Converts an array of ParameterInfo types to an array of
+        /// types repesenting the type of each paramater.  Refers to
+        /// the type from a generic type parameter collection when a
+        /// parameter is deemed to be generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameters to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        /// 
+        /// <param name="genericMethodArguments">
+        /// The generic arguments from the parameter's method.
+        /// </param>
+        internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments, Type[] genericMethodArguments)
+        {
+            return Array.ConvertAll(parameters, methodParam => ToParameterType(methodParam, genericTypeArguments, genericMethodArguments));
+        }
+
+        /// <summary>
+        /// Converts a ParameterInfo to the type that repesents the
+        /// type of the paramater.  Refers to the type from a generic
+        /// type parameter collection when a parameter is deemed to be
+        /// generic.
+        /// </summary>
+        /// 
+        /// <param name="parameters">
+        /// The parameter to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        /// 
+        /// <param name="genericMethodArguments">
+        /// The generic arguments from the parameter's method.
+        /// </param>
+        internal static Type ToParameterType(ParameterInfo parameter, Type[] genericTypeArguments, Type[] genericMethodArguments)
+        {
+            Type parameterType = parameter.ParameterType;
+            if (parameterType.IsGenericParameter)
+            {
+                if (parameterType.DeclaringMethod != null && genericMethodArguments.Length > 0)
+                {
+                    return genericMethodArguments[parameterType.GenericParameterPosition];
+                }
+
+                if (genericTypeArguments.Length > 0)
+                {
+                    return genericTypeArguments[parameterType.GenericParameterPosition];
+                }
+            }
+
+            return parameterType;
+        }
+
         #endregion
 
         #region private methods -------------------------------------------------------------------
@@ -151,9 +259,8 @@ namespace Jolt
 
             if (memberParameters.Length > 0)
             {
-                // TODO: Replace ConvertAll with method call in other Convert class.
                 builder.Append('(');
-                AppendXDCParameterTypesTo(builder, Array.ConvertAll(memberParameters, param => param.ParameterType))
+                AppendXDCParameterTypesTo(builder, ToParameterTypes(memberParameters))
                     .Append(')');
             }
 

@@ -1314,20 +1314,20 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>).GetProperty("Item", typeof(__PropertyTestType<,,>).GetGenericArguments()),
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
-                Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
+                Type specializedProxy = proxy.MakeGenericType(typeof(Guid), typeof(TimeSpan), typeof(StringBuilder));
                 proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
 
                 // Verify the behavior of the generated proxy.
                 // Get operation.
                 object proxyInstance = Activator.CreateInstance(specializedProxy);
-                object[] getterArguments = { DateTime.Now, TimeSpan.Zero, new StringBuilder() };
+                object[] getterArguments = { Guid.NewGuid(), TimeSpan.Zero, new StringBuilder() };
                 string result = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
                 Assert.That(result, Is.EqualTo("complex-value"));
 
                 // Set operation.
-                proxyProperty.SetValue(proxyInstance, "indexer-value", new object[] { DateTime.Parse("2008-01-01"), TimeSpan.FromDays(0.5), new StringBuilder("test") });
+                proxyProperty.SetValue(proxyInstance, "indexer-value", new object[] { Guid.Empty, TimeSpan.FromDays(0.5), new StringBuilder("test") });
                 result = (string)proxyProperty.GetValue(proxyInstance, getterArguments);
-                Assert.That(result, Is.EqualTo("indexer-value1/1/2008 00:00:0012:00:00test"));
+                Assert.That(result, Is.EqualTo("indexer-value00000000-0000-0000-0000-00000000000012:00:00test"));
             });
         }
 

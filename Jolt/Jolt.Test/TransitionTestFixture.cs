@@ -83,7 +83,7 @@ namespace Jolt.Test
             bool isEventFired = false;
             StateTransitionEventArgs<char> eventArgs = new StateTransitionEventArgs<char>("start", 'c');
             
-            Transition<char> transition = new Transition<char>("start", "start", ch => ch == 'c');
+            Transition<char> transition = new Transition<char>("start", "start", 'c'.Equals);
             transition.OnTransition += delegate(object sender, StateTransitionEventArgs<char> actualArgs)
             {
                 isEventFired = true;
@@ -106,7 +106,7 @@ namespace Jolt.Test
             StateTransitionEventArgs<char> eventArgs = new StateTransitionEventArgs<char>("start", 'c');
             EventHandler<StateTransitionEventArgs<char>> eventHandler = (s, a) => ++raiseEventCount;
 
-            Transition<char> transition = new Transition<char>("start", "start", ch => ch == 'c');
+            Transition<char> transition = new Transition<char>("start", "start", 'c'.Equals);
             transition.OnTransition += eventHandler;
 
             transition.RaiseOnTransitionEvent(eventArgs);
@@ -119,6 +119,162 @@ namespace Jolt.Test
             transition.OnTransition += eventHandler;
             transition.RaiseOnTransitionEvent(eventArgs);
             Assert.That(raiseEventCount, Is.EqualTo(2));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(object) method
+        /// when the given object for comparison is not a transition.
+        /// </summary>
+        [Test]
+        public void Equals_Object_NotTransition()
+        {
+            Transition<char> trans_x = new Transition<char>("start", "final", Char.IsDigit);
+            Assert.That(!trans_x.Equals(this));
+        }
+
+        /// <summary>
+        /// Verifies the axiomatic behavior of the Equals(Transition) method.
+        /// </summary>
+        [Test]
+        public void Equals()
+        {
+            EventHandler<StateTransitionEventArgs<char>> eventHandler = delegate { };
+            Transition<char> trans_x = new Transition<char>("start", "final", Char.IsDigit);
+            trans_x.OnTransition += eventHandler;
+
+            Transition<char> trans_y = new Transition<char>("start", "final", Char.IsDigit);
+            trans_y.OnTransition += eventHandler;
+
+            Transition<char> trans_z = new Transition<char>("start", "final", Char.IsDigit);
+            trans_z.OnTransition += eventHandler;
+
+            // Value-based equality assertions.
+            Assert.That(trans_x, Is.EqualTo(trans_y));
+            Assert.That(trans_y, Is.EqualTo(trans_z));
+
+            // Equality axiom assertions.
+            Assert.That(trans_x.Equals(trans_x));
+            Assert.That(trans_x.Equals(trans_y), Is.EqualTo(trans_y.Equals(trans_x)));
+            
+            if (trans_x.Equals(trans_y) && trans_y.Equals(trans_z))
+            {
+                Assert.That(trans_x.Equals(trans_z));
+            }
+
+            if (trans_x.Equals(trans_z))
+            {
+                Assert.That(trans_x.Equals(trans_y) && trans_y.Equals(trans_z));
+            }
+
+            Assert.That(!trans_x.Equals(null));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(Transition) method
+        /// when two transitions are not equal by source state.
+        /// </summary>
+        [Test]
+        public void Equals_NotEqualBySource()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("target", "target", Char.IsDigit);
+
+            Assert.That(trans_x, Is.Not.EqualTo(trans_y));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(Transition) method
+        /// when two transitions are not equal by target state.
+        /// </summary>
+        [Test]
+        public void Equals_NotEqualByTarget()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("source", "source", Char.IsDigit);
+
+            Assert.That(trans_x, Is.Not.EqualTo(trans_y));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(Transition) method
+        /// when two transitions are not equal by transition predicate.
+        /// </summary>
+        [Test]
+        public void Equals_NotEqualByPredicate()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("source", "target", Char.IsLetter);
+
+            Assert.That(trans_x, Is.Not.EqualTo(trans_y));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(Transition) method
+        /// when two transitions are not equal by description.
+        /// </summary>
+        [Test]
+        public void Equals_NotEqualByDescription()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("source", "target", Char.IsDigit, "description");
+
+            Assert.That(trans_x, Is.Not.EqualTo(trans_y));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Equals(Transition) method
+        /// when two transitions are not equal by event handler.
+        /// </summary>
+        [Test]
+        public void Equals_NotEqualByEventHandler()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("source", "target", Char.IsDigit);
+            trans_y.OnTransition += delegate { };
+
+            Assert.That(trans_x, Is.Not.EqualTo(trans_y));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the GetHashCode() method when
+        /// two transition objects are equal.
+        /// </summary>
+        [Test]
+        public new void GetHashCode()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            Transition<char> trans_y = new Transition<char>("source", "target", Char.IsDigit);
+
+            Assert.That(trans_x, Is.EqualTo(trans_y));
+            Assert.That(trans_x.GetHashCode(), Is.EqualTo(trans_y.GetHashCode()));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the GetHashCode() method when
+        /// a state change occurs as part of the Description property.
+        /// </summary>
+        [Test]
+        public void GetHashCode_DescriptionChange()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            int hashCode = trans_x.GetHashCode();
+            trans_x.Description = null;
+
+            Assert.That(hashCode, Is.Not.EqualTo(trans_x.GetHashCode()));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the GetHashCode() method when
+        /// a state change occurs as part of the OnTransition event.
+        /// </summary>
+        [Test]
+        public void GetHashCode_EventHandlerChange()
+        {
+            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
+            int hashCode = trans_x.GetHashCode();
+            trans_x.OnTransition += delegate { };
+
+            Assert.That(hashCode, Is.Not.EqualTo(trans_x.GetHashCode()));
         }
 
         #endregion

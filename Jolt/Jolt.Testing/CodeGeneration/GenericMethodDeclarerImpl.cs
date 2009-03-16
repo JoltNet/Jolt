@@ -11,8 +11,6 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-using JTCG = Jolt.Testing.CodeGeneration;
-
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
@@ -32,15 +30,15 @@ namespace Jolt.Testing.CodeGeneration
 
             // Create any generic method arguments required by the method.
             GenericTypeParameterBuilder[] genericMethodArguments = builder.DefineGenericParameters(
-                JTCG.Convert.ToTypeNames(realSubjectGenericMethodArguments));
+                Convert.ToTypeNames(realSubjectGenericMethodArguments));
             DeclarationHelper.CopyTypeConstraints(realSubjectGenericMethodArguments, genericMethodArguments);
 
             // Initialize the signature of the method.
-            builder.SetParameters(JTCG.Convert.ToParameterTypes(
+            builder.SetParameters(Convert.ToParameterTypes(
                 realSubjectTypeMethod.GetParameters(),
                 genericTypeArguments,
                 genericMethodArguments));
-            builder.SetReturnType(JTCG.Convert.ToParameterType(
+            builder.SetReturnType(Convert.ToParameterType(
                 realSubjectTypeMethod.ReturnParameter,
                 genericTypeArguments,
                 genericMethodArguments));

@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -122,7 +124,7 @@ namespace Jolt.Test
         public void FromGraphML_Vertices()
         {
             FiniteStateMachine<char> fsm;
-            using (TextReader reader = new StreamReader(GetGraphMLResource("LengthMod3Machine.xml")))
+            using (TextReader reader = new StreamReader(GetGraphMLResource(LengthMod3MachineResourceName)))
             {
                 fsm = FsmConverter.FromGraphML<char>(reader);
             }
@@ -135,14 +137,14 @@ namespace Jolt.Test
             {
                 switch (states[i])
                 {
-                    case Mod0State:
+                    case "mod3(len) = 0":
 
                         Assert.That(fsm.StartState, Is.EqualTo(states[i]));
                         Assert.That(fsm.IsFinalState(states[i]));
                         break;
 
-                    case Mod1State:
-                    case Mod2State:
+                    case "mod3(len) = 1":
+                    case "mod3(len) = 2":
 
                         Assert.That(fsm.StartState, Is.Not.EqualTo(states[i]));
                         Assert.That(!fsm.IsFinalState(states[i]));
@@ -164,48 +166,142 @@ namespace Jolt.Test
         public void FromGraphML_Edges()
         {
             FiniteStateMachine<char> fsm;
-            using (TextReader reader = new StreamReader(GetGraphMLResource("LengthMod3Machine.xml")))
+            using (TextReader reader = new StreamReader(GetGraphMLResource(LengthMod3MachineResourceName)))
             {
                 fsm = FsmConverter.FromGraphML<char>(reader);
             }
 
-            Transition<char>[] transitions = fsm.AsGraph.Edges.ToArray();
-            Assert.That(transitions, Has.Length(3));
-            Assert.That(transitions.Select(t => t.Source).ToArray(), Is.Unique);
+            Assert.That(fsm.AsGraph.Edges.ToArray(), Is.EqualTo(FsmFactory.CreateLengthMod3Machine().AsGraph.Edges.ToArray()));
+        }
 
-            for (int i = 0; i < transitions.Length; ++i)
+        /// <summary>
+        /// Verifies the behavior of the ToBinary() method, for the
+        /// vertices of an FSM.
+        /// </summary>
+        [Test]
+        public void ToBinary_Vertices()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            FiniteStateMachine<char> serializedFsm;
+
+            using (Stream stream = new MemoryStream())
             {
-                switch (transitions[i].Source)
-                {
-                    case Mod0State:
+                FsmConverter.ToBinary(fsm, stream);
+                
+                stream.Position = 0;
+                serializedFsm = new BinaryFormatter().Deserialize(stream) as FiniteStateMachine<char>;
+            }
 
-                        Assert.That(transitions[i].Target, Is.EqualTo(Mod2State));
-                        break;
+            Assert.That(serializedFsm, Is.Not.Null);
+            Assert.That(fsm.AsGraph.Vertices.ToArray(), Is.EqualTo(serializedFsm.AsGraph.Vertices.ToArray()));
+            Assert.That(fsm.StartState, Is.EqualTo(serializedFsm.StartState));
+            Assert.That(fsm.FinalStates.ToArray(), Is.EqualTo(fsm.FinalStates.ToArray()));
+        }
 
-                    case Mod1State:
+        /// <summary>
+        /// Verifies the behavior of the ToBinary() method, for the
+        /// edges of an FSM.
+        /// </summary>
+        [Test]
+        public void ToBinary_Edges()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            fsm.AsGraph.Edges.First().OnTransition += delegate { };
 
-                        Assert.That(transitions[i].Target, Is.EqualTo(Mod0State));
-                        break;
+            FiniteStateMachine<char> serializedFsm;
+            using (Stream stream = new MemoryStream())
+            {
+                FsmConverter.ToBinary(fsm, stream);
 
-                    case Mod2State:
+                stream.Position = 0;
+                serializedFsm = new BinaryFormatter().Deserialize(stream) as FiniteStateMachine<char>;
+            }
 
-                        Assert.That(transitions[i].Target, Is.EqualTo(Mod1State));
-                        break;
+            Assert.That(serializedFsm, Is.Not.Null);
+            Assert.That(fsm.AsGraph.Edges.ToArray(), Is.EqualTo(serializedFsm.AsGraph.Edges.ToArray()));
+        }
 
-                    default:
+        /// <summary>
+        /// Verifies the behavior of the ToBinary() method, when
+        /// an object in the FSM's object graph is not serializable.
+        /// </summary>
+        [Test, ExpectedException(typeof(SerializationException))]
+        public void ToBinary_NonSerializable()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            fsm.AsGraph.Edges.First().OnTransition += __EventHandler;
 
-                        Assert.Fail("Unexpected transition.");
-                        break;
-                }
-
-                Assert.That(transitions[i].Description, Is.EqualTo("<.cctor>b__0"));
-                Assert.That(transitions[i].TransitionPredicate, Is.EqualTo(Delegate.CreateDelegate(
-                    typeof(Predicate<char>),
-                    typeof(FsmFactory).GetMethod(transitions[i].Description, BindingFlags.NonPublic | BindingFlags.Static))));
+            using (Stream stream = new MemoryStream())
+            {
+                FsmConverter.ToBinary(fsm, stream);
             }
         }
 
-        #region private class methods -------------------------------------------------------------
+        /// <summary>
+        /// Verifies the behavior of the FromBinary() method, for the
+        /// vertices of an FSM.
+        /// </summary>
+        [Test]
+        public void FromBinary_Vertices()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            FiniteStateMachine<char> deserializedFsm;
+
+            using (Stream stream = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(stream, fsm);
+
+                stream.Position = 0;
+                deserializedFsm = FsmConverter.FromBinary<char>(stream);
+            }
+
+            Assert.That(fsm.AsGraph.Vertices.ToArray(), Is.EqualTo(deserializedFsm.AsGraph.Vertices.ToArray()));
+            Assert.That(fsm.StartState, Is.EqualTo(deserializedFsm.StartState));
+            Assert.That(fsm.FinalStates.ToArray(), Is.EqualTo(fsm.FinalStates.ToArray()));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the FromBinary() method, for the
+        /// edges of an FSM.
+        /// </summary>
+        [Test]
+        public void FromBinary_Edges()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
+            fsm.AsGraph.Edges.First().OnTransition += delegate { };
+
+            FiniteStateMachine<char> deserializedFsm;
+            using (Stream stream = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(stream, fsm);
+
+                stream.Position = 0;
+                deserializedFsm = FsmConverter.FromBinary<char>(stream);
+            }
+
+            Assert.That(fsm.AsGraph.Edges.ToArray(), Is.EqualTo(deserializedFsm.AsGraph.Edges.ToArray()));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the FromBinary() method when
+        /// the binary stream can not be deserialized to an FSM.
+        /// </summary>
+        [Test, ExpectedException(typeof(InvalidCastException))]
+        public void FromBinary_InvalidStreamContents()
+        {
+            using (Stream stream = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(stream, "invalid");
+
+                stream.Position = 0;
+                FsmConverter.FromBinary<int>(stream);
+            }
+        }
+
+        #region private methods -------------------------------------------------------------------
+
+        private void __EventHandler(object sender, StateTransitionEventArgs<char> args) { }
+
 
         /// <summary>
         /// Creates the GraphML for the given FSM.
@@ -264,10 +360,7 @@ namespace Jolt.Test
         #region private data ----------------------------------------------------------------------
 
         private static readonly XNamespace GraphMLNamespace = "http://graphml.graphdrawing.org/xmlns";
-
-        private const string Mod0State = "mod3(len) = 0";
-        private const string Mod1State = "mod3(len) = 1";
-        private const string Mod2State = "mod3(len) = 2";
+        private static readonly string LengthMod3MachineResourceName = "Xml.LengthMod3Machine.xml";
 
         #endregion
     }

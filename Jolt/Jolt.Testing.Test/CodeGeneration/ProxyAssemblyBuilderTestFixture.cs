@@ -812,17 +812,27 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void CreateAssembly()
         {
-            VerifyBehavior_CreateAssemblyBuilder(true);
+            VerifyBehavior_CreateAssemblyBuilder(true, true);
         }
 
         /// <summary>
         /// Verifies the behavior of the CreateAssembly() method when
-        /// XML doc comments are not created.
+        /// there are no XML doc comments to emit.
         /// </summary>
         [Test]
         public void CreateAssembly_NoXmlDocComments()
         {
-            VerifyBehavior_CreateAssemblyBuilder(false);
+            VerifyBehavior_CreateAssemblyBuilder(false, true);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the CreateAssembly() method when
+        /// XML doc comment production is disabled.
+        /// </summary>
+        [Test]
+        public void CreateAssembly_XmlDocCommentsDisabled()
+        {
+            VerifyBehavior_CreateAssemblyBuilder(false, false);
         }
 
         /// <summary>
@@ -853,7 +863,11 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="expectXmlDocComments">
         /// Determines if an XML doc comment file is expected to be created.
         /// </param>
-        private static void VerifyBehavior_CreateAssemblyBuilder(bool expectXmlDocComments)
+        /// 
+        /// <param name="emitComments">
+        /// Determines if XML doc comments should be created.
+        /// </param>
+        private static void VerifyBehavior_CreateAssemblyBuilder(bool expectXmlDocComments, bool emitComments)
         {
             string sAssemblyFileName = Path.GetRandomFileName() + ".dll";
             string sExpectedAssemblyFullPath = Path.Combine(WorkingDirectoryName, sAssemblyFileName);
@@ -861,8 +875,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(
                 "Unit.Testing.Namespace",
                 sExpectedAssemblyFullPath,
-                new ProxyAssemblyBuilderSettings(false, false, false, false, expectXmlDocComments));
+                new ProxyAssemblyBuilderSettings(false, false, false, false, emitComments));
 
+            if (expectXmlDocComments) { builder.AddType(typeof(Console)); }
             builder.CreateAssembly();
 
             Assert.That(File.Exists(sExpectedAssemblyFullPath));

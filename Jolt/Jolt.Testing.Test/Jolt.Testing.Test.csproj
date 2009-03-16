@@ -38,7 +38,6 @@
     <Compile Include="CodeGeneration\AbstractMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\ConstructorDeclarerImplTestFixture.cs" />
-    <Compile Include="CodeGeneration\ConvertTestFixture.cs" />
     <Compile Include="CodeGeneration\DeclationHelperTestFixture.cs" />
     <Compile Include="CodeGeneration\GenericConstructorDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\GenericMethodDeclarerImplTestFixture.cs" />

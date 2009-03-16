@@ -29,9 +29,9 @@ namespace Jolt
     /// The FSM is modelled as a graph, and may converted
     /// to and from the <see cref="QuickGraph.IGraph"/> data type.
     /// </remarks>
+    [Serializable]
     public class FiniteStateMachine<TAlphabet>
     {
-        // TODO: class needs to be serializable.
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>

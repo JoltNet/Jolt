@@ -16,7 +16,6 @@ using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
-using JTCG = Jolt.Testing.CodeGeneration;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -172,8 +171,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 .DefineType("__transientType_" + Guid.NewGuid().ToString("N"));
 
             Type[] sourceTypes = typeof(__GenericTestType<,,>).GetGenericArguments();
-            GenericTypeParameterBuilder[] targetTypes = builder.DefineGenericParameters(
-                JTCG.Convert.ToTypeNames(sourceTypes));
+            GenericTypeParameterBuilder[] targetTypes = builder.DefineGenericParameters(Convert.ToTypeNames(sourceTypes));
 
             DeclarationHelper.CopyTypeConstraints(sourceTypes, targetTypes);
             Type[] genericArguments = builder.CreateType().GetGenericArguments();

@@ -10,8 +10,6 @@
 using System.Reflection;
 using System.Reflection.Emit;
 
-using JTCG = Jolt.Testing.CodeGeneration;
-
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
@@ -40,7 +38,7 @@ namespace Jolt.Testing.CodeGeneration
             ParameterInfo[] constructorParameters = RealSubjectTypeMethod.GetParameters();
 
             ConstructorBuilder builder = Builder.DefineConstructor(MethodAttributes, CallingConventions.HasThis,
-                JTCG.Convert.ToParameterTypes(constructorParameters, Builder.GetGenericArguments()));
+                Convert.ToParameterTypes(constructorParameters, Builder.GetGenericArguments()));
             Implementation.DefineMethodParameters(builder, RealSubjectTypeMethod);
 
             return builder;
