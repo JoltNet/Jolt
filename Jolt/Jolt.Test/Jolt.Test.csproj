@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateTransitionEventArgsTestFixture.cs" />
     <Compile Include="TestTypes.cs" />
+    <Compile Include="TextWriterDotEngineTestFixture.cs" />
     <Compile Include="TransitionTestFixture.cs" />
     <Compile Include="XmlDocCommentDirectoryElementCollectionTestFixture.cs" />
     <Compile Include="XmlDocCommentDirectoryElementTestFixture.cs" />
@@ -83,6 +84,10 @@
     <Reference Include="QuickGraph, Version=3.1.31203.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.Graphviz.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.3.0.906, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -7,6 +7,7 @@
 // File created: 1/18/2009 12:38:46 PM
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -14,6 +15,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
 using QuickGraph;
+using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
 using QuickGraph.Serialization;
 
 namespace Jolt
@@ -165,6 +168,51 @@ namespace Jolt
         public static FiniteStateMachine<TAlphabet> FromBinary<TAlphabet>(Stream binaryStream)
         {
             return (FiniteStateMachine<TAlphabet>)(new BinaryFormatter().Deserialize(binaryStream));
+        }
+
+        /// <summary>
+        /// Serializes the given finite state machine to a GraphViz representation.
+        /// </summary>
+        /// 
+        /// <typeparam name="TAlphabet">
+        /// The type that represents the alphabet operated upon by the
+        /// finite state machine.
+        /// </typeparam>
+        ///
+        /// <param name="fsm">
+        /// The finite state machine to convert.
+        /// </param>
+        ///
+        /// <param name="writer">
+        /// The target of the serialization operation.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// The given TextWriter is not closed by this method.
+        /// </remarks>
+        public static void ToGraphViz<TAlphabet>(FiniteStateMachine<TAlphabet> fsm, TextWriter writer)
+        {
+            GraphvizAlgorithm<string, Transition<TAlphabet>> algorithm = new GraphvizAlgorithm<string, Transition<TAlphabet>>(fsm.AsGraph);
+
+            algorithm.FormatEdge += (s, args) => args.EdgeFormatter.Label.Value = args.Edge.Description;
+            algorithm.FormatVertex += delegate(object sender, FormatVertexEventArgs<string> args)
+            {
+                if (fsm.IsFinalState(args.Vertex))
+                {
+                    args.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
+                }
+                else
+                {
+                    args.VertexFormatter.Shape = GraphvizVertexShape.Circle;
+                }
+
+                if (fsm.StartState == args.Vertex)
+                {
+                    args.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+                }
+            };
+
+            algorithm.Generate(new TextWriterDotEngine(writer), String.Empty);
         }
 
         #endregion

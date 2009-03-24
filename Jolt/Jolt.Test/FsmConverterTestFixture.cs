@@ -298,6 +298,33 @@ namespace Jolt.Test
             }
         }
 
+        /// <summary>
+        /// Verifies the behavior of the ToGraphViz() method.
+        /// </summary>
+        [Test]
+        public void ToGraphViz()
+        {
+            using (Stream stream = new MemoryStream())
+            {
+                TextWriter writer = new StreamWriter(stream);
+                FsmConverter.ToGraphViz(FsmFactory.CreateLengthMod3Machine(), writer);
+                writer.Flush();
+                
+                stream.Position = 0;
+                TextReader reader = new StreamReader(stream);
+                
+                Assert.That(reader.ReadLine(), Is.EqualTo("digraph G {"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("0 [label=\"mod3(len) = 2\", shape=circle];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("1 [label=\"mod3(len) = 1\", shape=circle];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("2 [label=\"mod3(len) = 0\", style=bold, shape=doublecircle];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("0 -> 1 [ label=\"<.cctor>b__0\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("1 -> 2 [ label=\"<.cctor>b__0\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("2 -> 0 [ label=\"<.cctor>b__0\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("}"));
+                Assert.That(reader.Read(), Is.EqualTo(-1));
+            }
+        }
+
         #region private methods -------------------------------------------------------------------
 
         private void __EventHandler(object sender, StateTransitionEventArgs<char> args) { }

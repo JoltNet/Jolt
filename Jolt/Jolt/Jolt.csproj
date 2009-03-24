@@ -51,6 +51,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TextWriterDotEngine.cs" />
     <Compile Include="Transition.cs" />
     <Compile Include="XmlDocCommentDirectoryElement.cs" />
     <Compile Include="XmlDocCommentDirectoryElementCollection.cs" />
@@ -70,6 +71,10 @@
     <Reference Include="QuickGraph, Version=3.1.31203.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.Graphviz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
