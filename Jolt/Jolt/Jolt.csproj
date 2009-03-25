@@ -60,9 +60,9 @@
     <Compile Include="XmlDocCommentReaderSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Jolt.Testing.CodeGeneration.Proxies, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Jolt.Testing.GeneratedTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\Jolt-Generated\Jolt.Testing.CodeGeneration.Proxies.dll</HintPath>
+      <HintPath>..\..\external\Jolt-Generated\bin\Jolt.Testing.GeneratedTypes.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
