@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5DCC54DE-A15F-4719-BECE-463295EE32C3}"
+	ProjectSection(SolutionItems) = preProject
+		Jolt.license.txt = Jolt.license.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Test", "Jolt.Testing.Test\Jolt.Testing.Test.csproj", "{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.CodeGeneration.ProxyAssemblyDriver", "Jolt.Testing.CodeGeneration.ProxyAssemblyDriver\Jolt.Testing.CodeGeneration.ProxyAssemblyDriver.csproj", "{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing", "Jolt.Testing\Jolt.Testing.csproj", "{62192419-8710-4796-AA18-1F2F8382E907}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt", "Jolt\Jolt.csproj", "{DA98557A-159C-4D4B-9663-7E7D479318CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Test", "Jolt.Test\Jolt.Test.csproj", "{A53A6CB3-346F-43B6-940A-066ADBE77FF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62192419-8710-4796-AA18-1F2F8382E907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62192419-8710-4796-AA18-1F2F8382E907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62192419-8710-4796-AA18-1F2F8382E907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62192419-8710-4796-AA18-1F2F8382E907}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA98557A-159C-4D4B-9663-7E7D479318CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA98557A-159C-4D4B-9663-7E7D479318CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA98557A-159C-4D4B-9663-7E7D479318CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA98557A-159C-4D4B-9663-7E7D479318CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
