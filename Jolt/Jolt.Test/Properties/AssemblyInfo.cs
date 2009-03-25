@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Jolt Library Test Assembly")]
-[assembly: AssemblyDescription("Contains unit tests for the data structures and algorithms in Jolt.dll")]
+[assembly: AssemblyDescription("Contains unit tests for the data structures and algorithms in Jolt.dll.")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Jolt.Test")]
-[assembly: AssemblyCopyright("Copyright © Steve Guidi 2007")]
+[assembly: AssemblyCopyright("Copyright © Steve Guidi 2008")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]
 
