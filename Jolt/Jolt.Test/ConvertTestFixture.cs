@@ -45,7 +45,7 @@ namespace Jolt.Test
         public void ToXmlDocCommentMember_Type_Generic()
         {
             Assert.That(Convert.ToXmlDocCommentMember(typeof(System.Action<,,,>)), Is.EqualTo("T:System.Action`4"));
-            Assert.That(Convert.ToXmlDocCommentMember(typeof(FiniteStateMachine<int>)), Is.EqualTo("T:Jolt.FiniteStateMachine`1"));
+            Assert.That(Convert.ToXmlDocCommentMember(typeof(__GenericTestType<int, char, byte>)), Is.EqualTo("T:Jolt.Test.Types.__GenericTestType`3"));
 
             Assert.That(
                 Convert.ToXmlDocCommentMember(typeof(System.Collections.Generic.List<>)),
@@ -64,8 +64,8 @@ namespace Jolt.Test
         public void ToXmlDocCommentMember_Event()
         {
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Transition<>).GetEvent("OnTransition")),
-                Is.EqualTo("E:Jolt.Transition`1.OnTransition"));
+                Convert.ToXmlDocCommentMember(typeof(__GenericTestType<int, char, byte>).GetEvent("InstanceEvent")),
+                Is.EqualTo("E:Jolt.Test.Types.__GenericTestType`3.InstanceEvent"));
             
             Assert.That(
                 Convert.ToXmlDocCommentMember(typeof(System.Console).GetEvent("CancelKeyPress")),
@@ -84,7 +84,7 @@ namespace Jolt.Test
                 Is.EqualTo("F:System.Int32.MaxValue"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.FieldType<,>).GetField("Field", NonPublicInstance)),
+                Convert.ToXmlDocCommentMember(typeof(FieldType<,>).GetField("Field", NonPublicInstance)),
                 Is.EqualTo("F:Jolt.Test.Types.FieldType`2.Field"));
         }
 
@@ -121,19 +121,19 @@ namespace Jolt.Test
                 Is.EqualTo("P:System.Collections.Generic.List`1.Item(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 4)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 4)),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Int32,`0,`1,`0)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 1)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 1)),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Action{System.Action{System.Action{`1}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 3)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 3)),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(`0[],System.Action{System.Action{`1}[0:,0:][]}[][],`0[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.PointerTestType<>).GetProperties(NonPublicInstance).Single()),
+                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetProperties(NonPublicInstance).Single()),
                 Is.EqualTo("P:Jolt.Test.Types.PointerTestType`1.Item(System.Int32*[],System.Action{System.Action{`0[]}[][]}[],System.Int16***[0:,0:,0:][0:,0:][])"));
         }
 
@@ -162,19 +162,19 @@ namespace Jolt.Test
                 Is.EqualTo("M:System.Collections.Generic.List`1.#ctor(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 4)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 4)),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Int32,`0,`1,`1)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 1)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 1)),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Action{System.Action{System.Action{`0}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 3)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 3)),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(`0[],System.Action{System.Action{System.Action{`1}[][]}[]}[][]@,`1[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.PointerTestType<>).GetConstructors(NonPublicInstance).Single()),
+                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetConstructors(NonPublicInstance).Single()),
                 Is.EqualTo("M:Jolt.Test.Types.PointerTestType`1.#ctor(System.Action{`0[]}[],System.String***[0:,0:,0:][0:,0:][]@)"));
         }
 
@@ -206,7 +206,7 @@ namespace Jolt.Test
                 Is.EqualTo("M:System.Linq.Enumerable.ToLookup(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Collections.Generic.IEqualityComparer{``1})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(Types.PointerTestType<>).GetMethod("method", NonPublicInstance)),
+                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetMethod("method", NonPublicInstance)),
                 Is.EqualTo("M:Jolt.Test.Types.PointerTestType`1.method(System.Int32,`0[0:,0:]@,System.Action{``0[0:,0:][]}*[][0:,0:]@,System.Action{System.Int32**[0:,0:,0:][]})"));
         }
 

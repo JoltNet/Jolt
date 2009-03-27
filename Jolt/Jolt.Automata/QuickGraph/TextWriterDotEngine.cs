@@ -12,7 +12,7 @@ using System.IO;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 
-namespace Jolt
+namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
     /// Implements the IDotEngine interface and provides a GraphViz

@@ -11,10 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Jolt.Properties;
+using Jolt.Automata.Properties;
 using QuickGraph;
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Provides methods to create and manage a finite state machine (FSM),

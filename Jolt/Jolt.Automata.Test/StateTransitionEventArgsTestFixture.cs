@@ -10,7 +10,7 @@
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
-namespace Jolt.Test
+namespace Jolt.Automata.Test
 {
     [TestFixture]
     public sealed class StateTransitionEventArgsTestFixture

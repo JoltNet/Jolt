@@ -17,10 +17,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Linq;
 
+using Jolt.Automata.QuickGraph;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
-namespace Jolt.Test
+namespace Jolt.Automata.Test
 {
     [TestFixture]
     public sealed class FsmConverterTestFixture

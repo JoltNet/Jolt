@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Contains the data that is shared to a subscriber of the

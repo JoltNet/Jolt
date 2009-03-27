@@ -11,7 +11,7 @@ using System;
 
 using QuickGraph;
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Represents a transition between two vertices in a finite

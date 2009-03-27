@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Jolt.Test
+namespace Jolt.Automata.Test
 {
     /// <summary>
     /// Contains methods that create FSM instances that support unit tests.

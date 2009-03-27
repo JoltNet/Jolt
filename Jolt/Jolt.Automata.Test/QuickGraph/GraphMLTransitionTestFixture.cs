@@ -11,11 +11,12 @@ using System;
 using System.Reflection;
 using System.Xml.Serialization;
 
+using Jolt.Automata.QuickGraph;
 using log4net.Config;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
-namespace Jolt.Test
+namespace Jolt.Automata.Test.QuickGraph
 {
     [TestFixture]
     public sealed class GraphMLTransitionTestFixture

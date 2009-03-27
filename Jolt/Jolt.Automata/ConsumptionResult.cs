@@ -7,7 +7,7 @@
 // File created: 12/23/2008 16:34:47
 // ----------------------------------------------------------------------------
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Contains metadata describing the result of an FSM consuming a sequence

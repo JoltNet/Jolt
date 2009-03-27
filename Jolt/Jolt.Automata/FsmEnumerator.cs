@@ -10,10 +10,10 @@
 using System;
 using System.Linq;
 
-using Jolt.Properties;
+using Jolt.Automata.Properties;
 using QuickGraph;
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Implements the <see cref="IFsmEnumerator"/> interface, providing an

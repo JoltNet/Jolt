@@ -7,7 +7,7 @@
 // File created: 12/8/2008 17:55:17
 // ----------------------------------------------------------------------------
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Defines an interface for enumerating states in a finite state machine (FSM).

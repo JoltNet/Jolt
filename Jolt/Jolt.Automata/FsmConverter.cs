@@ -9,17 +9,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
+using Jolt.Automata.QuickGraph;
 using QuickGraph;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using QuickGraph.Serialization;
 
-namespace Jolt
+namespace Jolt.Automata
 {
     /// <summary>
     /// Converts a FiniteStateMachine class to various external representations.

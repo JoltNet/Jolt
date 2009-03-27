@@ -117,10 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error_XmlDocComments_AssemblyNotResolved" xml:space="preserve">
-    <value>Could not locate an XML doc comments file in the configured search list, for the assembly named '{0}'.</value>
+  <data name="Error_CreateEnumerator_InvalidStartState" xml:space="preserve">
+    <value>An FSM enumerator could not be created because the given start state '{0}' is not present in the FSM.</value>
   </data>
-  <data name="Error_XmlDocComments_FileNotFound" xml:space="preserve">
-    <value>The given XML doc comments file path '{0}' is invalid or inaccessible.</value>
+  <data name="Error_MoveNext_InvalidOperation" xml:space="preserve">
+    <value>The IEnumerator.MoveNext() method is invalid for this class as iteration requires an input symbol.  Please use the MoveNext(TAlphabet) overload.</value>
+  </data>
+  <data name="Error_NDFSM_NotSupported" xml:space="preserve">
+    <value>More than one transition from the state '{0}' that satisfies the input symbol '{1}' was detected.  Non-deterministic FSMs are not supported.</value>
+  </data>
+  <data name="Error_SetFinalStates_InvalidState" xml:space="preserve">
+    <value>The given states could not be marked as final states as there is at least one state in the collection that does not exist within the state machine.</value>
+  </data>
+  <data name="Error_SetFinalState_InvalidState" xml:space="preserve">
+    <value>The state '{0}' can not be marked as a final state as it does not exist within the state machine.</value>
+  </data>
+  <data name="Error_SetStartState_InvalidState" xml:space="preserve">
+    <value>The state '{0}' can not be marked as the start state as it does not exist within the state machine.</value>
+  </data>
+  <data name="Error_AddStates_ImplicitErrorState" xml:space="preserve">
+    <value>The given collection contains the reserved state name '{0}', which can not be added to the finite state machine.</value>
+  </data>
+  <data name="Error_AddState_ImplicitErrorState" xml:space="preserve">
+    <value>The state '{0}' is a reserved state name and can not be added to the finite state machine.</value>
+  </data>
+  <data name="Warn_TransitionDeserialization_InvalidPredicate" xml:space="preserve">
+    <value>Can not deserialize the transition predicate '{0}' for the transition [{1}-&gt;{2}] as it is invalid.  Verify that the signature of the predicate is valid for the transition type, and that the predicate is static.  The default "false-for-all" predicate will be used.</value>
+  </data>
+  <data name="Warn_TransitionDeserialization_PredicateNotSpecified" xml:space="preserve">
+    <value>Can not deserialize transition predicate for the transition [{0}-&gt;{1}] as it was not specified.  The default "false-for-all" predicate will be used.</value>
+  </data>
+  <data name="Warn_TransitionSerialization_DiscardInstancePredicate" xml:space="preserve">
+    <value>The transition predicate with name '{0}' and from type '{1}' can not be serialized as it is non-static.</value>
   </data>
 </root>

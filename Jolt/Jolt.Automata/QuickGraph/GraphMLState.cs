@@ -10,7 +10,7 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace Jolt
+namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
     /// Represents the state object used by the FiniteStateMachine for

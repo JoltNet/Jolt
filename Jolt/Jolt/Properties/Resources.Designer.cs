@@ -61,78 +61,6 @@ namespace Jolt.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The state &apos;{0}&apos; is a reserved state name and can not be added to the finite state machine..
-        /// </summary>
-        internal static string Error_AddState_ImplicitErrorState {
-            get {
-                return ResourceManager.GetString("Error_AddState_ImplicitErrorState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given collection contains the reserved state name &apos;{0}&apos;, which can not be added to the finite state machine..
-        /// </summary>
-        internal static string Error_AddStates_ImplicitErrorState {
-            get {
-                return ResourceManager.GetString("Error_AddStates_ImplicitErrorState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An FSM enumerator could not be created because the given start state &apos;{0}&apos; is not present in the FSM..
-        /// </summary>
-        internal static string Error_CreateEnumerator_InvalidStartState {
-            get {
-                return ResourceManager.GetString("Error_CreateEnumerator_InvalidStartState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The IEnumerator.MoveNext() method is invalid for this class as iteration requires an input symbol.  Please use the MoveNext(TAlphabet) overload..
-        /// </summary>
-        internal static string Error_MoveNext_InvalidOperation {
-            get {
-                return ResourceManager.GetString("Error_MoveNext_InvalidOperation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to More than one transition from the state &apos;{0}&apos; that satisfies the input symbol &apos;{1}&apos; was detected.  Non-deterministic FSMs are not supported..
-        /// </summary>
-        internal static string Error_NDFSM_NotSupported {
-            get {
-                return ResourceManager.GetString("Error_NDFSM_NotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The state &apos;{0}&apos; can not be marked as a final state as it does not exist within the state machine..
-        /// </summary>
-        internal static string Error_SetFinalState_InvalidState {
-            get {
-                return ResourceManager.GetString("Error_SetFinalState_InvalidState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given states could not be marked as final states as there is at least one state in the collection that does not exist within the state machine..
-        /// </summary>
-        internal static string Error_SetFinalStates_InvalidState {
-            get {
-                return ResourceManager.GetString("Error_SetFinalStates_InvalidState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The state &apos;{0}&apos; can not be marked as the start state as it does not exist within the state machine..
-        /// </summary>
-        internal static string Error_SetStartState_InvalidState {
-            get {
-                return ResourceManager.GetString("Error_SetStartState_InvalidState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not locate an XML doc comments file in the configured search list, for the assembly named &apos;{0}&apos;..
         /// </summary>
         internal static string Error_XmlDocComments_AssemblyNotResolved {
@@ -147,33 +75,6 @@ namespace Jolt.Properties {
         internal static string Error_XmlDocComments_FileNotFound {
             get {
                 return ResourceManager.GetString("Error_XmlDocComments_FileNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can not deserialize the transition predicate &apos;{0}&apos; for the transition [{1}-&gt;{2}] as it is invalid.  Verify that the signature of the predicate is valid for the transition type, and that the predicate is static.  The default &quot;false-for-all&quot; predicate will be used..
-        /// </summary>
-        internal static string Warn_TransitionDeserialization_InvalidPredicate {
-            get {
-                return ResourceManager.GetString("Warn_TransitionDeserialization_InvalidPredicate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can not deserialize transition predicate for the transition [{0}-&gt;{1}] as it was not specified.  The default &quot;false-for-all&quot; predicate will be used..
-        /// </summary>
-        internal static string Warn_TransitionDeserialization_PredicateNotSpecified {
-            get {
-                return ResourceManager.GetString("Warn_TransitionDeserialization_PredicateNotSpecified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The transition predicate with name &apos;{0}&apos; and from type &apos;{1}&apos; can not be serialized as it is non-static..
-        /// </summary>
-        internal static string Warn_TransitionSerialization_DiscardInstancePredicate {
-            get {
-                return ResourceManager.GetString("Warn_TransitionSerialization_DiscardInstancePredicate", resourceCulture);
             }
         }
     }

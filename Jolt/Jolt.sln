@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt", "Jolt\Jolt.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Test", "Jolt.Test\Jolt.Test.csproj", "{A53A6CB3-346F-43B6-940A-066ADBE77FF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata", "Jolt.Automata\Jolt.Automata.csproj", "{01762BEE-A0B0-4E2D-910D-F0654471475A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Test", "Jolt.Automata.Test\Jolt.Automata.Test.csproj", "{8DBEF18E-B628-4419-9EF2-C5E009FB973A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,14 @@ Global
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

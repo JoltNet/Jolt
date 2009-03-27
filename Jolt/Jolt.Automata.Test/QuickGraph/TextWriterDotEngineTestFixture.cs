@@ -9,13 +9,14 @@
 
 using System.IO;
 
+using Jolt.Automata.QuickGraph;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using Rhino.Mocks;
 
-namespace Jolt.Test
+namespace Jolt.Automata.Test.QuickGraph
 {
     [TestFixture]
     public sealed class TextWriterDotEngineTestFixture

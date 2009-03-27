@@ -12,11 +12,11 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
-using Jolt.Properties;
+using Jolt.Automata.Properties;
 using log4net;
 using QuickGraph;
 
-namespace Jolt
+namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
     /// Represents the transition object used by the FiniteStateMachine for
