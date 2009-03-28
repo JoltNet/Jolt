@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Jolt Automata Library Test Assembly")]
-[assembly: AssemblyDescription("Contains unit tests for the data structures and algorithms in Jolt.Automata.dll.")]
+[assembly: AssemblyTitle("Jolt Automata MSAGL Extension Test Assembly")]
+[assembly: AssemblyDescription("Contains unit tests for the data structures and algorithms in Jolt.Automata.Msagl.dll.")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Jolt.Automata.Test")]
+[assembly: AssemblyProduct("Jolt.Automata.Msagl.Test")]
 [assembly: AssemblyCopyright("Copyright © Steve Guidi 2009")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]
@@ -18,7 +17,3 @@ using System.Runtime.CompilerServices;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-
-// Friend Assemblies
-[assembly: InternalsVisibleTo("Jolt.Automata.Glee.Test")]
-[assembly: InternalsVisibleTo("Jolt.Automata.Msagl.Test")]
