@@ -306,7 +306,6 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         where T : MarshalByRefObject, IDisposable
     {
         public R NonGenericFunction(S s, T t) { throw new ApplicationException("non-generic-function"); }
-        //public R NonGenericFunction_MixedArgs(S s, T t, int i) { throw new ApplicationException("non-generic-function-mixed-args"); }
         public R GenericFunction_MixedArgs<A, B, C>(C c, A a, B b, T t, S s, int i) { throw new ApplicationException("generic-function"); }
         public R GenericFunction<A, B, C>(A a, B b, C c)
             where A : struct
@@ -317,8 +316,6 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         }
 
         public void NoGenericParameters(int x) { throw new ApplicationException("non-generic-function-parameters"); }
-        //public void NoParameters() { throw new ApplicationException("no-parameters"); }
-        //public void NoParameters<A>() { throw new ApplicationException("no-parameters-generic"); }
     }
 
     public class __FirstEmptySubjectType { }
@@ -357,4 +354,20 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         private static event EventHandler<EventArgs> PrivateStaticEvent;
     }
 
+    public class __ReturnTypeOverrideType<T, U>
+        where T : U, new()
+        where U : Exception, new()
+    {
+        public PathTooLongException InstanceMethod() { return new PathTooLongException(); }
+        public T GenericTypeParamMethod() { return new T(); }
+        public V GenericMethodParamMethod<V>() where V : U, new() { return new V(); }
+
+        public PathTooLongException InstanceProperty { get { return new PathTooLongException(); } }
+        public T GenericTypeParamProperty { get { return new T(); } }
+        public PathTooLongException InvalidProperty
+        {
+            get { return new PathTooLongException(); }
+            set { Exception e = value; }
+        }
+    }
 }

@@ -48,6 +48,28 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         /// <summary>
         /// Verifies the implementation of the Create() method,
+        /// when creating an interface method and overriding the
+        /// method's return type.
+        /// </summary>
+        [Test]
+        public void Create_InterfaceMethod_ReturnTypeOverride()
+        {
+            AssertMethodDeclared(
+                typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"),
+                typeof(object),
+                InterfaceMethodAttributes, delegate(MethodBuilder method)
+                {
+                    Assert.That(method.IsPublic);
+                    Assert.That(method.IsVirtual);
+                    Assert.That(method.IsAbstract);
+                    Assert.That(!method.IsHideBySig);
+                    Assert.That(!method.IsSpecialName);
+                    Assert.That(method.Attributes & MethodAttributes.NewSlot, Is.Not.EqualTo(MethodAttributes.NewSlot));
+                });
+        }
+
+        /// <summary>
+        /// Verifies the implementation of the Create() method,
         /// when creating a proxy method.
         /// </summary>
         [Test]
@@ -55,6 +77,28 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             AssertMethodDeclared(
                 typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes),
+                ProxyMethodAttributes, delegate(MethodBuilder method)
+                {
+                    Assert.That(method.IsPublic);
+                    Assert.That(method.IsVirtual);
+                    Assert.That(!method.IsStatic);
+                    Assert.That(method.IsFinal);
+                    Assert.That(!method.IsHideBySig);
+                    Assert.That(!method.IsSpecialName);
+                });
+        }
+
+        /// <summary>
+        /// Verifies the implementation of the Create() method,
+        /// when creating a proxy method and overriding the
+        /// method's return type.
+        /// </summary>
+        [Test]
+        public void Create_ProxyMethod_ReturnTypeOverride()
+        {
+            AssertMethodDeclared(
+                typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"),
+                typeof(object),
                 ProxyMethodAttributes, delegate(MethodBuilder method)
                 {
                     Assert.That(method.IsPublic);
@@ -91,28 +135,105 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodAttributes methodDeclarerAttributes,
             Action<MethodBuilder> assertMethodBuilderAttributes)
         {
+            AssertMethodDeclared(
+                expectedMethod,
+                expectedMethod.ReturnType,
+                methodDeclarerAttributes,
+                (declarer, returnType) => declarer.Declare(),
+                assertMethodBuilderAttributes);
+        }
+
+        /// <summary>
+        /// Asserts the expected behavior of the MethodBuilder.Declare() method.
+        /// </summary>
+        /// 
+        /// <param name="expectedMethod">
+        /// The real subject type method used to create a new method.
+        /// </param>
+        /// 
+        /// <param name="expectedMethodReturnType">
+        /// The return type of the real subject type method, or an override
+        /// for the new method's return type.
+        /// </param>
+        /// 
+        /// <param name="methodDeclarerAttributes">
+        /// The attributes of the newly created method.
+        /// </param>
+        /// 
+        /// <param name="assertMethodBuilderAttributes">
+        /// A delegate that defines a set of custom assertions on the attributes
+        /// of the given method builder.
+        /// </param>
+        private void AssertMethodDeclared(
+            MethodInfo expectedMethod,
+            Type expectedMethodReturnType,
+            MethodAttributes methodDeclarerAttributes,
+            Action<MethodBuilder> assertMethodBuilderAttributes)
+        {
+            AssertMethodDeclared(
+                expectedMethod,
+                expectedMethodReturnType,
+                methodDeclarerAttributes,
+                (declarer, returnType) => declarer.Declare(returnType),
+                assertMethodBuilderAttributes);
+        }
+
+        /// <summary>
+        /// Asserts the expected behavior of the MethodBuilder.Declare() method.
+        /// </summary>
+        /// 
+        /// <param name="expectedMethod">
+        /// The real subject type method used to create a new method.
+        /// </param>
+        /// 
+        /// <param name="expectedMethodReturnType">
+        /// The return type of the real subject type method, or an override
+        /// for the new method's return type.
+        /// </param>
+        /// 
+        /// <param name="methodDeclarerAttributes">
+        /// The attributes of the newly created method.
+        /// </param>
+        /// 
+        /// <param name="declareMethodBuilder">
+        /// A delegate that invokes a Declare() method overload from the given
+        /// MethodDeclarer, optionally using the given method return type overload.
+        /// </param>
+        /// 
+        /// <param name="assertMethodBuilderAttributes">
+        /// A delegate that defines a set of custom assertions on the attributes
+        /// of the given method builder.
+        /// </param>
+        private void AssertMethodDeclared(
+            MethodInfo expectedMethod,
+            Type expectedMethodReturnType,
+            MethodAttributes methodDeclarerAttributes,
+            Func<MethodDeclarer, Type, MethodBuilder> declareMethodBuilder,
+            Action<MethodBuilder> assertMethodBuilderAttributes)
+        {
             With.Mocks(delegate
             {
                 IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = Mocker.Current.CreateMock<IMethodDeclarerImpl<MethodBuilder, MethodInfo>>();
 
                 List<MethodBuilder> implementationArgs = new List<MethodBuilder>();
-                Delegate storeMethodBuilderParameter = CreateDeclareMethodsAttributeDelegate(implementationArgs);
+                Action<MethodBuilder, MethodInfo, Type> storeMethodBuilderParameter = CreateStoreMethodBuilderDelegate_3Args(implementationArgs);
+                Action<MethodBuilder, MethodInfo> storeMethodBuilderParameter_bind = (b, m) => storeMethodBuilderParameter(b, m, GetType());
 
                 // Expectations
                 // The method and its parameters are defined/declared.
-                implementation.DeclareMethod(null, expectedMethod);
-                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod))
+                implementation.DeclareMethod(null, expectedMethod, expectedMethodReturnType);
+                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod), RMC.Is.Same(expectedMethodReturnType))
                     .Do(storeMethodBuilderParameter);
 
                 implementation.DefineMethodParameters(null, expectedMethod);
                 LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod))
-                    .Do(storeMethodBuilderParameter);
+                    .Do(storeMethodBuilderParameter_bind);
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();
 
                 MethodDeclarer declarer = new MethodDeclarer(CurrentTypeBuilder, methodDeclarerAttributes, expectedMethod, implementation);
-                MethodBuilder method = declarer.Declare();
+                MethodBuilder method = declareMethodBuilder(declarer, expectedMethodReturnType);
 
                 Assert.That(method.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
                 Assert.That(method.Name, Is.EqualTo(expectedMethod.Name));
@@ -122,7 +243,6 @@ namespace Jolt.Testing.Test.CodeGeneration
                 assertMethodBuilderAttributes(method);
             });
         }
-
 
         #endregion
 

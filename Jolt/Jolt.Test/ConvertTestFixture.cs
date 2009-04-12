@@ -323,54 +323,54 @@ namespace Jolt.Test
         }
 
         /// <summary>
-        /// Verifies the behavior of the ToParameterType() method when
-        /// the given parameter is not generic.
+        /// Verifies the behavior of the ToMethodSignatureType() method when
+        /// the given type is not generic.
         /// </summary>
         [Test]
-        public void ToParameterType()
+        public void ToMethodSignatureType()
         {
-            Type parameterType = Convert.ToParameterType(
-                typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters").GetParameters()[0],
+            Type type = Convert.ToMethodSignatureType(
+                typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters").GetParameters()[0].ParameterType,
                 Type.EmptyTypes,
                 Type.EmptyTypes);
 
-            Assert.That(parameterType, Is.EqualTo(typeof(int)));
+            Assert.That(type, Is.EqualTo(typeof(int)));
         }
 
         /// <summary>
-        /// Verifies the behavior of the ToParameterType() method when
-        /// the given parameter type is a generic type argument.
+        /// Verifies the behavior of the ToMethodSignatureType() method when
+        /// the given type is a generic type argument.
         /// </summary>
         [Test]
-        public void ToParameterType_GenericTypeArgument()
+        public void ToMethodSignatureType_GenericTypeArgument()
         {
             MethodInfo nonGenericMethod = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction");
             Type[] genericTypeArguments = nonGenericMethod.DeclaringType.GetGenericArguments();
 
-            Type parameterType = Convert.ToParameterType(
-                nonGenericMethod.GetParameters()[0],
+            Type type = Convert.ToMethodSignatureType(
+                nonGenericMethod.GetParameters()[0].ParameterType,
                 genericTypeArguments,
                 Type.EmptyTypes);
 
-            Assert.That(parameterType, Is.EqualTo(genericTypeArguments[1]));
+            Assert.That(type, Is.EqualTo(genericTypeArguments[1]));
         }
 
         /// <summary>
-        /// Verifies the behavior of the ToParameterType() method when
+        /// Verifies the behavior of the ToMethodSignatureType() method when
         /// the given parameter type is a generic method argument.
         /// </summary>
         [Test]
-        public void ToParameterType_GenericMethodArgument()
+        public void ToMethodSignatureType_GenericMethodArgument()
         {
             MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
             Type[] genericMethodArguments = genericMethod.GetGenericArguments();
 
-            Type parameterType = Convert.ToParameterType(
-                genericMethod.GetParameters()[0],
+            Type type = Convert.ToMethodSignatureType(
+                genericMethod.GetParameters()[0].ParameterType,
                 genericMethodArguments,
                 Type.EmptyTypes);
 
-            Assert.That(parameterType, Is.EqualTo(genericMethodArguments[0]));
+            Assert.That(type, Is.EqualTo(genericMethodArguments[0]));
         }
 
         /// <summary>

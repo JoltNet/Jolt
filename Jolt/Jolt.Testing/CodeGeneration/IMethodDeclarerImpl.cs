@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// AbstractMethodDeclarerImpl.cs
+// IMethodDeclarerImpl.cs
 //
 // Contains the definition of the IMethodDeclarerImpl interface.
 // Copyright 2008 Steve Guidi.
@@ -7,6 +7,7 @@
 // File created: 7/21/2008 18:41:01
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Reflection;
 
 namespace Jolt.Testing.CodeGeneration
@@ -32,6 +33,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <summary>
         /// Declares the method using the given method builder, modelling
         /// the method signature from the given real subject type method.
+        /// Overrides the declared methods return type to the given type.
         /// </summary>
         /// 
         /// <param name="builder">
@@ -41,7 +43,11 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="realSubjectTypeMethod">
         /// The method to model.
         /// </param>
-        void DeclareMethod(TMethodBuilder builder, TMethod realSubjectTypeMethod);
+        /// 
+        /// <param name="returnType">
+        /// The return type of the declared method.
+        /// </param>
+        void DeclareMethod(TMethodBuilder builder, TMethod realSubjectTypeMethod, Type returnType);
 
         /// <summary>
         /// Defines the methods parameters using the given method builder,

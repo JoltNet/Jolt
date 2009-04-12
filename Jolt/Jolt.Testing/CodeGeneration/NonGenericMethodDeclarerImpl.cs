@@ -7,6 +7,7 @@
 // File created: 7/21/2008 20:07:35
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -20,11 +21,11 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region IMethodDeclarerImpl<MethodBuilder,MethodInfo> implementation ----------------------
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
-        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo, Type>"/>
+        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod, Type returnType)
         {
             builder.SetParameters(Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
-            builder.SetReturnType(realSubjectTypeMethod.ReturnType);
+            builder.SetReturnType(returnType);
         }
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo>"/>

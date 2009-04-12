@@ -129,14 +129,23 @@
   <data name="Error_InvalidProperty" xml:space="preserve">
     <value>The property '{0}' has neither a public getter or a public setter.</value>
   </data>
+  <data name="Error_InvalidProperty_ReturnTypeOverride" xml:space="preserve">
+    <value>Can not override the return type from the property '{0}' because the property contains a setter method.</value>
+  </data>
   <data name="Error_InvalidRealSubjectType" xml:space="preserve">
     <value>The real subject type '{0}' is invalid.  It can not be a delegate or interface type.</value>
+  </data>
+  <data name="Error_InvalidReturnTypeOverride" xml:space="preserve">
+    <value>Can not override the return type from method '{0}' as the desired type '{1}' is not a base type of the method return type '{2}'.</value>
   </data>
   <data name="Error_MemberNotPublic" xml:space="preserve">
     <value>The proxy builder can only accept public methods, properties, and events.</value>
   </data>
   <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
     <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
+  </data>
+  <data name="Error_OverrideCtorReturnType" xml:space="preserve">
+    <value>Can not override the return type of a constructor as a constructor does not have a return value.</value>
   </data>
   <data name="Error_RealSubjectType_LackingConstructor" xml:space="preserve">
     <value>The non-abstract real subject type '{0}' requires at least one public constructor.</value>

@@ -41,7 +41,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_GenericType_NonGenericMethod()
         {
-            AssertDeclareMethod(typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters"));
+            MethodInfo method = typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters");
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -51,7 +52,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_NoParameters()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -61,7 +63,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OneParameter()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) }));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) });
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -71,7 +74,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ManyParameters()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod");
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -81,7 +85,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ParamsArray()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("ParamsArrayArgumentsMethod"));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("ParamsArrayArgumentsMethod");
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -91,7 +96,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OutParameter()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("OutParameterMethod"));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("OutParameterMethod");
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -101,7 +107,19 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_VoidReturnValue()
         {
-            AssertDeclareMethod(typeof(__MethodTestType).GetMethod("VoidReturnValueMethod"));
+            MethodInfo method = typeof(__MethodTestType).GetMethod("VoidReturnValueMethod");
+            AssertDeclareMethod(method, method.ReturnType);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the DeclareMethod() method when the
+        /// declared method's return type is overriden.
+        /// </summary>
+        [Test]
+        public void DeclareMethod_ReturnTypeOverride()
+        {
+            MethodInfo method = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod");
+            AssertDeclareMethod(method, typeof(object));
         }
 
         /// <summary>
@@ -157,14 +175,19 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// The real subject type method given as a parameter to the
         /// DeclareMethod() method.
         /// </param>
-        private void AssertDeclareMethod(MethodInfo method)
+        /// 
+        /// <param name="returnType">
+        /// The declared method's return type, given as a parameter to the
+        /// DefineMethodParameters() method.
+        /// </param>
+        private void AssertDeclareMethod(MethodInfo method, Type returnType)
         {
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, method);
+            implementation.DeclareMethod(m_defaultMethodBuilder, method, returnType);
             FinalizeDefaultMethodBuilder();
 
             Assert.That(Convert.ToParameterTypes(m_defaultMethodBuilder.GetParameters()), Is.EqualTo(Convert.ToParameterTypes(method.GetParameters())));
-            Assert.That(m_defaultMethodBuilder.ReturnType, Is.EqualTo(method.ReturnType));
+            Assert.That(m_defaultMethodBuilder.ReturnType, Is.EqualTo(returnType));
         }
 
         /// <summary>
@@ -179,7 +202,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         private void AssertDefineMethodParameters(MethodInfo method)
         {
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new NonGenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, method);
+            implementation.DeclareMethod(m_defaultMethodBuilder, method, m_defaultMethodBuilder.ReturnType);
             implementation.DefineMethodParameters(m_defaultMethodBuilder, method);
             FinalizeDefaultMethodBuilder();
 

@@ -8,6 +8,8 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
@@ -27,7 +29,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_NoParameters()
         {
-            AssertConstructorDeclaredFrom<NonGenericConstructorDeclarer>(
+            AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes),
                 delegate { });
         }
@@ -39,7 +41,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_OneParameter()
         {
-            AssertConstructorDeclaredFrom<NonGenericConstructorDeclarer>(
+            AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int) }),
                 delegate { });
         }
@@ -51,9 +53,25 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ManyParameter()
         {
-            AssertConstructorDeclaredFrom<NonGenericConstructorDeclarer>(
+            AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int), typeof(int) }),
                 delegate { });
+        }
+
+        #endregion
+
+        #region internal methods -----------------------------------------------------------------=
+
+        /// <see cref="AbstractConstructorDeclarerTestFixture.CreateConstructorDeclarer"/>
+        internal override AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> CreateConstructorDeclarer(
+            ConstructorInfo realSubjectTypeConstructor,
+            IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation)
+        {
+            return new NonGenericConstructorDeclarer(
+                CurrentTypeBuilder,
+                ConstructorAttributes,
+                realSubjectTypeConstructor,
+                implementation);
         }
 
         #endregion

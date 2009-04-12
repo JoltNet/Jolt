@@ -21,8 +21,8 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region IMethodDeclarerImpl<MethodBuilder,MethodInfo> implementation ----------------------
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo>"/>
-        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo, Type>"/>
+        void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod, Type returnType)
         {
             // Obtain all generic arguments that may be required by the method.
             Type[] genericTypeArguments = builder.DeclaringType.GetGenericArguments();
@@ -38,8 +38,8 @@ namespace Jolt.Testing.CodeGeneration
                 realSubjectTypeMethod.GetParameters(),
                 genericTypeArguments,
                 genericMethodArguments));
-            builder.SetReturnType(Convert.ToParameterType(
-                realSubjectTypeMethod.ReturnParameter,
+            builder.SetReturnType(Convert.ToMethodSignatureType(
+                returnType,
                 genericTypeArguments,
                 genericMethodArguments));
         }

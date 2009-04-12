@@ -7,6 +7,7 @@
 // File created: 7/19/2008 13:58:33
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -68,10 +69,17 @@ namespace Jolt.Testing.CodeGeneration
         #region internal instance methods ---------------------------------------------------------
 
         /// <summary>
-        /// Declares a new method, modelling after the associated method
+        /// Declares a new method, modelling it after the associated method
         /// from the real subject type.
         /// </summary>
         internal abstract TMethodBuilder Declare();
+
+        /// <summary>
+        /// Declares a new method, modelling it after the associated method
+        /// from the real subject type.  Suggests an override for the new
+        /// method's return type.
+        /// </summary>
+        internal abstract TMethodBuilder Declare(Type desiredReturnType);
 
         #endregion
 

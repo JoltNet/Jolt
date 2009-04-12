@@ -203,10 +203,25 @@ namespace Jolt.Testing.CodeGeneration
         public virtual void AddMethod(MethodInfo method)
         {
             ThrowOnNullMember(method);
-            ValidateMethod(method);
-            DefineInterfaceAndProxyMethod(method);
+            AddMethod_NonNull(method, method.ReturnType);
+        }
 
-            m_xmlDocCommentBuilder.AddMethod(method);
+        /// <summary>
+        /// Adds a method to the proxy builder, overriding the
+        /// given method's return type.
+        /// </summary>
+        /// 
+        /// <param name="method">
+        /// The method to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnType">
+        /// The type of the return value on the builder's generated method.
+        /// </param>
+        public virtual void AddMethod(MethodInfo method, Type desiredReturnType)
+        {
+            ThrowOnNullMember(method);
+            AddMethod_NonNull(method, desiredReturnType);
         }
 
         /// <summary>
@@ -219,39 +234,29 @@ namespace Jolt.Testing.CodeGeneration
         public virtual void AddProperty(PropertyInfo property)
         {
             ThrowOnNullMember(property);
-            ValidateProperty(property);
+            AddProperty_NonNull(property, property.PropertyType);
+        }
 
-            // Add the property to the interface.
-            Type[] indexerParameterTypes = Convert.ToParameterTypes(property.GetIndexParameters());
-            PropertyBuilder interfacePropertyBuilder = m_proxyInterface.DefineProperty(property.Name,
-                property.Attributes, property.PropertyType, indexerParameterTypes);
-
-            // Add the property to the proxy.
-            PropertyBuilder proxyPropertyBuilder = m_proxy.DefineProperty(property.Name,
-                property.Attributes, property.PropertyType, indexerParameterTypes);
-
-            // Define the property methods (get/set) for the interface and proxy,
-            // when applicable.
-            MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
-
-            MethodInfo getMethod = property.GetGetMethod();
-            MethodInfo setMethod = property.GetSetMethod();
-
-            if (getMethod != null)
-            {
-                DefineInterfaceAndProxyMethod(getMethod, out interfaceMethodBuilder, out proxyMethodBuilder);
-                interfacePropertyBuilder.SetGetMethod(interfaceMethodBuilder);
-                proxyPropertyBuilder.SetGetMethod(proxyMethodBuilder);
-            }
-
-            if (setMethod != null)
-            {
-                DefineInterfaceAndProxyMethod(setMethod, out interfaceMethodBuilder, out proxyMethodBuilder);
-                interfacePropertyBuilder.SetSetMethod(interfaceMethodBuilder);
-                proxyPropertyBuilder.SetSetMethod(proxyMethodBuilder);
-            }
-
-            m_xmlDocCommentBuilder.AddProperty(property);
+        /// <summary>
+        /// Adds a property to the proxy builder, overriding the
+        /// given property's return type on the get method.
+        /// </summary>
+        /// 
+        /// <param name="property">
+        /// The property to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnType">
+        /// The type of the return value on the builder's generated get method.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// It is an error to provide an override for a property with a set method.
+        /// </remarks>
+        public virtual void AddProperty(PropertyInfo property, Type desiredReturnType)
+        {
+            ThrowOnNullMember(property);
+            AddProperty_NonNull(property, desiredReturnType);
         }
 
         /// <summary>
@@ -280,11 +285,14 @@ namespace Jolt.Testing.CodeGeneration
             // any method subscribed to the proxy event will be notified.
             MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
 
-            DefineInterfaceAndProxyMethod(eventInfo.GetAddMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+            MethodInfo addMethod = eventInfo.GetAddMethod();
+            MethodInfo removeMethod = eventInfo.GetRemoveMethod();
+
+            DefineInterfaceAndProxyMethod(addMethod, addMethod.ReturnType, out interfaceMethodBuilder, out proxyMethodBuilder);
             interfaceEventBuilder.SetAddOnMethod(interfaceMethodBuilder);
             proxyEventBuilder.SetAddOnMethod(proxyMethodBuilder);
 
-            DefineInterfaceAndProxyMethod(eventInfo.GetRemoveMethod(), out interfaceMethodBuilder, out proxyMethodBuilder);
+            DefineInterfaceAndProxyMethod(removeMethod, removeMethod.ReturnType, out interfaceMethodBuilder, out proxyMethodBuilder);
             interfaceEventBuilder.SetRemoveOnMethod(interfaceMethodBuilder);
             proxyEventBuilder.SetRemoveOnMethod(proxyMethodBuilder);
 
@@ -380,15 +388,20 @@ namespace Jolt.Testing.CodeGeneration
         /// The method from which the build will base its definitions.
         /// </param>
         /// 
+        /// <param name="methodReturnType">
+        /// The return type for the generated methods, overriding the return
+        /// type of the given method.
+        /// </param>
+        ///
         /// <remarks>
         /// Assumes that the method has been validated prior to the call.
         /// <seealso cref="ValidateMethod(MethodInfo)"/>
         /// <seealso cref="ThrowOnNullMember(MemberInfo)"/>
         /// </remarks>
-        private void DefineInterfaceAndProxyMethod(MethodInfo method)
+        private void DefineInterfaceAndProxyMethod(MethodInfo method, Type methodReturnType)
         {
             MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
-            DefineInterfaceAndProxyMethod(method, out interfaceMethodBuilder, out proxyMethodBuilder);
+            DefineInterfaceAndProxyMethod(method, methodReturnType, out interfaceMethodBuilder, out proxyMethodBuilder);
         }
 
         /// <summary>
@@ -398,6 +411,11 @@ namespace Jolt.Testing.CodeGeneration
         /// 
         /// <param name="method">
         /// The method from which the build will base its definitions.
+        /// </param>
+        /// 
+        /// <param name="methodReturnType">
+        /// The return type for the generated methods, overriding the return
+        /// type of the given method.
         /// </param>
         /// 
         /// <param name="interfaceMethodBuilder">
@@ -413,11 +431,11 @@ namespace Jolt.Testing.CodeGeneration
         /// <seealso cref="ValidateMethod(MethodInfo)"/>
         /// <seealso cref="ThrowOnNullMember(MemberInfo)"/>
         /// </remarks>
-        private void DefineInterfaceAndProxyMethod(MethodInfo method, out MethodBuilder interfaceMethodBuilder, out MethodBuilder proxyMethodBuilder)
+        private void DefineInterfaceAndProxyMethod(MethodInfo method, Type methodReturnType, out MethodBuilder interfaceMethodBuilder, out MethodBuilder proxyMethodBuilder)
         {
             // Declare the interface and proxy methods.
-            interfaceMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Interface, method).Declare();
-            proxyMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Proxy, method).Declare();
+            interfaceMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Interface, method).Declare(methodReturnType);
+            proxyMethodBuilder = m_methodDeclarerFactory.Create(MethodDeclarerTypes.Proxy, method).Declare(methodReturnType);
 
             // Generate the IL that represents the proxy's method call.
             ILGenerator codeGenerator = proxyMethodBuilder.GetILGenerator();
@@ -453,14 +471,18 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="method">
         /// The method to validate.
         /// </param>
-        private void ValidateMethod(MethodInfo method)
+        /// 
+        /// <param name="desiredReturnType">
+        /// The desired type of the return value on the builder's generated method.
+        /// </param>
+        private void ValidateMethod(MethodInfo method, Type desiredReturnType)
         {
             if (!method.IsPublic)
             {
                 throw new InvalidOperationException(Resources.Error_MemberNotPublic);
             }
 
-            ValidateAccessibleMethod(method);
+            ValidateAccessibleMethod(method, desiredReturnType);
         }
 
         /// <summary>
@@ -470,7 +492,11 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="method">
         /// The method to validate.
         /// </param>
-        private void ValidateAccessibleMethod(MethodInfo method)
+        /// 
+        /// <param name="desiredReturnType">
+        /// The desired type of the return value on the builder's generated method.
+        /// </param>
+        private void ValidateAccessibleMethod(MethodInfo method, Type desiredReturnType)
         {
             if (m_addedMembers.Contains(method))
             {
@@ -489,6 +515,12 @@ namespace Jolt.Testing.CodeGeneration
                     String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, method.Name));
             }
 
+            if (!desiredReturnType.IsAssignableFrom(method.ReturnType))
+            {
+                throw new InvalidOperationException(
+                    String.Format(Resources.Error_InvalidReturnTypeOverride, method.Name, desiredReturnType.Name, method.ReturnType.Name));
+            }
+
             m_addedMembers.Add(method);
         }
 
@@ -499,18 +531,28 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="property">
         /// The property to validate.
         /// </param>
-        private void ValidateProperty(PropertyInfo property)
+        /// 
+        /// <param name="desiredReturnType">
+        /// The desired type of the return value on the builder's generated get method.
+        /// </param>
+        private void ValidateProperty(PropertyInfo property, Type desiredReturnType)
         {
             MethodInfo getMethod = property.GetGetMethod();
             MethodInfo setMethod = property.GetSetMethod();
-            
+
             if (getMethod == null && setMethod == null)
             {
                 throw new NotSupportedException(String.Format(Resources.Error_InvalidProperty, property.Name));
             }
 
-            if (getMethod != null) { ValidateAccessibleMethod(getMethod); }
-            if (setMethod != null) { ValidateAccessibleMethod(setMethod); }
+            if (setMethod != null && property.PropertyType != desiredReturnType)
+            {
+                throw new InvalidOperationException(
+                    String.Format(Resources.Error_InvalidProperty_ReturnTypeOverride, property.Name));
+            }
+
+            if (getMethod != null) { ValidateAccessibleMethod(getMethod, desiredReturnType); }
+            if (setMethod != null) { ValidateAccessibleMethod(setMethod, setMethod.ReturnType); }
         }
 
         /// <summary>
@@ -522,8 +564,84 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         private void ValidateEvent(EventInfo eventInfo)
         {
-            ValidateMethod(eventInfo.GetAddMethod(true));
-            ValidateMethod(eventInfo.GetRemoveMethod(true));
+            MethodInfo addMethod = eventInfo.GetAddMethod(true);
+            MethodInfo removeMethod = eventInfo.GetRemoveMethod(true);
+
+            ValidateMethod(addMethod, addMethod.ReturnType);
+            ValidateMethod(removeMethod, removeMethod.ReturnType);
+        }
+
+        /// <summary>
+        /// Adds a non-null method to the proxy builder, overriding the
+        /// given method's return type.
+        /// </summary>
+        /// 
+        /// <param name="method">
+        /// The method to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnType">
+        /// The type of the return value on the builder's generated method.
+        /// </param>
+        private void AddMethod_NonNull(MethodInfo method, Type desiredReturnType)
+        {
+            ValidateMethod(method, desiredReturnType);
+            DefineInterfaceAndProxyMethod(method, desiredReturnType);
+
+            m_xmlDocCommentBuilder.AddMethod(method);
+        }
+
+        /// <summary>
+        /// Adds a property to the proxy builder, overriding the
+        /// given property's return type on the get method.
+        /// </summary>
+        /// 
+        /// <param name="property">
+        /// The property to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnType">
+        /// The type of the return value on the builder's generated get method.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// It is an error to provide an override for a property with a set method.
+        /// </remarks>
+        private void AddProperty_NonNull(PropertyInfo property, Type desiredReturnType)
+        {
+            ValidateProperty(property, desiredReturnType);
+
+            // Add the property to the interface.
+            Type[] indexerParameterTypes = Convert.ToParameterTypes(property.GetIndexParameters());
+            PropertyBuilder interfacePropertyBuilder = m_proxyInterface.DefineProperty(property.Name,
+                property.Attributes, desiredReturnType, indexerParameterTypes);
+
+            // Add the property to the proxy.
+            PropertyBuilder proxyPropertyBuilder = m_proxy.DefineProperty(property.Name,
+                property.Attributes, desiredReturnType, indexerParameterTypes);
+
+            // Define the property methods (get/set) for the interface and proxy,
+            // when applicable.
+            MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
+
+            MethodInfo getMethod = property.GetGetMethod();
+            MethodInfo setMethod = property.GetSetMethod();
+
+            if (getMethod != null)
+            {
+                DefineInterfaceAndProxyMethod(getMethod, desiredReturnType, out interfaceMethodBuilder, out proxyMethodBuilder);
+                interfacePropertyBuilder.SetGetMethod(interfaceMethodBuilder);
+                proxyPropertyBuilder.SetGetMethod(proxyMethodBuilder);
+            }
+
+            if (setMethod != null)
+            {
+                DefineInterfaceAndProxyMethod(setMethod, setMethod.ReturnType, out interfaceMethodBuilder, out proxyMethodBuilder);
+                interfacePropertyBuilder.SetSetMethod(interfaceMethodBuilder);
+                proxyPropertyBuilder.SetSetMethod(proxyMethodBuilder);
+            }
+
+            m_xmlDocCommentBuilder.AddProperty(property);
         }
 
         #endregion

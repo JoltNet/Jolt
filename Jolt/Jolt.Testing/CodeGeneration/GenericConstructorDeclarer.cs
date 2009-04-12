@@ -7,8 +7,11 @@
 // File created: 9/1/2008 13:01:20
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
+
+using Jolt.Testing.Properties;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -42,6 +45,12 @@ namespace Jolt.Testing.CodeGeneration
             Implementation.DefineMethodParameters(builder, RealSubjectTypeMethod);
 
             return builder;
+        }
+
+        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.Declare(Type)"/>
+        internal override ConstructorBuilder Declare(Type desiredReturnType)
+        {
+            throw new InvalidOperationException(Resources.Error_OverrideCtorReturnType);
         }
 
         #endregion

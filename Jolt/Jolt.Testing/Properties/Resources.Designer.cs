@@ -97,11 +97,29 @@ namespace Jolt.Testing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can not override the return type from the property &apos;{0}&apos; because the property contains a setter method..
+        /// </summary>
+        internal static string Error_InvalidProperty_ReturnTypeOverride {
+            get {
+                return ResourceManager.GetString("Error_InvalidProperty_ReturnTypeOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The real subject type &apos;{0}&apos; is invalid.  It can not be a delegate or interface type..
         /// </summary>
         internal static string Error_InvalidRealSubjectType {
             get {
                 return ResourceManager.GetString("Error_InvalidRealSubjectType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can not override the return type from method &apos;{0}&apos; as the desired type &apos;{1}&apos; is not a base type of the method return type &apos;{2}&apos;..
+        /// </summary>
+        internal static string Error_InvalidReturnTypeOverride {
+            get {
+                return ResourceManager.GetString("Error_InvalidReturnTypeOverride", resourceCulture);
             }
         }
         
@@ -120,6 +138,15 @@ namespace Jolt.Testing.Properties {
         internal static string Error_MethodNotMemberOfRealSubject {
             get {
                 return ResourceManager.GetString("Error_MethodNotMemberOfRealSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can not override the return type of a constructor as a constructor does not have a return value..
+        /// </summary>
+        internal static string Error_OverrideCtorReturnType {
+            get {
+                return ResourceManager.GetString("Error_OverrideCtorReturnType", resourceCulture);
             }
         }
         

@@ -126,7 +126,7 @@ namespace Jolt
 
         /// <summary>
         /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each paramater.
+        /// types repesenting the type of each parameter.
         /// </summary>
         /// 
         /// <param name="parameters">
@@ -139,7 +139,7 @@ namespace Jolt
 
         /// <summary>
         /// Converts an array of Type types to an array of
-        /// strings repesenting the names of each paramater.
+        /// strings repesenting the names of each parameter.
         /// </summary>
         /// 
         /// <param name="types">
@@ -156,7 +156,7 @@ namespace Jolt
 
         /// <summary>
         /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each paramater.  Refers to
+        /// types repesenting the type of each parameter.  Refers to
         /// the type from a generic type argument collection when a
         /// parameter is deemed to be generic.
         /// </summary>
@@ -175,7 +175,7 @@ namespace Jolt
 
         /// <summary>
         /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each paramater.  Refers to
+        /// types repesenting the type of each parameter.  Refers to
         /// the type from a generic type parameter collection when a
         /// parameter is deemed to be generic.
         /// </summary>
@@ -197,14 +197,14 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Converts a ParameterInfo to the type that repesents the
-        /// type of the paramater.  Refers to the type from a generic
-        /// type parameter collection when a parameter is deemed to be
-        /// generic.
+        /// Converts a given type to one that represents a defined type
+        /// that participates in an external method signature.  Refers to
+        /// the type from a generic type parameter collection when the
+        /// given type is deemed to begeneric.
         /// </summary>
         /// 
-        /// <param name="parameters">
-        /// The parameter to convert.
+        /// <param name="parameterType">
+        /// The type to convert.
         /// </param>
         /// 
         /// <param name="genericTypeArguments">
@@ -214,9 +214,8 @@ namespace Jolt
         /// <param name="genericMethodArguments">
         /// The generic arguments from the parameter's method.
         /// </param>
-        internal static Type ToParameterType(ParameterInfo parameter, Type[] genericTypeArguments, Type[] genericMethodArguments)
+        internal static Type ToMethodSignatureType(Type parameterType, Type[] genericTypeArguments, Type[] genericMethodArguments)
         {
-            Type parameterType = parameter.ParameterType;
             if (parameterType.IsGenericParameter)
             {
                 if (parameterType.DeclaringMethod != null && genericMethodArguments.Length > 0)
@@ -236,6 +235,29 @@ namespace Jolt
         #endregion
 
         #region private methods -------------------------------------------------------------------
+
+        /// <summary>
+        /// Converts a ParameterInfo to the type that repesents the
+        /// type of the parameter.  Refers to the type from a generic
+        /// type parameter collection when a parameter is deemed to be
+        /// generic.
+        /// </summary>
+        /// 
+        /// <param name="parameter">
+        /// The parameter to convert.
+        /// </param>
+        /// 
+        /// <param name="genericTypeArguments">
+        /// The generic arguments from the declaring type of the parameter's method.
+        /// </param>
+        /// 
+        /// <param name="genericMethodArguments">
+        /// The generic arguments from the parameter's method.
+        /// </param>
+        private static Type ToParameterType(ParameterInfo parameter, Type[] genericTypeArguments, Type[] genericMethodArguments)
+        {
+            return ToMethodSignatureType(parameter.ParameterType, genericTypeArguments, genericMethodArguments);
+        }
 
         /// <summary>
         /// Creates a string representing a given type member in an

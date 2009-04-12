@@ -967,6 +967,78 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
+        /// Verifies the behavior of the AddMethod() method when given
+        /// an override for the method's return type.
+        /// </summary>
+        [Test]
+        public void AddMethod_ReturnTypeOverride()
+        {
+            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
+            builder.AddMethod(realSubjectTypeMethod, typeof(IOException));
+
+            // Verify the behavior of the generated proxy.
+            Type proxy = builder.CreateProxy().MakeGenericType(typeof(FileNotFoundException), typeof(IOException));
+            Assert.That(proxy.GetMethod(realSubjectTypeMethod.Name).ReturnType, Is.EqualTo(typeof(IOException)));
+
+            IOException result = (IOException)proxy.InvokeMember(realSubjectTypeMethod.Name, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+            Assert.That(result, Is.InstanceOfType(typeof(PathTooLongException)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when given
+        /// an override for the method's return type that originates from
+        /// the method's declaring type's generic parameter list.
+        /// </summary>
+        [Test]
+        public void AddMethod_ReturnTypeOverride_GenericTypeParameter()
+        {
+            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("GenericTypeParamMethod");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
+            builder.AddMethod(realSubjectTypeMethod, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
+
+            // Verify the behavior of the generated proxy.
+            Type proxy = builder.CreateProxy().MakeGenericType(typeof(DirectoryNotFoundException), typeof(IOException));
+            Assert.That(proxy.GetMethod(realSubjectTypeMethod.Name).ReturnType, Is.EqualTo(typeof(IOException)));
+
+            IOException result = (IOException)proxy.InvokeMember(realSubjectTypeMethod.Name, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
+            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when given
+        /// an override for the method's return type that originates from
+        /// the method's generic parameter list.
+        /// </summary>
+        [Test]
+        public void AddMethod_ReturnTypeOverride_GenericMethodParameter()
+        {
+            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("GenericMethodParamMethod");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
+            builder.AddMethod(realSubjectTypeMethod, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
+
+            // Verify the behavior of the generated proxy.
+            Type proxy = builder.CreateProxy().MakeGenericType(typeof(FileLoadException), typeof(IOException));
+            MethodInfo proxyMethod = proxy.GetMethod(realSubjectTypeMethod.Name).MakeGenericMethod(typeof(DirectoryNotFoundException));
+            Assert.That(proxyMethod.ReturnType, Is.EqualTo(typeof(IOException)));
+
+            IOException result = (IOException)proxyMethod.Invoke(Activator.CreateInstance(proxy), ProxyMethodInvocationFlags, null, null, null);
+            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddMethod() method when given
+        /// an invalid override for the method's return type.
+        /// </summary>
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void AddMethod_ReturnTypeOverride_InvalidOverride()
+        {
+            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
+            builder.AddMethod(realSubjectTypeMethod, typeof(NotImplementedException));
+        }
+
+        /// <summary>
         /// Verifies the behavior of the AddProperty() method when adding
         /// an instance property to the builder.
         /// </summary>
@@ -1357,6 +1429,73 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Type realSubjectType = typeof(__PropertyTestType);
             VerifyBehavior_AddMember_XmlDocComments(realSubjectType, realSubjectType.GetProperties());
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when given
+        /// an override for the property's return type.
+        /// </summary>
+        [Test]
+        public void AddProperty_ReturnTypeOverride()
+        {
+            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
+            builder.AddProperty(realSubjectTypeProperty, typeof(IOException));
+
+            // Verify the behavior of the generated proxy.
+            Type proxy = builder.CreateProxy().MakeGenericType(typeof(FileNotFoundException), typeof(IOException));
+            PropertyInfo proxyProperty = proxy.GetProperty(realSubjectTypeProperty.Name);
+            Assert.That(proxyProperty.PropertyType, Is.EqualTo(typeof(IOException)));
+            Assert.That(proxyProperty.GetGetMethod().ReturnType, Is.EqualTo(typeof(IOException)));
+
+            IOException result = (IOException)proxyProperty.GetValue(Activator.CreateInstance(proxy), null);
+            Assert.That(result, Is.InstanceOfType(typeof(PathTooLongException)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when given
+        /// an override for the property's return type that originates from
+        /// the property's declaring type's generic parameter list.
+        /// </summary>
+        [Test]
+        public void AddProperty_ReturnTypeOverride_GenericTypeParameter()
+        {
+            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("GenericTypeParamProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
+            builder.AddProperty(realSubjectTypeProperty, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
+
+            // Verify the behavior of the generated proxy.
+            Type proxy = builder.CreateProxy().MakeGenericType(typeof(DirectoryNotFoundException), typeof(IOException));
+            PropertyInfo proxyProperty = proxy.GetProperty(realSubjectTypeProperty.Name);
+            Assert.That(proxyProperty.PropertyType, Is.EqualTo(typeof(IOException)));
+            Assert.That(proxyProperty.GetGetMethod().ReturnType, Is.EqualTo(typeof(IOException)));
+
+            IOException result = (IOException)proxyProperty.GetValue(Activator.CreateInstance(proxy), null);
+            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when given
+        /// an invalid override for the property's return type.
+        /// </summary>
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void AddProperty_ReturnTypeOverride_InvalidOverride()
+        {
+            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
+            builder.AddProperty(realSubjectTypeProperty, typeof(NotImplementedException));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the AddProperty() method when attempting
+        /// to override an invalid property.
+        /// </summary>
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void AddProperty_ReturnTypeOverride_InvalidProperty()
+        {
+            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InvalidProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
+            builder.AddProperty(realSubjectTypeProperty, typeof(IOException));
         }
 
         /// <summary>
@@ -2046,13 +2185,23 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         /// <summary>
         /// Creates a delegate that is used to filter methods on a builder type.
-        /// A method is returned if the method name starts with "Add" if the
+        /// A method is returned if the method name starts with "Add" and if the
         /// method contains one argument of type TMember.
         /// </summary>
         private static Func<MethodInfo, bool> CreateBuilderMethodPredicate<TMember>()
             where TMember : MemberInfo
         {
-            return method => method.Name.StartsWith("Add") && method.GetParameters().Single().ParameterType == typeof(TMember);
+            return delegate(MethodInfo method)
+            {
+                bool result = false;
+                if (method.Name.StartsWith("Add"))
+                {
+                    ParameterInfo[] parameters = method.GetParameters();
+                    result = parameters.Length == 1 && parameters[0].ParameterType == typeof(TMember);
+                }
+
+                return result;
+            };
         }
 
         #endregion

@@ -9,6 +9,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
@@ -32,7 +33,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type realSubjectType = typeof(__ConstructorTestType<,>);
             InitializeCurrentTypeBuilder(realSubjectType);
 
-            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(Type.EmptyTypes), AssertConstructorAttributes);
+            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(Type.EmptyTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             InitializeCurrentTypeBuilder(realSubjectType);
 
             Type[] constructorParameterTypes = { realSubjectType.GetGenericArguments()[0] };
-            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
             Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1] };
-            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -76,7 +77,23 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
             Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1], typeof(int) };
-            AssertConstructorDeclaredFrom<GenericConstructorDeclarer>(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+        }
+
+        #endregion
+
+        #region internal methods ------------------------------------------------------------------
+
+        /// <see cref="AbstractConstructorDeclarerTestFixture.CreateConstructorDeclarer"/>
+        internal override AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> CreateConstructorDeclarer(
+            ConstructorInfo realSubjectTypeConstructor,
+            IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation)
+        {
+            return new GenericConstructorDeclarer(
+                CurrentTypeBuilder,
+                ConstructorAttributes,
+                realSubjectTypeConstructor,
+                implementation);
         }
 
         #endregion

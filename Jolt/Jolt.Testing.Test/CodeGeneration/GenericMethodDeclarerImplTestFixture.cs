@@ -46,7 +46,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodInfo realSubjectTypeMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
             
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod);
+            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod, realSubjectTypeMethod.ReturnType);
             FinalizeDefaultMethodBuilder(realSubjectTypeMethod.GetParameters());
 
             MethodInfo method = CurrentTypeBuilder.GetMethod("__transientMethod");
@@ -73,8 +73,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_NoParameters()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 0));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 0);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -84,8 +85,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OneParameter()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 1));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 1);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         ///// <summary>
@@ -95,8 +97,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ManyParameters()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -106,8 +109,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ParamsArray()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ParamsArrayArgumentsMethod" && m.IsGenericMethod));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "ParamsArrayArgumentsMethod" && m.IsGenericMethod);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -117,8 +121,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OutParameter()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "OutParameterMethod" && m.IsGenericMethod));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "OutParameterMethod" && m.IsGenericMethod);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -128,8 +133,21 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_VoidReturnValue()
         {
-            AssertDeclareMethod(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "VoidReturnValueMethod" && m.IsGenericMethod));
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "VoidReturnValueMethod" && m.IsGenericMethod);
+            AssertDeclareMethod(method, method.ReturnType);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the DeclareMethod() method when the
+        /// declared method's return type is overriden.
+        /// </summary>
+        [Test]
+        public void DeclareMethod_ReturnTypeOverride()
+        {
+            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
+                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod);
+            AssertDeclareMethod(method, typeof(object));
         }
 
         /// <summary>
@@ -139,8 +157,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_GenericType_GenericMethod()
         {
-            AssertDeclareMethod(typeof(__GenericTestType<,,>).GetMethods().Single(
-                m => m.Name == "GenericFunction" && m.IsGenericMethod));
+            MethodInfo method = typeof(__GenericTestType<,,>).GetMethods().Single(
+                m => m.Name == "GenericFunction" && m.IsGenericMethod);
+            AssertDeclareMethod(method, method.ReturnType);
         }
 
         /// <summary>
@@ -186,15 +205,20 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </summary>
         /// 
         /// <param name="realSubjectTypeMethod">
-        /// The real subject type method given as a parameter to the
+        /// The real subject type method, given as a parameter to the
         /// DefineMethodParameters() method.
         /// </param>
-        private void AssertDeclareMethod(MethodInfo realSubjectTypeMethod)
+        /// 
+        /// <param name="returnType">
+        /// The declared method's return type, given as a parameter to the
+        /// DefineMethodParameters() method.
+        /// </param>
+        private void AssertDeclareMethod(MethodInfo realSubjectTypeMethod, Type returnType)
         {
             CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
 
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod);
+            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod, returnType);
             FinalizeDefaultMethodBuilder(realSubjectTypeMethod.GetParameters());
 
             MethodInfo method = CurrentTypeBuilder.GetMethod("__transientMethod");
@@ -202,7 +226,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertTypeEquivalence(
                 Convert.ToParameterTypes(method.GetParameters()),
                 Convert.ToParameterTypes(realSubjectTypeMethod.GetParameters()));
-            AssertTypeEquivalence(method.ReturnType, realSubjectTypeMethod.ReturnType);
+            AssertTypeEquivalence(method.ReturnType, returnType);
         }
 
         /// <summary>
@@ -219,7 +243,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(realSubjectTypeMethod.DeclaringType.GetGenericArguments()));
 
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
-            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod);
+            implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod, realSubjectTypeMethod.ReturnType);
             implementation.DefineMethodParameters(m_defaultMethodBuilder, realSubjectTypeMethod);
             FinalizeDefaultMethodBuilder(realSubjectTypeMethod.GetParameters());
 
@@ -269,11 +293,6 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             if (actualTypes.Length > 0)
             {
-                //// Compare the generic array types from both type arrays.
-                //AssertTypeEquivalence(
-                //    actualTypes.Where(t => t.IsArray).Select(t => t.GetElementType()).ToArray(),
-                //    expectedTypes.Where(t => t.IsArray).Select(t => t.GetElementType()).ToArray());
-
                 // Compare the generic types from both type arrays.
                 Assert.That(actualTypes.Where(t => t.ContainsGenericParameters).Select(t => t.Name).ToList(),
                     Is.EqualTo(expectedTypes.Where(t => t.ContainsGenericParameters).Select(t => t.Name).ToList()));

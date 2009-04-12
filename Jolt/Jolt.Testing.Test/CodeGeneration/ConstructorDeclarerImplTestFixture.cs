@@ -30,7 +30,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation = new ConstructorDeclarerImpl();
             ConstructorInfo constructor = typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes);
-            implementation.DeclareMethod(CreateConstructorBuilder(constructor), constructor);
+            implementation.DeclareMethod(CreateConstructorBuilder(constructor), constructor, GetType());
         }
 
         /// <summary>

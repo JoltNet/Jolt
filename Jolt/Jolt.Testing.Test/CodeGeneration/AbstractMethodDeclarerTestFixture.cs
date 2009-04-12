@@ -62,15 +62,38 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         /// 
         /// <remarks>
-        /// Required as a TypeBuilder created from a dynamic module can not be queried prior
+        /// A TypeBuilder created from a dynamic module can not be queried prior
         /// to being persisted or having its construction finalized.
         /// </remarks>
-        protected static Action<TMethodBuilder, TMethod> CreateDeclareMethodsAttributeDelegate(List<TMethodBuilder> implementationArgs)
+        protected static Action<TMethodBuilder, TMethod, Type> CreateStoreMethodBuilderDelegate_3Args(List<TMethodBuilder> implementationArgs)
         {
             // Stores method builder parameter passed to mock methods for future verification.
             // Required as a TypeBuilder created from a dynamic modules can not be queried prior
             // to being persisted or having its construction finalized.
-            return (TMethodBuilder builder, TMethod method) => implementationArgs.Add(builder);
+            return (builder, method, returnType) => implementationArgs.Add(builder);
+        }
+
+        /// <summary>
+        /// Creates a delegate that stores its method builder parameter in the given
+        /// list.
+        /// </summary>
+        /// 
+        /// <param name="implementationArgs">
+        /// The list to store method builder references.
+        /// </param>
+        /// 
+        /// <remarks>
+        /// A TypeBuilder created from a dynamic module can not be queried prior
+        /// to being persisted or having its construction finalized.
+        /// </remarks>
+        protected static Action<TMethodBuilder, TMethod> CreateStoreMethodBuilderDelegate_2Args(List<TMethodBuilder> implementationArgs)
+        {
+            // TODO: Use Jolt.Bind and merge methods.
+
+            // Stores method builder parameter passed to mock methods for future verification.
+            // Required as a TypeBuilder created from a dynamic modules can not be queried prior
+            // to being persisted or having its construction finalized.
+            return (builder, method) => implementationArgs.Add(builder);
         }
 
         #endregion

@@ -20,7 +20,7 @@ namespace Jolt.Testing.CodeGeneration
         #region IMethodDeclarerImpl implementation ------------------------------------------------
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(ConstructorBuilder, ConstructorInfo>"/>
-        void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DeclareMethod(ConstructorBuilder builder, ConstructorInfo realSubjectTypeMethod)
+        void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DeclareMethod(ConstructorBuilder builder, ConstructorInfo realSubjectTypeMethod, Type returnType)
         {
             // The method is already declared as part of the constructor of the
             // given constructor builder.
