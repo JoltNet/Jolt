@@ -82,11 +82,11 @@
     </Reference>
     <Reference Include="QuickGraph, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.dll</HintPath>
+      <HintPath>..\..\external\QuickGraph-3.2\bin\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph.Graphviz, Version=3.2.40122.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\QuickGraph-3.1\bin\QuickGraph.Graphviz.dll</HintPath>
+      <HintPath>..\..\external\QuickGraph-3.2\bin\QuickGraph.Graphviz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

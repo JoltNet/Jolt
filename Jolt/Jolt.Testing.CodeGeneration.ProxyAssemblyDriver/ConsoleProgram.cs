@@ -13,6 +13,7 @@ using System.Configuration;
 using System.IO;
 
 using log4net.Config;
+using Jolt.Testing.CodeGeneration.Xml;
 
 namespace Jolt.Testing.CodeGeneration
 {
@@ -62,10 +63,10 @@ namespace Jolt.Testing.CodeGeneration
                 // Load the subject types from the configuration file.
                 using (Stream stream = File.Open(args[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    foreach (Type t in Xml.XmlConfigurator.LoadRealSubjectTypes(stream))
+                    foreach (TypeDescriptor descriptor in Xml.XmlConfigurator.LoadRealSubjectTypes(stream))
                     {
-                        Console.WriteLine(t.FullName);
-                        builder.AddType(t);
+                        Console.WriteLine(descriptor.RealSubjectType.FullName);
+                        builder.AddType(descriptor.RealSubjectType, descriptor.ReturnTypeOverrides);
                     }
                 }
 

@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml.Schema;
 
 using Jolt.Testing.CodeGeneration.Xml;
@@ -30,78 +31,134 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
 
 
         /// <summary>
-        /// Verifies the behavior of the LoadAdapteeTypes method.
+        /// Verifies the behavior of the LoadRealSubjectTypes method.
         /// </summary>
         [Test]
-        public void LoadAdapteeTypes()
+        public void LoadRealSubjectTypes()
         {
             Type[] expectedTypes = {typeof(string), typeof(System.IO.File), typeof(System.Text.Decoder)};
             using (Stream resource = GetEmbeddedResource("ValidConfiguration.xml"))
             {
-                foreach (Type loadedType in XmlConfigurator.LoadRealSubjectTypes(resource))
+                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
                 {
-                    Assert.That(expectedTypes, List.Contains(loadedType));
+                    Assert.That(expectedTypes, List.Contains(typeDescriptor.RealSubjectType));
+                    Assert.That(typeDescriptor.ReturnTypeOverrides, Is.Empty);
                 }
             }
         }
 
         /// <summary>
-        /// Verifies the behavior of the LoadAdapteeTypes method when
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
         /// the configuration stream contains invalid types.
         /// </summary>
         [Test]
-        public void LoadAdapteeTypes_InvalidTypes()
+        public void LoadRealSubjectTypes_InvalidTypes()
         {
             Type[] expectedTypes = { typeof(string), typeof(System.IO.File), typeof(System.Text.Decoder) };
             using (Stream resource = GetEmbeddedResource("ContainsInvalidTypes.xml"))
             {
-                foreach (Type loadedType in XmlConfigurator.LoadRealSubjectTypes(resource))
+                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
                 {
-                    Assert.That(expectedTypes, List.Contains(loadedType));
+                    Assert.That(expectedTypes, List.Contains(typeDescriptor.RealSubjectType));
+                    Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(0));
                 }
             }
         }
 
         /// <summary>
-        /// Verifies the behavior of the LoadAdapteeTypes method when
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
         /// the configuration stream is invalid.
         /// </summary>
         [Test, ExpectedException(typeof(XmlSchemaValidationException))]
-        public void LoadAdapteeTypes_InvalidConfigurationStream()
+        public void LoadRealSubjectTypes_InvalidConfigurationStream()
         {
             using (Stream resource = GetEmbeddedResource("InvalidConfiguration.xml"))
             {
-                foreach (Type loadedType in XmlConfigurator.LoadRealSubjectTypes(resource)) { };
+                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource)) { };
             }
         }
 
         /// <summary>
-        /// Verifies the behavior of the LoadAdapteeTypes method when
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
         /// the configuration stream contains duplicate types.
         /// </summary>
         [Test, ExpectedException(typeof(XmlSchemaValidationException))]
-        public void LoadAdapteeTypes_DuplicateTypesInStream()
+        public void LoadRealSubjectTypes_DuplicateTypesInStream()
         {
             using (Stream resource = GetEmbeddedResource("DuplicateTypesConfiguration.xml"))
             {
-                foreach (Type loadedType in XmlConfigurator.LoadRealSubjectTypes(resource)) { }
+                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource)) { }
                 
             }
         }
 
         /// <summary>
-        /// Verifies the behavior of the LoadAdapteeTypes method when
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
         /// the configuration stream is invalid.
         /// </summary>
         [Test]
-        public void LoadAdapteeTypes_EmptyConfigurationStream()
+        public void LoadRealSubjectTypes_EmptyConfigurationStream()
         {
             using (Stream resource = GetEmbeddedResource("EmptyConfiguration.xml"))
             {
-                foreach (Type loadedType in XmlConfigurator.LoadRealSubjectTypes(resource))
+                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
                 {
                     Assert.Fail();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
+        /// the configuration stream contains valid return type overrides.
+        /// </summary>
+        [Test]
+        public void LoadRealSubjectType_ReturnTypeOverride()
+        {
+            using (Stream resource = GetEmbeddedResource("ValidConfigurationWithOverrides.xml"))
+            {
+                TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
+                    .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
+                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(2));
+
+                Assert.That(typeDescriptor.ReturnTypeOverrides.ContainsKey(typeof(System.IO.FileStream)));
+                Assert.That(typeDescriptor.ReturnTypeOverrides[typeof(System.IO.FileStream)], Is.EqualTo(typeof(System.IO.Stream)));
+
+                Assert.That(typeDescriptor.ReturnTypeOverrides.ContainsKey(typeof(System.IO.StreamReader)));
+                Assert.That(typeDescriptor.ReturnTypeOverrides[typeof(System.IO.StreamReader)], Is.EqualTo(typeof(System.IO.TextReader)));
+            }
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
+        /// the configuration stream contains invalid return type overrides.
+        /// </summary>
+        [Test]
+        public void LoadRealSubjectType_InvalidReturnTypeOverride()
+        {
+            using (Stream resource = GetEmbeddedResource("InvalidReturnTypeOverride.xml"))
+            {
+                TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
+                    .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
+                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(0));
+            }
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the LoadRealSubjectTypes method when
+        /// the configuration stream contains an ambiguous return type override.
+        /// </summary>
+        [Test]
+        public void LoadRealSubjectType_AmbiguousReturnTypeOverride()
+        {
+            using (Stream resource = GetEmbeddedResource("AmbiguousReturnTypeOverride.xml"))
+            {
+                TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
+                    .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
+                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(1));
+
+                Assert.That(typeDescriptor.ReturnTypeOverrides.ContainsKey(typeof(System.IO.FileStream)));
+                Assert.That(typeDescriptor.ReturnTypeOverrides[typeof(System.IO.FileStream)], Is.EqualTo(typeof(System.IO.Stream)));
             }
         }
 

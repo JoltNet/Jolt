@@ -159,6 +159,9 @@
   <data name="Info_XmlDocCommentsDisabled" xml:space="preserve">
     <value>Could not locate XML doc comments file for assembly '{0}'.  Procuction of XML doc comments is disabled.</value>
   </data>
+  <data name="Warn_IgnoreReturnTypeOverride_Ambiguous" xml:space="preserve">
+    <value>Ignoring return type override '{0}'-&gt;'{1}'.  An override for the return type '{0}' on the real subject type '{2}' is already specified.</value>
+  </data>
   <data name="Warn_TypeNotLoaded" xml:space="preserve">
     <value>Could not load the type '{0}'.</value>
   </data>

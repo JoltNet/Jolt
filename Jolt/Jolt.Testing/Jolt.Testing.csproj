@@ -53,6 +53,7 @@
     <Compile Include="CodeGeneration\ProxyAssemblyBuilderSettings.cs" />
     <Compile Include="CodeGeneration\XmlDocCommentBuilder.cs" />
     <Compile Include="CodeGeneration\XmlDocCommentBuilderBase.cs" />
+    <Compile Include="CodeGeneration\Xml\TypeDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CodeGeneration\Xml\XmlConfigurator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

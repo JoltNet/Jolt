@@ -10,7 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 
 using Jolt.Testing.Properties;
@@ -39,6 +41,7 @@ namespace Jolt.Testing.CodeGeneration.Xml
             }
 
             Log = LogManager.GetLogger(typeof(XmlConfigurator));
+            XmlNamespace = "{urn:Jolt.Testing.CodeGeneration.Xml}";
         }
 
         #endregion
@@ -60,26 +63,64 @@ namespace Jolt.Testing.CodeGeneration.Xml
         /// <remarks>
         /// The given stream is not closed by this function.
         /// </remarks>
-        public static IEnumerable<Type> LoadRealSubjectTypes(Stream xmlConfiguration)
+        public static IEnumerable<TypeDescriptor> LoadRealSubjectTypes(Stream xmlConfiguration)
         {
-            using (XmlReader reader = XmlReader.Create(xmlConfiguration, ReaderSettings))
+            XDocument realSubjectTypes = XDocument.Load(XmlReader.Create(xmlConfiguration, ReaderSettings));
+            foreach(XElement typeElement in realSubjectTypes.Root.Elements(XmlNamespace + "Type"))
             {
-                while (reader.Read())
+                Type realSubjectType;
+                if (LoadType(typeElement.Attribute("name"), out realSubjectType))
                 {
-                    if (reader.LocalName == "Type")
+                    IDictionary<Type, Type> returnTypeOverrides = new Dictionary<Type, Type>();
+                    foreach (XElement overrideElement in typeElement.Elements(XmlNamespace + "OverrideReturnType"))
                     {
-                        Type realSubjectType = Type.GetType(reader.GetAttribute("name"));
-                        if (realSubjectType != null)
+                        Type originalReturnType, desiredReturnType;
+                        if (LoadType(overrideElement.Attribute("name"), out originalReturnType) &&
+                            LoadType(overrideElement.Attribute("desiredTypeName"), out desiredReturnType))
                         {
-                            yield return realSubjectType;
-                        }
-                        else
-                        {
-                            Log.WarnFormat(Resources.Warn_TypeNotLoaded, reader.GetAttribute("name"));
+                            if (!returnTypeOverrides.ContainsKey(originalReturnType))
+                            {
+                                returnTypeOverrides.Add(originalReturnType, desiredReturnType);
+                            }
+                            else
+                            {
+                                Log.WarnFormat(Resources.Warn_IgnoreReturnTypeOverride_Ambiguous, originalReturnType.Name, desiredReturnType.Name, realSubjectType.Name);
+                            }
                         }
                     }
+
+                    yield return new TypeDescriptor(realSubjectType, returnTypeOverrides);
                 }
             }
+        }
+
+        #endregion
+
+        #region private methods -------------------------------------------------------------------
+
+        /// <summary>
+        /// Loads the type described by the given attribute, logging a warning if the type
+        /// can not be loaded.  Returns a value denoting the success of the load operation.
+        /// </summary>
+        /// 
+        /// <param name="typeAttribute">
+        /// An attribute containing the name of the type to load.
+        /// </param>
+        /// 
+        /// <param name="type">
+        /// Contains the loaded type, or a null value if the loading is not successful.
+        /// </param>
+        private static bool LoadType(XAttribute typeAttribute, out Type type)
+        {
+            type = Type.GetType(typeAttribute.Value);
+            bool isLoaded = type != null;
+
+            if (!isLoaded)
+            {
+                Log.WarnFormat(Resources.Warn_TypeNotLoaded, typeAttribute.Value);
+            }
+
+            return isLoaded;
         }
 
         #endregion
@@ -88,6 +129,7 @@ namespace Jolt.Testing.CodeGeneration.Xml
 
         private static readonly XmlReaderSettings ReaderSettings;
         private static readonly ILog Log;
+        private static readonly string XmlNamespace;
 
         #endregion
     }

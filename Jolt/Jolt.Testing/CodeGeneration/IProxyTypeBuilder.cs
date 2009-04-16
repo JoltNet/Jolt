@@ -20,7 +20,9 @@ namespace Jolt.Testing.CodeGeneration
     internal interface IProxyTypeBuilder
     {
         void AddMethod(MethodInfo method);
+        void AddMethod(MethodInfo method, Type desiredReturnType);
         void AddProperty(PropertyInfo property);
+        void AddProperty(PropertyInfo property, Type desiredReturnType);
         void AddEvent(EventInfo eventInfo);
         Type CreateInterface();
         Type CreateProxy();

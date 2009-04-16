@@ -324,8 +324,8 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     public class __RealSubjectType
     {
         public void PublicMethod_1() { }
-        public void PublicMethod_2() { }
-        public static void PublicMethod_3() { }
+        public int PublicMethod_2() { return 0; }
+        public static int PublicMethod_3() { return 0; }
         public static void PublicMethod_4() { }
 
         public int PublicProperty_1 { get { return 0; } set { } }

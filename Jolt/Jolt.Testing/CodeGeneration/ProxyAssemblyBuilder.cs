@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -178,10 +179,28 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         public virtual void AddType(Type realSubjectType)
         {
+            AddType(realSubjectType, EmptyDictionary);
+        }
+
+        /// <summary>
+        /// Adds a type to the assembly builder, generating an interface and proxy
+        /// containing all of its methods, properties and events.
+        /// </summary>
+        /// 
+        /// <param name="realSubjectType">
+        /// The type for which a proxy and interface are created.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnTypeOverrides">
+        /// A collection of desired return type overrides for the given
+        /// real subject type.
+        /// </param>
+        public virtual void AddType(Type realSubjectType, IDictionary<Type, Type> desiredReturnTypeOverrides)
+        {
             IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_settings.EmitXmlDocComments, m_module);
-            Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => builder.AddProperty(property)));
+            Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => AddProperty(property, desiredReturnTypeOverrides, builder)));
             Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), evt => HandleExceptionsIn(() => builder.AddEvent(evt)));
-            Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, builder));
+            Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, desiredReturnTypeOverrides, builder));
 
             builder.CreateProxy();
 
@@ -272,7 +291,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="builder">
         /// The builder that accepts the method.
         /// </param>
-        private void AddMethod(MethodInfo method, IProxyTypeBuilder builder)
+        private void AddMethod(MethodInfo method, IDictionary<Type, Type> desiredReturnTypeOverrides, IProxyTypeBuilder builder)
         {
             if (IsSpecialMethod(method, PropertyMethodPrefixes, m_propertyBindingFlags))
             {
@@ -294,7 +313,17 @@ namespace Jolt.Testing.CodeGeneration
             }
             else
             {
-                HandleExceptionsIn(() => builder.AddMethod(method));
+                HandleExceptionsIn(delegate
+                {
+                    if (desiredReturnTypeOverrides.ContainsKey(method.ReturnType))
+                    {
+                        builder.AddMethod(method, desiredReturnTypeOverrides[method.ReturnType]);
+                    }
+                    else
+                    {
+                        builder.AddMethod(method);
+                    }
+                });
             }
         }
 
@@ -378,6 +407,34 @@ namespace Jolt.Testing.CodeGeneration
             }
         }
 
+        /// <summary>
+        /// Adds the given property to the given builder, overriding the property return
+        /// type when it is located in the given collection of return type overrides.
+        /// </summary>
+        /// 
+        /// <param name="property">
+        /// The property to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnTypeOverrides">
+        /// A collection of return type overrides for the real subject type.
+        /// </param>
+        /// 
+        /// <param name="builder">
+        /// The builder that accepts the property.
+        /// </param>
+        private static void AddProperty(PropertyInfo property, IDictionary<Type, Type> desiredReturnTypeOverrides, IProxyTypeBuilder builder)
+        {
+            if (desiredReturnTypeOverrides.ContainsKey(property.PropertyType))
+            {
+                builder.AddProperty(property, desiredReturnTypeOverrides[property.PropertyType]);
+            }
+            else
+            {
+                builder.AddProperty(property);
+            }
+        }
+
         #endregion
 
         #region private instance fields -----------------------------------------------------------
@@ -402,6 +459,7 @@ namespace Jolt.Testing.CodeGeneration
         private static readonly string[] PropertyMethodPrefixes = { "get_", "set_" };
         private static readonly string[] EventMethodPrefixes = { "add_", "remove_" };
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProxyAssemblyBuilder));
+        private static readonly Dictionary<Type, Type> EmptyDictionary = new Dictionary<Type, Type>(0);
 
         #endregion
     }
