@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,6 @@ using Rhino.Mocks;
 namespace Jolt.Testing.Test.CodeGeneration
 {
     using CreateProxyTypeBuilderDelegate = Func<string, Type, bool, ModuleBuilder, IProxyTypeBuilder>;
-    using System.Collections.Generic;
 
 
     [TestFixture]

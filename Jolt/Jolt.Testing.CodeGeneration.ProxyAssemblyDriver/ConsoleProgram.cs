@@ -8,12 +8,10 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 
-using log4net.Config;
 using Jolt.Testing.CodeGeneration.Xml;
+using log4net.Config;
 
 namespace Jolt.Testing.CodeGeneration
 {

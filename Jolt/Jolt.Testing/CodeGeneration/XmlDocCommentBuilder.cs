@@ -8,8 +8,8 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Text;
 using System.Reflection;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Jolt.Testing.CodeGeneration
