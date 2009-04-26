@@ -53,6 +53,7 @@
     <Compile Include="ConvertTestFixture.cs" />
     <Compile Include="DefaultXDCReadPolicyTestFixture.cs" />
     <Compile Include="Functional\BindTestFixture.cs" />
+    <Compile Include="Functional\FunctorTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestTypes.cs" />
     <Compile Include="XmlDocCommentDirectoryElementCollectionTestFixture.cs" />
