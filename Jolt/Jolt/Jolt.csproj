@@ -36,6 +36,8 @@
     <Compile Include="Convert.cs" />
     <Compile Include="DefaultXDCReadPolicy.cs" />
     <Compile Include="Functional\Bind.cs" />
+    <Compile Include="Functional\Compose.cs" />
+    <Compile Include="Functional\Delegates.cs" />
     <Compile Include="Functional\Functor.cs" />
     <Compile Include="IXmlDocCommentReader.cs" />
     <Compile Include="IXmlDocCommentReadPolicy.cs" />
