@@ -155,7 +155,7 @@ namespace Jolt.Functional
         /// </param>
         public static Predicate<T> ToPredicate<T>(Func<T, bool> function)
         {
-            return arg => function(arg);
+            return new Predicate<T>(function);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T, bool> ToPredicateFunc<T>(Predicate<T> predicate)
         {
-            return arg => predicate(arg);
+            return new Func<T, bool>(predicate);
         }
 
         /// <summary>

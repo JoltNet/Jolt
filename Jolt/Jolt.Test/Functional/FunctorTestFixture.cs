@@ -132,14 +132,12 @@ namespace Jolt.Test.Functional
             With.Mocks(delegate
             {
                 Func<int, bool> functionPredicate = Mocker.Current.CreateMock<Func<int, bool>>();
-
-                int functionArgument = 100;
-                bool expectedResult = true;
-                Expect.Call(functionPredicate(functionArgument)).Return(expectedResult);
                 Mocker.Current.ReplayAll();
 
                 Predicate<int> predicate = Functor.ToPredicate(functionPredicate);
-                Assert.That(predicate(functionArgument), Is.EqualTo(expectedResult));
+                Assert.That(predicate.GetInvocationList(), Has.Length(1));
+                Assert.That(predicate.GetInvocationList()[0].Target, Is.SameAs(functionPredicate));
+                Assert.That(predicate.GetInvocationList()[0].Method.Name, Is.EqualTo(functionPredicate.Method.Name));
             });
         }
 
@@ -152,14 +150,12 @@ namespace Jolt.Test.Functional
             With.Mocks(delegate
             {
                 Predicate<int> predicate = Mocker.Current.CreateMock<Predicate<int>>();
-
-                int functionArgument = 200;
-                bool expectedResult = false;
-                Expect.Call(predicate(functionArgument)).Return(expectedResult);
                 Mocker.Current.ReplayAll();
 
                 Func<int, bool> functionPredicate = Functor.ToPredicateFunc(predicate);
-                Assert.That(functionPredicate(functionArgument), Is.EqualTo(expectedResult));
+                Assert.That(functionPredicate.GetInvocationList(), Has.Length(1));
+                Assert.That(functionPredicate.GetInvocationList()[0].Target, Is.SameAs(predicate));
+                Assert.That(functionPredicate.GetInvocationList()[0].Method.Name, Is.EqualTo(predicate.Method.Name));
             });
         }
 
