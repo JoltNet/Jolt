@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
+using Jolt.Functional;
 using Jolt.Test.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -121,15 +122,15 @@ namespace Jolt.Test
                 Is.EqualTo("P:System.Collections.Generic.List`1.Item(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 4)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(4))),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Int32,`0,`1,`0)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 1)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(1))),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Action{System.Action{System.Action{`1}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(p => p.GetIndexParameters().Length == 3)),
+                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(3))),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(`0[],System.Action{System.Action{`1}[0:,0:][]}[][],`0[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
@@ -162,15 +163,15 @@ namespace Jolt.Test
                 Is.EqualTo("M:System.Collections.Generic.List`1.#ctor(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 4)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(4))),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Int32,`0,`1,`1)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 1)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(1))),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Action{System.Action{System.Action{`0}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(c => c.GetParameters().Length == 3)),
+                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(3))),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(`0[],System.Action{System.Action{System.Action{`1}[][]}[]}[][]@,`1[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
@@ -405,12 +406,40 @@ namespace Jolt.Test
         private void __f() { }
         private void __g(int x, int y, double z, byte b) { }
 
+        /// <summary>
+        /// Creates a predicate that determines if a constructor
+        /// has the given number of parameters.
+        /// </summary>
+        /// 
+        /// <param name="desiredNumParameters">
+        /// The desired number of parameters.
+        /// </param>
+        private Func<ConstructorInfo, bool> CreateNumCtorParamsPredicate(int desiredNumParameters)
+        {
+            return Bind.Second(HasNParameters, desiredNumParameters);
+        }
+
+        /// <summary>
+        /// Creates a predicate that determines if a property
+        /// has the given number of index parameters.
+        /// </summary>
+        /// 
+        /// <param name="desiredNumParameters">
+        /// The desired number of parameters.
+        /// </param>
+        private Func<PropertyInfo, bool> CreateNumIndexParamsPredicate(int desiredNumParameters)
+        {
+            return Bind.Second(HasNIndexParameters, desiredNumParameters);
+        }
+
         #endregion
 
         #region private class data ----------------------------------------------------------------
 
         private static readonly BindingFlags NonPublicInstance = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly BindingFlags NonPublicStatic = BindingFlags.Static | BindingFlags.NonPublic;
+        private static readonly Func<ConstructorInfo, int, bool> HasNParameters = (ctor, numParams) => ctor.GetParameters().Length == numParams;
+        private static readonly Func<PropertyInfo, int, bool> HasNIndexParameters = (property, numParams) => property.GetIndexParameters().Length == numParams;
 
         #endregion
     }

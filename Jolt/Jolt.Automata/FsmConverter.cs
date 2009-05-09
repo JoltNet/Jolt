@@ -15,6 +15,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
 using Jolt.Automata.QuickGraph;
+using Jolt.Functional;
 using QuickGraph;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
@@ -61,7 +62,7 @@ namespace Jolt.Automata
             // Hash each newly created vertex so that referential integrity
             // is maintained when converting transitions to edges.
             IDictionary<string, GraphMLState> stateToVertexMap = fsm.AsGraph.Vertices.ToDictionary(
-                state => state,
+                Functor.Identity<string>(),
                 state => new GraphMLState(state, fsm.StartState == state, fsm.IsFinalState(state)));
 
             graph.AddVertexRange(stateToVertexMap.Values);

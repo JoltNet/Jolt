@@ -9,6 +9,8 @@
 
 using System;
 
+using Jolt.Functional;
+
 namespace Jolt.Automata.Test
 {
     /// <summary>
@@ -79,6 +81,6 @@ namespace Jolt.Automata.Test
         }
 
 
-        private static readonly Predicate<char> TrueForAll = ch => true;
+        private static readonly Predicate<char> TrueForAll = Functor.ToPredicate(Functor.TrueForAll<char>());
     }
 }

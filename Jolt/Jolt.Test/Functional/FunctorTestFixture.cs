@@ -124,6 +124,41 @@ namespace Jolt.Test.Functional
         }
 
         /// <summary>
+        /// Verifies the behavior of the ToAction() method, accepting
+        /// an EventHandler for adapting.
+        /// </summary>
+        [Test]
+        public void ToAction_EventHandler()
+        {
+            With.Mocks(delegate
+            {
+                EventHandler<EventArgs> eventHandler = Mocker.Current.CreateMock<EventHandler<EventArgs>>();
+                Mocker.Current.ReplayAll();
+
+                Action<object, EventArgs> action = Functor.ToAction(eventHandler);
+                Assert.That(action.Method, Is.SameAs(eventHandler.Method));
+                Assert.That(action.Target, Is.SameAs(eventHandler.Target));
+            });
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ToEventHandler() method.
+        /// </summary>
+        [Test]
+        public void ToEventHandler()
+        {
+            With.Mocks(delegate
+            {
+                Action<object, EventArgs> action = Mocker.Current.CreateMock<Action<object, EventArgs>>();
+                Mocker.Current.ReplayAll();
+
+                EventHandler<EventArgs> eventHandler = Functor.ToEventHandler(action);
+                Assert.That(eventHandler.Method, Is.SameAs(action.Method));
+                Assert.That(eventHandler.Target, Is.SameAs(action.Target));
+            });
+        }
+
+        /// <summary>
         /// Verifies the behavior of the ToPredicate() method.
         /// </summary>
         [Test]
@@ -135,9 +170,8 @@ namespace Jolt.Test.Functional
                 Mocker.Current.ReplayAll();
 
                 Predicate<int> predicate = Functor.ToPredicate(functionPredicate);
-                Assert.That(predicate.GetInvocationList(), Has.Length(1));
-                Assert.That(predicate.GetInvocationList()[0].Target, Is.SameAs(functionPredicate));
-                Assert.That(predicate.GetInvocationList()[0].Method.Name, Is.EqualTo(functionPredicate.Method.Name));
+                Assert.That(predicate.Method, Is.SameAs(functionPredicate.Method));
+                Assert.That(predicate.Target, Is.SameAs(functionPredicate.Target));
             });
         }
 
@@ -153,9 +187,8 @@ namespace Jolt.Test.Functional
                 Mocker.Current.ReplayAll();
 
                 Func<int, bool> functionPredicate = Functor.ToPredicateFunc(predicate);
-                Assert.That(functionPredicate.GetInvocationList(), Has.Length(1));
-                Assert.That(functionPredicate.GetInvocationList()[0].Target, Is.SameAs(predicate));
-                Assert.That(functionPredicate.GetInvocationList()[0].Method.Name, Is.EqualTo(predicate.Method.Name));
+                Assert.That(functionPredicate.Method, Is.SameAs(predicate.Method));
+                Assert.That(functionPredicate.Target, Is.SameAs(predicate.Target));
             });
         }
 
@@ -168,6 +201,7 @@ namespace Jolt.Test.Functional
         {
             string constant = "constant-value";
             Func<string> function = Functor.Idempotency(constant);
+            Assert.That(function.Target, Is.Not.Null);
 
             for (int i = 0; i < 200; ++i)
             {
@@ -184,6 +218,7 @@ namespace Jolt.Test.Functional
         {
             string constant = "constant-value";
             Func<int, string> function = Functor.Idempotency<int, string>(constant);
+            Assert.That(function.Target, Is.Not.Null);
 
             for (int i = 0; i < 20; ++i)
             {
@@ -200,6 +235,7 @@ namespace Jolt.Test.Functional
         {
             string constant = "constant-value";
             Func<int, double, string> function = Functor.Idempotency<int, double, string>(constant);
+            Assert.That(function.Target, Is.Not.Null);
 
             for (int i = 0; i < 200; ++i)
             {
@@ -216,6 +252,7 @@ namespace Jolt.Test.Functional
         {
             string constant = "constant-value";
             Func<int, double, DateTime, string> function = Functor.Idempotency<int, double, DateTime, string>(constant);
+            Assert.That(function.Target, Is.Not.Null);
 
             for (int i = 0; i < 200; ++i)
             {
@@ -232,6 +269,7 @@ namespace Jolt.Test.Functional
         {
             string constant = "constant-value";
             Func<int, double, DateTime, char, string> function = Functor.Idempotency<int, double, DateTime, char, string>(constant);
+            Assert.That(function.Target, Is.Not.Null);
 
             for (int i = 0; i < 200; ++i)
             {
@@ -306,6 +344,8 @@ namespace Jolt.Test.Functional
         public void Identity()
         {
             Func<string, string> identity = Functor.Identity<string>();
+            Assert.That(identity.Target, Is.Null);
+
             for (int i = 0; i < 200; ++i)
             {
                 string functionArg = new String('z', i);
@@ -320,6 +360,8 @@ namespace Jolt.Test.Functional
         public void TrueForAll()
         {
             Func<int, bool> predicate = Functor.TrueForAll<int>();
+            Assert.That(predicate.Target, Is.Null);
+
             for (int i = 0; i < 200; ++i)
             {
                 Assert.That(predicate(i));
@@ -333,6 +375,8 @@ namespace Jolt.Test.Functional
         public void FalseForAll()
         {
             Func<int, bool> predicate = Functor.FalseForAll<int>();
+            Assert.That(predicate.Target, Is.Null);
+
             for (int i = 0; i < 200; ++i)
             {
                 Assert.That(!predicate(i));

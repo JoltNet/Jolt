@@ -11,6 +11,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using Jolt.Functional;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -31,7 +32,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes),
-                delegate { });
+                Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int) }),
-                delegate { });
+                Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             AssertConstructorDeclaredFrom(
                 typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int), typeof(int) }),
-                delegate { });
+                Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 
         #endregion

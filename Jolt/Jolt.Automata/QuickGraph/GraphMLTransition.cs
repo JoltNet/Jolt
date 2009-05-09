@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 
 using Jolt.Automata.Properties;
+using Jolt.Functional;
 using log4net;
 using QuickGraph;
 
@@ -137,13 +138,23 @@ namespace Jolt.Automata.QuickGraph
 
                 if (declaringType != null)
                 {
-                    MethodInfo predicate = declaringType.GetMethods(PredicateBindingFlags)
-                        .FirstOrDefault(m => m.Name == methodName &&
-                             m.GetParameters().Length == 1 &&
-                             m.GetParameters()[0].ParameterType == typeof(TAlphabet) &&
-                             m.ReturnType == typeof(bool));
-
-                    if (predicate != null) { return (Predicate<TAlphabet>)Delegate.CreateDelegate(typeof(Predicate<TAlphabet>), predicate); }
+                    foreach (MethodInfo predicate in declaringType.GetMethods(PredicateBindingFlags))
+                    {
+                        if (predicate.Name == methodName &&
+                            predicate.GetParameters().Length == 1 &&
+                            predicate.ReturnType == typeof(bool))
+                        {
+                            Type paramType = predicate.GetParameters()[0].ParameterType;
+                            if (paramType == typeof(TAlphabet))
+                            {
+                                return Delegate.CreateDelegate(typeof(Predicate<TAlphabet>), predicate) as Predicate<TAlphabet>;
+                            }
+                            else if (paramType.IsGenericParameter)
+                            {
+                                return Delegate.CreateDelegate(typeof(Predicate<TAlphabet>), predicate.MakeGenericMethod(typeof(TAlphabet))) as Predicate<TAlphabet>;
+                            }
+                        }
+                    }
                 }
 
                 // Predicate is invalid or could not be loaded.
@@ -155,7 +166,7 @@ namespace Jolt.Automata.QuickGraph
                 Log.WarnFormat(Resources.Warn_TransitionDeserialization_PredicateNotSpecified, Source.Name, Target.Name);
             }
 
-            return inputSymbol => false;
+            return Functor.ToPredicate(Functor.FalseForAll<TAlphabet>());
         }
 
         #endregion

@@ -17,7 +17,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Linq;
 
+using log4net.Config;
 using Jolt.Automata.QuickGraph;
+using Jolt.Functional;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
@@ -26,6 +28,12 @@ namespace Jolt.Automata.Test
     [TestFixture]
     public sealed class FsmConverterTestFixture
     {
+        [TestFixtureSetUp]
+        public void TestFixtureSetup()
+        {
+            BasicConfigurator.Configure();
+        }
+        
         /// <summary>
         /// Verifies the behavior of the ToGraphML() method, for
         /// the vertices of an FSM.
@@ -207,7 +215,7 @@ namespace Jolt.Automata.Test
         public void ToBinary_Edges()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
-            fsm.AsGraph.Edges.First().OnTransition += delegate { };
+            fsm.AsGraph.Edges.First().OnTransition += Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
 
             FiniteStateMachine<char> serializedFsm;
             using (Stream stream = new MemoryStream())
@@ -230,7 +238,7 @@ namespace Jolt.Automata.Test
         public void ToBinary_NonSerializable()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
-            fsm.AsGraph.Edges.First().OnTransition += __EventHandler;
+            fsm.AsGraph.Edges.First().OnTransition += delegate { fsm.ToString(); };
 
             using (Stream stream = new MemoryStream())
             {
@@ -269,7 +277,7 @@ namespace Jolt.Automata.Test
         public void FromBinary_Edges()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
-            fsm.AsGraph.Edges.First().OnTransition += delegate { };
+            fsm.AsGraph.Edges.First().OnTransition += Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
 
             FiniteStateMachine<char> deserializedFsm;
             using (Stream stream = new MemoryStream())
@@ -318,18 +326,15 @@ namespace Jolt.Automata.Test
                 Assert.That(reader.ReadLine(), Is.EqualTo("0 [label=\"mod3(len) = 2\", shape=circle];"));
                 Assert.That(reader.ReadLine(), Is.EqualTo("1 [label=\"mod3(len) = 1\", shape=circle];"));
                 Assert.That(reader.ReadLine(), Is.EqualTo("2 [label=\"mod3(len) = 0\", style=bold, shape=doublecircle];"));
-                Assert.That(reader.ReadLine(), Is.EqualTo("0 -> 1 [ label=\"<.cctor>b__0\"];"));
-                Assert.That(reader.ReadLine(), Is.EqualTo("1 -> 2 [ label=\"<.cctor>b__0\"];"));
-                Assert.That(reader.ReadLine(), Is.EqualTo("2 -> 0 [ label=\"<.cctor>b__0\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("0 -> 1 [ label=\"<TrueForAll>b__25\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("1 -> 2 [ label=\"<TrueForAll>b__25\"];"));
+                Assert.That(reader.ReadLine(), Is.EqualTo("2 -> 0 [ label=\"<TrueForAll>b__25\"];"));
                 Assert.That(reader.ReadLine(), Is.EqualTo("}"));
                 Assert.That(reader.Read(), Is.EqualTo(-1));
             }
         }
 
         #region private methods -------------------------------------------------------------------
-
-        private void __EventHandler(object sender, StateTransitionEventArgs<char> args) { }
-
 
         /// <summary>
         /// Creates the GraphML for the given FSM.
@@ -372,7 +377,8 @@ namespace Jolt.Automata.Test
         }
 
         /// <summary>
-        /// Retrieves the given embedded resource in a stream.
+        /// Retrieves the given GraphML embedded resource and
+        /// transforms it to assure correct assembly references.
         /// </summary>
         /// 
         /// <param name="resourceName">
@@ -380,7 +386,28 @@ namespace Jolt.Automata.Test
         /// </param>
         private static Stream GetGraphMLResource(string resourceName)
         {
-            return Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(FsmConverterTestFixture), resourceName);
+            XDocument graphML;
+            using (XmlReader resourceReader = XmlReader.Create(
+                   Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(FsmConverterTestFixture), resourceName)))
+            {
+                graphML = XDocument.Load(resourceReader);
+                foreach (XElement element in graphML.Root.Descendants(GraphMLNamespace + "data").Where(e => e.Attribute("key").Value == "transitionPredicate"))
+                {
+                    string transitionPredicateName = element.Value;
+                    int textPos = transitionPredicateName.IndexOf(TemplateJoltAssemblyFullName);
+
+                    if (textPos >= 0)
+                    {
+                        element.SetValue(transitionPredicateName.Substring(0, textPos) + ActualJoltAssemblyFullName);
+                    }
+                }
+            }
+
+            Stream xmlStream = new MemoryStream();
+            graphML.Save(new StreamWriter(xmlStream));
+            xmlStream.Position = 0;
+
+            return xmlStream;
         }
 
         #endregion
@@ -389,6 +416,8 @@ namespace Jolt.Automata.Test
 
         private static readonly XNamespace GraphMLNamespace = "http://graphml.graphdrawing.org/xmlns";
         private static readonly string LengthMod3MachineResourceName = "Xml.LengthMod3Machine.xml";
+        private static readonly string TemplateJoltAssemblyFullName = "Jolt, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+        private static readonly string ActualJoltAssemblyFullName = typeof(Functor).Assembly.FullName;
 
         #endregion
     }

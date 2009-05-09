@@ -48,6 +48,10 @@
       <Project>{01762BEE-A0B0-4E2D-910D-F0654471475A}</Project>
       <Name>Jolt.Automata</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jolt\Jolt.csproj">
+      <Project>{DA98557A-159C-4D4B-9663-7E7D479318CE}</Project>
+      <Name>Jolt</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">

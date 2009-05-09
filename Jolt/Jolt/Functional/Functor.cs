@@ -143,6 +143,41 @@ namespace Jolt.Functional
         }
 
         /// <summary>
+        /// Adapnts a generic EventHandler delegate to the corresponding
+        /// Action delegate.
+        /// </summary>
+        /// 
+        /// <typeparam name="TEventArgs">
+        /// The type of the event handler argument.
+        /// </typeparam>
+        /// 
+        /// <param name="eventHandler">
+        /// The event handler to adapt.
+        /// </param>
+        public static Action<object, TEventArgs> ToAction<TEventArgs>(EventHandler<TEventArgs> eventHandler)
+            where TEventArgs : EventArgs
+        {
+            return Delegate.CreateDelegate(typeof(Action<object, TEventArgs>), eventHandler.Target, eventHandler.Method) as Action<object, TEventArgs>;
+        }
+
+        /// <summary>
+        /// Adapnts an Action delegate to a generic EventHandler delegate.
+        /// </summary>
+        /// 
+        /// <typeparam name="TEventArgs">
+        /// The type of the event handler argument.
+        /// </typeparam>
+        /// 
+        /// <param name="action">
+        /// The action handler to adapt.
+        /// </param>
+        public static EventHandler<TEventArgs> ToEventHandler<TEventArgs>(Action<object, TEventArgs> action)
+            where TEventArgs : EventArgs
+        {
+            return Delegate.CreateDelegate(typeof(EventHandler<TEventArgs>), action.Target, action.Method) as EventHandler<TEventArgs>;
+        }
+
+        /// <summary>
         /// Adapts a Func delegate to the corresponding Predicate delegate.
         /// </summary>
         /// 
@@ -155,7 +190,7 @@ namespace Jolt.Functional
         /// </param>
         public static Predicate<T> ToPredicate<T>(Func<T, bool> function)
         {
-            return new Predicate<T>(function);
+            return Delegate.CreateDelegate(typeof(Predicate<T>), function.Target, function.Method) as Predicate<T>;
         }
 
         /// <summary>
@@ -171,7 +206,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T, bool> ToPredicateFunc<T>(Predicate<T> predicate)
         {
-            return new Func<T, bool>(predicate);
+            return Delegate.CreateDelegate(typeof(Func<T, bool>), predicate.Target, predicate.Method) as Func<T, bool>;
         }
 
         /// <summary>
@@ -187,7 +222,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<TResult> Idempotency<TResult>(TResult value)
         {
-            return () => value;
+            return delegate { return value; };
         }
 
         /// <summary>
@@ -207,7 +242,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T, TResult> Idempotency<T, TResult>(TResult value)
         {
-            return arg => value;
+            return delegate { return value; };
         }
 
         /// <summary>
@@ -231,7 +266,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T1, T2, TResult> Idempotency<T1, T2, TResult>(TResult value)
         {
-            return (arg1, arg2) => value;
+            return delegate { return value; };
         }
 
         /// <summary>
@@ -259,7 +294,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T1, T2, T3, TResult> Idempotency<T1, T2, T3, TResult>(TResult value)
         {
-            return (arg1, arg2, arg3) => value;
+            return delegate { return value; };
         }
 
         /// <summary>
@@ -291,7 +326,7 @@ namespace Jolt.Functional
         /// </param>
         public static Func<T1, T2, T3, T4, TResult> Idempotency<T1, T2, T3, T4, TResult>(TResult value)
         {
-            return (arg1, arg2, arg3, arg4) => value;
+            return delegate { return value; };
         }
 
         /// <summary>
@@ -395,7 +430,7 @@ namespace Jolt.Functional
         /// </typeparam>
         public static Func<T, bool> TrueForAll<T>()
         {
-            return Idempotency<T, bool>(true);
+            return delegate { return true; };   // Ensures the generated method is static.
         }
 
         /// <summary>
@@ -407,7 +442,7 @@ namespace Jolt.Functional
         /// </typeparam>
         public static Func<T, bool> FalseForAll<T>()
         {
-            return Idempotency<T, bool>(false);
+            return delegate { return false; };  // Ensures the generated method is static.
         }
     }
 }

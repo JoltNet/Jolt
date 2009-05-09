@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml;
 
+using Jolt.Functional;
 using Jolt.Testing.Properties;
 using log4net;
 
@@ -350,7 +351,7 @@ namespace Jolt.Testing.CodeGeneration
             // Initialize the base constructor emit call only when the
             // real subject type is a reference type.
             Action<ILGenerator> emitBaseClassConstructorCall = m_realSubjectType.IsClass ?
-                EmitObjectDefaultConstructorCall : (Action<ILGenerator>)delegate { /* no-op */ };
+                EmitObjectDefaultConstructorCall : Functor.NoOperation<ILGenerator>();
 
             // Create a constructor on the proxy for each public constructor
             // on the real subject type and emit XML doc comments.

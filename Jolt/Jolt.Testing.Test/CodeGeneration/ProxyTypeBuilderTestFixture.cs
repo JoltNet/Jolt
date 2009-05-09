@@ -16,6 +16,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Xml;
 
+using Jolt.Functional;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -1145,7 +1146,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Getter()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Getter"), delegate { });
+            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Getter"), Functor.NoOperation<Type, PropertyInfo>());
         }
 
         /// <summary>
@@ -1155,7 +1156,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Setter()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Setter"), delegate { });
+            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Setter"), Functor.NoOperation<Type, PropertyInfo>());
         }
 
         /// <summary>
@@ -2133,7 +2134,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private static CreateXDCBuilderDelegate CreateXDCBuilderFactoryDelegate(XmlDocCommentBuilderBase builderToCreate)
         {
-            return delegate { return builderToCreate; };
+            return Functor.Idempotency<Type, Type, Type, XmlDocCommentBuilderBase>(builderToCreate);
         }
 
         /// <summary>

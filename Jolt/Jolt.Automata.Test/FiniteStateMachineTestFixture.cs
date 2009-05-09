@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Jolt.Functional;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using QuickGraph;
@@ -63,7 +64,7 @@ namespace Jolt.Automata.Test
         public void Construction_CopyGraph()
         {
             string[] expectedStates = { "start", "abc", "def", "final" };
-            Predicate<char> trueForAll = ch => true;
+            Predicate<char> trueForAll = Functor.ToPredicate(Functor.TrueForAll<char>());
 
             Transition<char>[] expectedTransitions = {
                  new Transition<char>("start", "abc", trueForAll),

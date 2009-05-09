@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
+using Jolt.Functional;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -29,7 +30,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction()
         {
-            VerifyBehavior(delegate { });
+            VerifyBehavior(Functor.NoOperation<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>

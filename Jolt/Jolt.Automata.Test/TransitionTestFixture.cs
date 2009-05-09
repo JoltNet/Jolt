@@ -9,6 +9,7 @@
 
 using System;
 
+using Jolt.Functional;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
@@ -138,7 +139,7 @@ namespace Jolt.Automata.Test
         [Test]
         public void Equals()
         {
-            EventHandler<StateTransitionEventArgs<char>> eventHandler = delegate { };
+            EventHandler<StateTransitionEventArgs<char>> eventHandler = Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
             Transition<char> trans_x = new Transition<char>("start", "final", Char.IsDigit);
             trans_x.OnTransition += eventHandler;
 
@@ -230,7 +231,7 @@ namespace Jolt.Automata.Test
         {
             Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
             Transition<char> trans_y = new Transition<char>("source", "target", Char.IsDigit);
-            trans_y.OnTransition += delegate { };
+            trans_y.OnTransition += Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
 
             Assert.That(trans_x, Is.Not.EqualTo(trans_y));
         }
@@ -272,7 +273,7 @@ namespace Jolt.Automata.Test
         {
             Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
             int hashCode = trans_x.GetHashCode();
-            trans_x.OnTransition += delegate { };
+            trans_x.OnTransition += Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
 
             Assert.That(hashCode, Is.Not.EqualTo(trans_x.GetHashCode()));
         }

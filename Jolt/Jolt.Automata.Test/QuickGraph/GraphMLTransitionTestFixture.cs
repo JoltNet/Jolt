@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 
 using Jolt.Automata.QuickGraph;
+using Jolt.Functional;
 using log4net.Config;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -166,6 +167,23 @@ namespace Jolt.Automata.Test.QuickGraph
 
         /// <summary>
         /// Verifies the behavior of the ToTransition() method
+        /// when the transition predicate is generic.
+        /// </summary>
+        [Test]
+        public void ToTransition_GenericPredicate()
+        {
+            Predicate<char> predicate = Functor.ToPredicate(Functor.TrueForAll<char>());
+            GraphMLTransition<char> graphMLtransition = new GraphMLTransition<char>(
+                new GraphMLState("start", true, false),
+                new GraphMLState("finish", false, true),
+                "description",
+                predicate);
+
+            AssertToTransition(graphMLtransition, predicate);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the ToTransition() method
         /// when the transition predicate name is null.
         /// </summary>
         [Test]
@@ -314,9 +332,9 @@ namespace Jolt.Automata.Test.QuickGraph
         {
             Predicate<TAlphabet> predicate = Delegate.CreateDelegate(
                 typeof(Predicate<TAlphabet>),
-                typeof(GraphMLTransition<TAlphabet>).GetMethod(
-                    "<DeserializeMethod>b__1",
-                    BindingFlags.Static | BindingFlags.NonPublic)) as Predicate<TAlphabet>;
+                typeof(Functor).GetMethod("<FalseForAll>b__26", BindingFlags.Static | BindingFlags.NonPublic)
+                    .MakeGenericMethod(typeof(TAlphabet)))
+                as Predicate<TAlphabet>;
 
             AssertToTransition(graphMLTransition, predicate);
         }
