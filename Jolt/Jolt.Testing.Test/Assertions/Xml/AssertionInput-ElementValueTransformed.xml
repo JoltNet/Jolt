@@ -1,0 +1,33 @@
+<root xmlns="urn:document-namespace">
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3">a</element>
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3">b</element>
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3">c</element>
+	
+	<anotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+		<childElement attribute1="value-1" attribute2="value-2"/>
+		AnotherTextNodeTextNode
+		AnotherTextNodeTextNode
+		!!YetAnotherTextNode!!
+		<anotherChildElement attribute1="value-1" attribute2="value-2"/>
+		!!YetAnotherTextNode!!
+		!!YetAnotherTextNode!!
+		<childElement attribute1="value-1" attribute2="value-2">
+			<grandChildElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				<element attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				<anotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3">abc</anotherElement>
+				<yetAnotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+			</grandChildElement>
+			<anotherGrandChildElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				AnotherTextNode
+				<element attribute1="value-1" attribute2="value-2" attribute3="value-3">abc</element>
+				AnotherTextNode
+				AnotherTextNode
+				<element attribute1="value-1" attribute2="value-2" attribute3="value-3">abc</element>
+				AnotherTextNode
+				AnotherTextNode
+				<element attribute1="value-1" attribute2="value-2" attribute3="value-3">abc</element>
+				AnotherTextNode
+			</anotherGrandChildElement>
+		</childElement>
+	</anotherElement>
+</root>

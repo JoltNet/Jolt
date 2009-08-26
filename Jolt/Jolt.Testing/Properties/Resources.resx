@@ -117,6 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssertionFailure_AttributeNamespaceMismatch" xml:space="preserve">
+    <value>Unexpected namespace in attribute '{0}' from element '{1}'.
+Expected: {2}
+Actual: {3}</value>
+  </data>
+  <data name="AssertionFailure_AttributeQuantityMismatch" xml:space="preserve">
+    <value>Element '{0}' differs in number of attributes.</value>
+  </data>
+  <data name="AssertionFailure_AttributeValueMismatch" xml:space="preserve">
+    <value>Unexpected value in attribute '{0}' from element '{1}'.
+Expected: {2}
+Actual: {3}</value>
+  </data>
+  <data name="AssertionFailure_ChildElementQuantityMismatch" xml:space="preserve">
+    <value>Element '{0}' differs in number of child elements.</value>
+  </data>
+  <data name="AssertionFailure_ElementNamespaceMismatch" xml:space="preserve">
+    <value>Unexpected namespace in element '{0}'.
+Expected: {1}
+Actual: {2}</value>
+  </data>
+  <data name="AssertionFailure_ElementValueMismatch" xml:space="preserve">
+    <value>Unexpected value in element '{0}'.
+Expected: {1}
+Actual: {2}</value>
+  </data>
+  <data name="AssertionFailure_UnexpectedAttribute" xml:space="preserve">
+    <value>Unexpected attribute '{0}' found in element '{1}'.</value>
+  </data>
+  <data name="AssertionFailure_UnexpectedElement" xml:space="preserve">
+    <value>Unexpected element.
+Expected: {0}
+Actual: {1}</value>
+  </data>
   <data name="Error_DelayedConstructorDeclaration" xml:space="preserve">
     <value>The constructor '{0}' must be declared at the same time its corresponding ConstructorBuilder is created.</value>
   </data>

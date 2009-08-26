@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assertions\XmlComparisonResultTestFixture.cs" />
+    <Compile Include="Assertions\XmlEqualityAssertionTestFixture.cs" />
+    <Compile Include="Assertions\XmlEquivalencyAssertionTestFixture.cs" />
+    <Compile Include="Assertions\XmlValidityAssertionTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractConstructorDeclarerTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarerImplTestFixture.cs" />
     <Compile Include="CodeGeneration\AbstractMethodDeclarerTestFixture.cs" />
@@ -116,6 +120,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeGeneration\Xml\AmbiguousReturnTypeOverride.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AdditionalAttribute.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AdditionalAttributeInDescendant.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AdditionalElement.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AdditionalElementInDescendant.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AttributeNamespaceTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AttributeOrderTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-AttributeTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-ElementSequenceTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-ElementValueTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-FewerAttributes.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-FewerAttributesInDescendant.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-ElementNamespaceTransformed.xml" />
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-MismatchingNumberOfChildren.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assertions\Xml\AssertionInput-MismatchingNumberOfChildrenInDescendant.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

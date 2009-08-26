@@ -1,0 +1,29 @@
+<root xmlns="urn:document-namespace">
+	<element attribute2="value-2" attribute1="value-1" attribute3="value-3"/>
+	<element attribute1="value-1" attribute3="value-3" attribute2="value-2"/>
+	<element attribute3="value-3" attribute2="value-2" attribute1="value-1"/>
+	
+	<anotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+		TextNode
+		<childElement attribute2="value-2" attribute1="value-1"/>
+		AnotherTextNode
+		<anotherChildElement attribute1="value-1" attribute2="value-2"/>
+		YetAnotherTextNode
+		<childElement attribute1="value-1" attribute2="value-2">
+			<grandChildElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				TextNode
+				<element attribute1="value-1" attribute3="value-3" attribute2="value-2"/>
+				<anotherElement attribute1="value-1" attribute3="value-3" attribute2="value-2" />
+				<yetAnotherElement attribute1="value-1" attribute3="value-3" attribute2="value-2"/>
+				AnotherTextNode
+			</grandChildElement>
+			<anotherGrandChildElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				TextNode
+				<element attribute2="value-2" attribute1="value-1" attribute3="value-3"/>
+				AnotherTextNode
+				<element attribute1="value-1" attribute3="value-3" attribute2="value-2"/>
+				<element attribute3="value-3" attribute2="value-2" attribute1="value-1"/>
+			</anotherGrandChildElement>
+		</childElement>
+	</anotherElement>
+</root>

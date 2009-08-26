@@ -5,6 +5,7 @@
     <assembly path="Jolt.Automata.Msagl.Test\bin\Debug\Jolt.Automata.Msagl.Test.dll" />
     <assembly path="Jolt.Automata.Test\bin\Debug\Jolt.Automata.Test.dll" />
     <assembly path="Jolt.Test\bin\Debug\Jolt.Test.dll" />
+    <assembly path="Jolt.Testing.Assertions.NUnit.Test\bin\Debug\Jolt.Testing.Assertions.NUnit.Test.dll" />
     <assembly path="Jolt.Testing.Test\bin\Debug\Jolt.Testing.Test.dll" />
   </Config>
   <Config name="Release" binpathtype="Auto">
@@ -12,6 +13,7 @@
     <assembly path="Jolt.Automata.Msagl.Test\bin\Release\Jolt.Automata.Msagl.Test.dll" />
     <assembly path="Jolt.Automata.Test\bin\Release\Jolt.Automata.Test.dll" />
     <assembly path="Jolt.Test\bin\Release\Jolt.Test.dll" />
+    <assembly path="Jolt.Testing.Assertions.NUnit.Test\bin\Release\Jolt.Testing.Assertions.NUnit.Test.dll" />
     <assembly path="Jolt.Testing.Test\bin\Release\Jolt.Testing.Test.dll" />
   </Config>
-  </NUnitProject>
+</NUnitProject>

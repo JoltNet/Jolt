@@ -37,6 +37,10 @@
     <DocumentationFile>bin\Release\Jolt.Testing.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assertions\XmlComparisonFlags.cs" />
+    <Compile Include="Assertions\XmlComparisonResult.cs" />
+    <Compile Include="Assertions\XmlEqualityAssertion.cs" />
+    <Compile Include="Assertions\XmlValidityAssertion.cs" />
     <Compile Include="CodeGeneration\DeclarationHelper.cs" />
     <Compile Include="CodeGeneration\GenericConstructorDeclarer.cs" />
     <Compile Include="CodeGeneration\GenericMethodDeclarerImpl.cs" />
@@ -61,6 +65,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Assertions\XmlEquivalencyAssertion.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeGeneration\Xml\RealSubjectTypes.xsd">
