@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RealSubjects xmlns="urn:Jolt.Testing.CodeGeneration.Xml">
+  <Type name="System.String, mscorlib" />
+  <Type name="System.IO.File, mscorlib">
+    <OverrideReturnType name="System.IO.FileStream, mscorlib" desiredTypeName="System.IO.Stream, mscorlib"/>
+    <OverrideReturnType name="System.IO.FileStream, mscorlib" desiredTypeName="System.Object, mscorlib"/>
+  </Type>
+  <Type name="System.Text.Decoder, mscorlib" />
+</RealSubjects>

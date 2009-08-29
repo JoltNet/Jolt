@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AssertionFailure_AttributeNamespaceMismatch" xml:space="preserve">
+    <value>Unexpected namespace in attribute '{0}' from element '{1}'.
+Expected: {2}
+Actual: {3}</value>
+  </data>
+  <data name="AssertionFailure_AttributeQuantityMismatch" xml:space="preserve">
+    <value>Element '{0}' differs in number of attributes.</value>
+  </data>
+  <data name="AssertionFailure_AttributeValueMismatch" xml:space="preserve">
+    <value>Unexpected value in attribute '{0}' from element '{1}'.
+Expected: {2}
+Actual: {3}</value>
+  </data>
+  <data name="AssertionFailure_ChildElementQuantityMismatch" xml:space="preserve">
+    <value>Element '{0}' differs in number of child elements.</value>
+  </data>
+  <data name="AssertionFailure_ElementNamespaceMismatch" xml:space="preserve">
+    <value>Unexpected namespace in element '{0}'.
+Expected: {1}
+Actual: {2}</value>
+  </data>
+  <data name="AssertionFailure_ElementValueMismatch" xml:space="preserve">
+    <value>Unexpected value in element '{0}'.
+Expected: {1}
+Actual: {2}</value>
+  </data>
+  <data name="AssertionFailure_UnexpectedAttribute" xml:space="preserve">
+    <value>Unexpected attribute '{0}' found in element '{1}'.</value>
+  </data>
+  <data name="AssertionFailure_UnexpectedElement" xml:space="preserve">
+    <value>Unexpected element.
+Expected: {0}
+Actual: {1}</value>
+  </data>
+  <data name="Error_DelayedConstructorDeclaration" xml:space="preserve">
+    <value>The constructor '{0}' must be declared at the same time its corresponding ConstructorBuilder is created.</value>
+  </data>
+  <data name="Error_DuplicateMember" xml:space="preserve">
+    <value>Duplicate method, property, or event detected within a type.</value>
+  </data>
+  <data name="Error_InstanceMethodAddedFromAbstractType" xml:space="preserve">
+    <value>Can not add non-static method '{0}' to the proxy builder as the real subject type is abstract.</value>
+  </data>
+  <data name="Error_InvalidProperty" xml:space="preserve">
+    <value>The property '{0}' has neither a public getter or a public setter.</value>
+  </data>
+  <data name="Error_InvalidProperty_ReturnTypeOverride" xml:space="preserve">
+    <value>Can not override the return type from the property '{0}' because the property contains a setter method.</value>
+  </data>
+  <data name="Error_InvalidRealSubjectType" xml:space="preserve">
+    <value>The real subject type '{0}' is invalid.  It can not be a delegate or interface type.</value>
+  </data>
+  <data name="Error_InvalidReturnTypeOverride" xml:space="preserve">
+    <value>Can not override the return type from method '{0}' as the desired type '{1}' is not a base type of the method return type '{2}'.</value>
+  </data>
+  <data name="Error_MemberNotPublic" xml:space="preserve">
+    <value>The proxy builder can only accept public methods, properties, and events.</value>
+  </data>
+  <data name="Error_MethodNotMemberOfRealSubject" xml:space="preserve">
+    <value>The method '{0}' does not belong to the proxy builder's real subject type.</value>
+  </data>
+  <data name="Error_OverrideCtorReturnType" xml:space="preserve">
+    <value>Can not override the return type of a constructor as a constructor does not have a return value.</value>
+  </data>
+  <data name="Error_RealSubjectType_LackingConstructor" xml:space="preserve">
+    <value>The non-abstract real subject type '{0}' requires at least one public constructor.</value>
+  </data>
+  <data name="Info_SkipDefinedEventMethod" xml:space="preserve">
+    <value>The method '{0}' was not included as part of the proxy type as it is already defined as an event.</value>
+  </data>
+  <data name="Info_SkipDefinedPropertyMethod" xml:space="preserve">
+    <value>The method '{0}' was not included as part of the proxy type as it is already defined as a property.</value>
+  </data>
+  <data name="Info_XmlDocCommentsDisabled" xml:space="preserve">
+    <value>Could not locate XML doc comments file for assembly '{0}'.  Procuction of XML doc comments is disabled.</value>
+  </data>
+  <data name="Warn_IgnoreReturnTypeOverride_Ambiguous" xml:space="preserve">
+    <value>Ignoring return type override '{0}'-&gt;'{1}'.  An override for the return type '{0}' on the real subject type '{2}' is already specified.</value>
+  </data>
+  <data name="Warn_TypeNotLoaded" xml:space="preserve">
+    <value>Could not load the type '{0}'.</value>
+  </data>
+</root>
