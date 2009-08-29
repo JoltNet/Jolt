@@ -88,8 +88,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </remarks>
         protected static Action<TMethodBuilder, TMethod> CreateStoreMethodBuilderDelegate_2Args(List<TMethodBuilder> implementationArgs)
         {
-            // TODO: Use Jolt.Bind and merge methods.
-
             // Stores method builder parameter passed to mock methods for future verification.
             // Required as a TypeBuilder created from a dynamic modules can not be queried prior
             // to being persisted or having its construction finalized.

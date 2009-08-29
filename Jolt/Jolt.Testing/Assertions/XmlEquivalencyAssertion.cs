@@ -135,32 +135,34 @@ namespace Jolt.Testing.Assertions
             XmlComparisonResult areEquivalent = AreElementsEquivalent(expected, actual);
             if (!areEquivalent.Result) { return areEquivalent; }
 
-            IEnumerator<XElement> expectedChildElements = expected.Elements().GetEnumerator();
-            IEnumerator<XElement> actualChildElements = actual.Elements().GetEnumerator();
-            bool moreExpectedChildElements, moreActualChildElements;
-
-            while (true)
+            using (IEnumerator<XElement> expectedChildElements = expected.Elements().GetEnumerator(),
+                                         actualChildElements = actual.Elements().GetEnumerator())
             {
-                moreExpectedChildElements = expectedChildElements.MoveNext();
-                moreActualChildElements = actualChildElements.MoveNext();
+                bool moreExpectedChildElements, moreActualChildElements;
 
-                if (!moreExpectedChildElements || !moreActualChildElements)
+                while (true)
                 {
-                    if (moreExpectedChildElements ^ moreActualChildElements)
+                    moreExpectedChildElements = expectedChildElements.MoveNext();
+                    moreActualChildElements = actualChildElements.MoveNext();
+
+                    if (!moreExpectedChildElements || !moreActualChildElements)
                     {
-                        return new XmlComparisonResult(
-                            false,
-                            String.Format(Resources.AssertionFailure_ChildElementQuantityMismatch, actual.Name.LocalName),
-                            expected,
-                            actual);
+                        if (moreExpectedChildElements ^ moreActualChildElements)
+                        {
+                            return new XmlComparisonResult(
+                                false,
+                                String.Format(Resources.AssertionFailure_ChildElementQuantityMismatch, actual.Name.LocalName),
+                                expected,
+                                actual);
+                        }
+
+                        break;
                     }
 
-                    break;
+                    // Ordering of child elements must match.
+                    areEquivalent = AreEquivalentAndOrdered(expectedChildElements.Current, actualChildElements.Current);
+                    if (!areEquivalent.Result) { return areEquivalent; }
                 }
-
-                // Ordering of child elements must match.
-                areEquivalent = AreEquivalentAndOrdered(expectedChildElements.Current, actualChildElements.Current);
-                if (!areEquivalent.Result) { return areEquivalent; }
             }
 
             return SuccessfulComparisonResult;
@@ -181,70 +183,14 @@ namespace Jolt.Testing.Assertions
         /// </param>
         private XmlComparisonResult AreEquivalentAndUnordered(XElement expected, XElement actual)
         {
-            NormalizeElementOrder(expected, actual);
+            NormalizeElementOrder_FirstPass(expected, actual);
+            NormalizeElementOrder_SecondPass(expected, actual);
             return AreEquivalentAndOrdered(expected, actual);  // TODO: consider comparison message upon detection of error.
         }
 
         /// <summary>
-        /// Orders the elements of the document <paramref name="actual"/> such that they
-        /// match the element order in the document <paramref name="expected"/>.
-        /// Elements are moved if they are considered equivalent as per the configuration
-        /// of the class.
-        /// </summary>
-        /// 
-        /// <param name="expected">
-        /// The element containing the expected set of child elements.
-        /// </param>
-        /// 
-        /// <param name="actual">
-        /// The element containing the child element set to validate.
-        /// </param>
-        private bool NormalizeElementOrder(XElement expected, XElement actual)
-        {
-            if (!AreEquivalent(expected, actual)) { return false; }
-
-            List<XElement> actualChildren = actual.Elements().ToList();
-            IList<XElement> expectedChildren = expected.Elements().ToList();
-
-            if (expectedChildren.Count != actualChildren.Count) { return false; }
-
-            // First normalization pass:
-            // Reorder the actual child element list so that elements are
-            // aligned as close as possible to their expected counterparts.
-            // Allows for accurate error reporting for when the second pass
-            // fails to move any elements.
-            NormalizeChildElementOrder(expectedChildren, actualChildren);   // TODO: Can this normalization occur in AreEquivalentAndUnOrdered?
-
-            // Second normalization pass:
-            // Reorder the actual child element list as above, but take into
-            // consideration the structure of the entire sub tree.  Guarantees
-            // the most acurate reordering.
-            bool continueSearch = true;
-            for (int expectedChildIndex = 0; expectedChildIndex < expectedChildren.Count; ++expectedChildIndex)
-            {
-                // Look for the element that best resembles expectedChild considering the configuration
-                // the assertion, along with the number of child elements for expectedChild.
-                int equivalentChildIndex = actualChildren.FindIndex(expectedChildIndex,
-                    new Predicate<XElement>(Bind.First<XElement, XElement, bool>(NormalizeElementOrder, expectedChildren[expectedChildIndex])));
-
-                // If we can not find an equivalent child, the entire child list is inequivalent.
-                if (equivalentChildIndex < 0)
-                {
-                    continueSearch = false;
-                    break;
-                }
-
-                SwapElement(actualChildren, expectedChildIndex, equivalentChildIndex);
-            }
-
-            actual.Elements().Remove();
-            actual.Add(actualChildren);
-            return continueSearch;
-        }
-
-        /// <summary>
-        /// Orders the elements contained in <paramref name="actualChildren"/> such that they
-        /// match the element order of those in <paramref name="expectedChildren"/>.
+        /// Orders the child elementselements contained in <paramref name="actualChildren"/>
+        /// such that they match the element order of those in <paramref name="expectedChildren"/>.
         /// An element is moved if it is considered equivalent to the reference element as per
         /// the configuration of the class (<see cref="AreElementsEquivalent"/>).
         /// </summary>
@@ -256,37 +202,95 @@ namespace Jolt.Testing.Assertions
         /// <param name="actualChildren">
         /// The collection containing the elements to reorder.
         /// </param>
-        private void NormalizeChildElementOrder(IEnumerable<XElement> expectedChildren, List<XElement> actualChildren)
+        private void NormalizeElementOrder_FirstPass(XElement expected, XElement actual)
         {
-            int nextUnorderedElementIndex = 0;
-            foreach (XElement expectedChild in expectedChildren)
+            if (!AreEquivalent(expected, actual)) { return; }
+
+            List<XElement> unorderedActualChildren = actual.Elements().ToList();
+            if (expected.Elements().Count() != unorderedActualChildren.Count) { return; }
+
+            int nextUnorderedChildIndex = 0;
+            foreach (XElement expectedChild in expected.Elements())
             {
                 int numChildElements = expectedChild.Elements().Count();
 
-                Predicate<XElement> isEquivalentToExpectedChild = Functor.ToPredicate(
-                    Bind.First<XElement, XElement, bool>(AreEquivalent, expectedChild));
+                Predicate<XElement> isEquivalentToExpectedChild =
+                    Functor.ToPredicate(Bind.First<XElement, XElement, bool>(AreEquivalent, expectedChild));
                 Predicate<XElement> isEquivalentToExpectedChild_Strict =
                     candidateElement => isEquivalentToExpectedChild(candidateElement) &&
                                         numChildElements == candidateElement.Elements().Count();
 
                 // Look for the element that best resembles expectedChild considering the configuration
                 // the assertion, along with the number of child elements for expectedChild.
-                int equivalentChildIndex = actualChildren.FindIndex(nextUnorderedElementIndex, isEquivalentToExpectedChild_Strict);
+                int equivalentChildIndex = unorderedActualChildren.FindIndex(nextUnorderedChildIndex, isEquivalentToExpectedChild_Strict);
 
                 if (equivalentChildIndex < 0)
                 {
                     // We couldn't find a matching element.  Relax the search criteria
                     // by removing the matching child element count constraint and try again.
-                    equivalentChildIndex = actualChildren.FindIndex(nextUnorderedElementIndex, isEquivalentToExpectedChild);
+                    equivalentChildIndex = unorderedActualChildren.FindIndex(nextUnorderedChildIndex, isEquivalentToExpectedChild);
                     if (equivalentChildIndex < 0) { return; }   // No match found, stop normalizing element order.
                 }
 
-                SwapElement(actualChildren, equivalentChildIndex, nextUnorderedElementIndex);
-                ++nextUnorderedElementIndex;
+                // Exchange the unordered elements and then apply the normalization to
+                // the children of expected/actual.
+                unorderedActualChildren[nextUnorderedChildIndex].ReplaceWith(unorderedActualChildren[equivalentChildIndex]);
+                unorderedActualChildren[equivalentChildIndex].ReplaceWith(unorderedActualChildren[nextUnorderedChildIndex]);
+                SwapElement(unorderedActualChildren, nextUnorderedChildIndex, equivalentChildIndex);
+                ++nextUnorderedChildIndex;
+
+                NormalizeElementOrder_FirstPass(expectedChild, unorderedActualChildren[equivalentChildIndex]);
             }
         }
 
         /// <summary>
+        /// Orders the child elementselements contained in <paramref name="actualChildren"/>
+        /// such that they match the element order of those in <paramref name="expectedChildren"/>.
+        /// An element is moved if it is considered equivalent to the reference element as per
+        /// the configuration of the class (<see cref="AreElementsEquivalent"/>).
+        /// </summary>
+        /// 
+        /// <param name="expectedChildren">
+        /// The collection of reference elements, defining the desired element order.
+        /// </param>
+        /// 
+        /// <param name="actualChildren">
+        /// The collection containing the elements to reorder.
+        /// </param>
+        private bool NormalizeElementOrder_SecondPass(XElement expected, XElement actual)
+        {
+            if (!AreEquivalent(expected, actual)) { return false; }
+
+            List<XElement> unorderedActualChildren = actual.Elements().ToList();
+            if (expected.Elements().Count() != unorderedActualChildren.Count) { return false; }
+
+            // Reorder the actual child element, but considers
+            // the structure of the entire sub tree.  Guarantees
+            // the most acurate reordering.
+            int nextUnorderedChildIndex = 0;
+            foreach (XElement expectedChild in expected.Elements())
+            {
+                // Look for the element that best resembles expectedChild considering the configuration
+                // the assertion, along with the number of child elements for expectedChild.
+                int equivalentChildIndex = unorderedActualChildren.FindIndex(
+                    nextUnorderedChildIndex,
+                    Functor.ToPredicate(Bind.First<XElement, XElement, bool>(NormalizeElementOrder_SecondPass, expectedChild)));
+
+                // If we can not find an equivalent child, the entire child list is inequivalent.
+                if (equivalentChildIndex < 0) { return false; }
+
+                // Exchange the unordered elements and then apply the normalization to
+                // the children of expected/actual.
+                unorderedActualChildren[nextUnorderedChildIndex].ReplaceWith(unorderedActualChildren[equivalentChildIndex]);
+                unorderedActualChildren[equivalentChildIndex].ReplaceWith(unorderedActualChildren[nextUnorderedChildIndex]);
+                SwapElement(unorderedActualChildren, nextUnorderedChildIndex, equivalentChildIndex);
+                ++nextUnorderedChildIndex;
+            }
+
+            return true;
+        }
+
+
         /// Exchanges the elements in the given collection, at the given indecies.
         /// </summary>
         /// 
@@ -376,58 +380,60 @@ namespace Jolt.Testing.Assertions
         /// </param>
         private XmlComparisonResult CompareAttributes(XElement expected, XElement actual)
         {
-            IEnumerator<XAttribute> expectedAttributes = CreateAttributeEnumerator(expected);
-            IEnumerator<XAttribute> actualAttributes = CreateAttributeEnumerator(actual);
-            bool moreExpectedAttributes, moreActualAttributes;
-
-            while (true)
+            using (IEnumerator<XAttribute> expectedAttributes = CreateAttributeEnumerator(expected),
+                                           actualAttributes = CreateAttributeEnumerator(actual))
             {
-                moreExpectedAttributes = expectedAttributes.MoveNext();
-                moreActualAttributes = actualAttributes.MoveNext();
+                bool moreExpectedAttributes, moreActualAttributes;
 
-                // Attribute quantity must match.
-                if (!moreExpectedAttributes || !moreActualAttributes)
+                while (true)
                 {
-                    if (moreExpectedAttributes ^ moreActualAttributes)
+                    moreExpectedAttributes = expectedAttributes.MoveNext();
+                    moreActualAttributes = actualAttributes.MoveNext();
+
+                    // Attribute quantity must match.
+                    if (!moreExpectedAttributes || !moreActualAttributes)
+                    {
+                        if (moreExpectedAttributes ^ moreActualAttributes)
+                        {
+                            return new XmlComparisonResult(
+                                false,
+                                String.Format(Resources.AssertionFailure_AttributeQuantityMismatch, actual.Name.LocalName),
+                                expected,
+                                actual);
+                        }
+
+                        break;
+                    }
+
+                    // Attribute local name and value must match, and optionally attribute namespace.
+                    XmlComparisonResult areEquivalent = m_validateAttributeNamespaceEquivalency(expectedAttributes.Current, actualAttributes.Current, expected, actual);
+                    if (!areEquivalent.Result) { return areEquivalent; }
+
+                    if (expectedAttributes.Current.Name.LocalName != actualAttributes.Current.Name.LocalName)
                     {
                         return new XmlComparisonResult(
                             false,
-                            String.Format(Resources.AssertionFailure_AttributeQuantityMismatch, actual.Name.LocalName),
+                            String.Format(
+                                Resources.AssertionFailure_UnexpectedAttribute,
+                                actualAttributes.Current.Name.LocalName,
+                                actual.Name.LocalName),
                             expected,
                             actual);
                     }
 
-                    break;
-                }
-
-                // Attribute local name and value must match, and optionally attribute namespace.
-                XmlComparisonResult areEquivalent = m_validateAttributeNamespaceEquivalency(expectedAttributes.Current, actualAttributes.Current, expected, actual);
-                if (!areEquivalent.Result) { return areEquivalent; }
-
-                if (expectedAttributes.Current.Name.LocalName != actualAttributes.Current.Name.LocalName)
-                {
-                    return new XmlComparisonResult(
-                        false,
-                        String.Format(
-                            Resources.AssertionFailure_UnexpectedAttribute,
-                            actualAttributes.Current.Name.LocalName,
-                            actual.Name.LocalName),
-                        expected,
-                        actual);
-                }
-
-                if (expectedAttributes.Current.Value != actualAttributes.Current.Value)
-                {
-                    return new XmlComparisonResult(
-                        false,
-                        String.Format(
-                            Resources.AssertionFailure_AttributeValueMismatch,
-                            actualAttributes.Current.Name.LocalName,
-                            actual.Name.LocalName,
-                            expectedAttributes.Current.Value,
-                            actualAttributes.Current.Value),
-                        expected,
-                        actual);                    
+                    if (expectedAttributes.Current.Value != actualAttributes.Current.Value)
+                    {
+                        return new XmlComparisonResult(
+                            false,
+                            String.Format(
+                                Resources.AssertionFailure_AttributeValueMismatch,
+                                actualAttributes.Current.Name.LocalName,
+                                actual.Name.LocalName,
+                                expectedAttributes.Current.Value,
+                                actualAttributes.Current.Value),
+                            expected,
+                            actual);
+                    }
                 }
             }
 

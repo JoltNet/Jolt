@@ -11,6 +11,10 @@ using System;
 
 namespace Jolt.Testing.Assertions
 {
+    /// <summary>
+    /// Controls the level of equivalency strictness when applied to the
+    /// <seealso cref="XmlEquivalencyAssertion"/> class.
+    /// </summary>
     [Flags]
     public enum XmlComparisonFlags
     {

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using Jolt.Functional;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -216,18 +217,18 @@ namespace Jolt.Testing.Test.CodeGeneration
                 IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = Mocker.Current.CreateMock<IMethodDeclarerImpl<MethodBuilder, MethodInfo>>();
 
                 List<MethodBuilder> implementationArgs = new List<MethodBuilder>();
-                Action<MethodBuilder, MethodInfo, Type> storeMethodBuilderParameter = CreateStoreMethodBuilderDelegate_3Args(implementationArgs);
-                Action<MethodBuilder, MethodInfo> storeMethodBuilderParameter_bind = (b, m) => storeMethodBuilderParameter(b, m, GetType());
+                Action<MethodBuilder, MethodInfo, Type> storeMethodBuilderForMethods = CreateStoreMethodBuilderDelegate_3Args(implementationArgs);
+                Action<MethodBuilder, MethodInfo> storeMethodBuilderForParameters = Bind.Third(storeMethodBuilderForMethods, GetType());
 
                 // Expectations
                 // The method and its parameters are defined/declared.
                 implementation.DeclareMethod(null, expectedMethod, expectedMethodReturnType);
                 LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod), RMC.Is.Same(expectedMethodReturnType))
-                    .Do(storeMethodBuilderParameter);
+                    .Do(storeMethodBuilderForMethods);
 
                 implementation.DefineMethodParameters(null, expectedMethod);
                 LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod))
-                    .Do(storeMethodBuilderParameter_bind);
+                    .Do(storeMethodBuilderForParameters);
 
                 // Verification and assertions.
                 Mocker.Current.ReplayAll();

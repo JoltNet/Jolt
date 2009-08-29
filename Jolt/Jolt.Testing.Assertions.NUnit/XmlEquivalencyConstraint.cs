@@ -10,9 +10,6 @@
 using System;
 using System.Xml;
 
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
-
 namespace Jolt.Testing.Assertions.NUnit
 {
     using CreateXmlEquivalencyAssertionDelegate = Func<XmlComparisonFlags, XmlEquivalencyAssertion>;
@@ -167,6 +164,14 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #region private methods -------------------------------------------------------------------
 
+        /// <summary>
+        /// Adds the given comparison flag to the stored flag and returns an
+        /// instance of the modified object.
+        /// </summary>
+        /// 
+        /// <param name="flag">
+        /// The flag to add to the stored flag instance.
+        /// </param>
         private XmlEquivalencyConstraint ApplyComparisonFlag(XmlComparisonFlags flag)
         {
             m_comparisonFlags |= flag;

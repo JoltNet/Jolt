@@ -7,11 +7,7 @@
 // File created: 5/25/2009 10:56:59
 // ----------------------------------------------------------------------------
 
-using System.Linq;
-using System.Text;
 using System.Xml;
-
-using Jolt.Testing.Properties;
 
 namespace Jolt.Testing.Assertions
 {

@@ -10,9 +10,6 @@
 using System;
 using System.Xml;
 
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
-
 namespace Jolt.Testing.Assertions.NUnit
 {
     /// <summary>

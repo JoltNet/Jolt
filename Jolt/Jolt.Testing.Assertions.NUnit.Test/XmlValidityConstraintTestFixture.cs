@@ -10,16 +10,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
-using Jolt.Testing.Properties;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
-
-using Jolt.Testing.Assertions.NUnit;
-using System.Reflection;
 
 namespace Jolt.Testing.Assertions.NUnit.Test
 {
@@ -32,13 +29,7 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Construction_Schemas()
         {
-            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-            XmlValidityConstraint constraint = new XmlValidityConstraint(expectedSchemas);
-
-            XmlReaderSettings readerSettings = constraint.Assertion.CreateReaderSettings(null);
-            Assert.That(readerSettings.Schemas, Is.SameAs(expectedSchemas));
-            Assert.That(readerSettings.ValidationFlags | XmlSchemaValidationFlags.ReportValidationWarnings,
-                Is.EqualTo(readerSettings.ValidationFlags));
+            ConstraintConstructionTests.XmlValidityConstraint_Schemas(schemas => new XmlValidityConstraint(schemas));
         }
 
         /// <summary>
@@ -48,13 +39,7 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Construction_Schemas_Flags()
         {
-            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-            XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.None;
-            XmlValidityConstraint constraint = new XmlValidityConstraint(expectedSchemas, expectedFlags);
-
-            XmlReaderSettings readerSettings = constraint.Assertion.CreateReaderSettings(null);
-            Assert.That(readerSettings.Schemas, Is.SameAs(expectedSchemas));
-            Assert.That(readerSettings.ValidationFlags | expectedFlags, Is.EqualTo(readerSettings.ValidationFlags));
+            ConstraintConstructionTests.XmlValidityConstraint_Schemas_Flags((schemas, flags) => new XmlValidityConstraint(schemas, flags));
         }
 
         /// <summary>

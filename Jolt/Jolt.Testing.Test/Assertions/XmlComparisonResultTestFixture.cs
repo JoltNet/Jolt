@@ -7,16 +7,12 @@
 // File created: 8/18/2009 18:08:57
 // ----------------------------------------------------------------------------
 
-using System.Linq;
 using System.Xml.Linq;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Jolt.Testing.Assertions;
-using System.Runtime.Serialization;
 using System;
-using System.Reflection;
-using System.Globalization;
 
 namespace Jolt.Testing.Test.Assertions
 {
@@ -72,33 +68,5 @@ namespace Jolt.Testing.Test.Assertions
 
             Assert.That(result.XPathHint, Is.EqualTo("/ns-1:root/child/ns-2:descendant"));
         }
-
-        //SerializationInfo info = new SerializationInfo(
-        //typeof(XmlComparisonAssertionException),
-        //new FormatterConverter());
-
-        //Exception expectedInnerException = new Exception();
-        //string expectedMessage = "exception-message";
-        //info.AddValue("ClassName", String.Empty);
-        //info.AddValue("Message", expectedMessage);
-        //info.AddValue("InnerException", expectedInnerException);
-        //info.AddValue("HelpURL", String.Empty);
-        //info.AddValue("StackTraceString", String.Empty);
-        //info.AddValue("RemoteStackTraceString", String.Empty);
-        //info.AddValue("RemoteStackIndex", 0);
-        //info.AddValue("ExceptionMethod", String.Empty);
-        //info.AddValue("HResult", 1);
-        //info.AddValue("Source", String.Empty);
-
-        //XmlComparisonAssertionException exception = Activator.CreateInstance(
-        //typeof(XmlComparisonAssertionException),
-        //BindingFlags.NonPublic | BindingFlags.Instance,
-        //null,
-        //new object[] { info, new StreamingContext() },
-        //null) as XmlComparisonAssertionException;
-
-        //Assert.That(exception.Message, Is.SameAs(expectedMessage));
-        //Assert.That(exception.InnerException, Is.SameAs(expectedInnerException));
-
     }
 }

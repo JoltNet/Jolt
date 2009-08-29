@@ -12,7 +12,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
-using Jolt.Testing.Properties;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
@@ -28,11 +27,7 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Construction()
         {
-            XmlReader expectedXml = XmlReader.Create(Stream.Null);
-            XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedXml);
-
-            Assert.That(constraint.Assertion, Is.Not.Null);
-            Assert.That(constraint.ExpectedXml, Is.SameAs(expectedXml));
+            ConstraintConstructionTests.XmlEqualityConstraint(xml => new XmlEqualityConstraint(xml));
         }
 
         /// <summary>
@@ -227,7 +222,6 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         /// </summary>
         private static XmlComparisonResult CreateFailedComparisonResult()
         {
-            // TODO: remove code duplication from XmlEquivalencyConstraintTestFixture.
             XElement element = new XElement(XName.Get("element", "ns"));
             return new XmlComparisonResult(false, "message", element, element);
         }

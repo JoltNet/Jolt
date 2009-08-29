@@ -7,13 +7,9 @@
 // File created: 7/7/2009 09:06:09
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
-
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace Jolt.Testing.Assertions.NUnit
 {

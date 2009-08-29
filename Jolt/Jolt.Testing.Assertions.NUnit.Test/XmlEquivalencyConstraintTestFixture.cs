@@ -12,7 +12,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
-using Jolt.Testing.Properties;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
@@ -31,12 +30,7 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Construction()
         {
-            XmlReader expectedXml = XmlReader.Create(Stream.Null);
-            XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedXml);
-
-            Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.Strict));
-            Assert.That(constraint.CreateAssertion, Is.InstanceOfType(typeof(CreateXmlEquivalencyAssertionDelegate)));
-            Assert.That(constraint.ExpectedXml, Is.SameAs(expectedXml));
+            ConstraintConstructionTests.XmlEquivalencyConstraint(xml => new XmlEquivalencyConstraint(xml));
         }
 
         /// <summary>
@@ -366,7 +360,6 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         /// </summary>
         private static XmlComparisonResult CreateFailedComparisonResult()
         {
-            // TODO: remove code duplication from XmlEqualityConstraintTestFixture.
             XElement element = new XElement(XName.Get("element", "ns"));
             return new XmlComparisonResult(false, "message", element, element);
         }

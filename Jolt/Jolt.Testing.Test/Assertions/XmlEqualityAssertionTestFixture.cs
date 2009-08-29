@@ -7,14 +7,13 @@
 // File created: 5/29/2009 19:12:47
 // ----------------------------------------------------------------------------
 
-using Rhino.Mocks;
+using System.IO;
+using System.Xml;
 
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using System.Xml;
-using System.IO;
-using Jolt.Testing.Properties;
+using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.Assertions
 {

@@ -7,8 +7,8 @@
 // File created: 8/22/2009 23:05:27
 // ----------------------------------------------------------------------------
 
-using System.Xml.Schema;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Jolt.Testing.Assertions.NUnit.SyntaxHelpers
 {

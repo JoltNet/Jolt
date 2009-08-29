@@ -111,7 +111,6 @@ namespace Jolt.Test
         [Test]
         public void ToXmlDocCommentMember_Indexer()
         {
-            // TODO: Factor out common anonymous delegates.
             Assert.That(Convert.ToXmlDocCommentMember(typeof(string).GetProperty("Chars")), Is.EqualTo("P:System.String.Chars(System.Int32)"));
             Assert.That(
                 Convert.ToXmlDocCommentMember(typeof(System.Collections.Generic.List<>).GetProperty("Item")),
@@ -145,7 +144,6 @@ namespace Jolt.Test
         [Test]
         public void ToXmlDocCommentMember_Constructor()
         {
-            // TODO: Factor out common anonymous delegates.
             Assert.That(
                 Convert.ToXmlDocCommentMember(typeof(System.Collections.Generic.List<>).GetConstructor(NonPublicStatic, null, Type.EmptyTypes, null)),
                 Is.EqualTo("M:System.Collections.Generic.List`1.#cctor"));
