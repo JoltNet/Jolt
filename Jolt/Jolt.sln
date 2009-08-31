@@ -26,10 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Glee", "Jolt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Glee.Test", "Jolt.Automata.Glee.Test\Jolt.Automata.Glee.Test.csproj", "{F7CEA313-558C-45F1-BF7C-114982E0FA68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Msagl", "Jolt.Automata.Msagl\Jolt.Automata.Msagl.csproj", "{4F3251E7-F809-4991-9476-F95DCF8C8E74}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Msagl.Test", "Jolt.Automata.Msagl.Test\Jolt.Automata.Msagl.Test.csproj", "{088D2023-6376-446C-8B32-6A3C5737A66C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.NUnit", "Jolt.Testing.Assertions.NUnit\Jolt.Testing.Assertions.NUnit.csproj", "{DC09A424-4552-434D-995E-DF0AE2EFFA03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.NUnit.Test", "Jolt.Testing.Assertions.NUnit.Test\Jolt.Testing.Assertions.NUnit.Test.csproj", "{E839FE36-7834-41BE-871E-C699C0040B7D}"
@@ -76,14 +72,6 @@ Global
 		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F3251E7-F809-4991-9476-F95DCF8C8E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F3251E7-F809-4991-9476-F95DCF8C8E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F3251E7-F809-4991-9476-F95DCF8C8E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F3251E7-F809-4991-9476-F95DCF8C8E74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{088D2023-6376-446C-8B32-6A3C5737A66C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{088D2023-6376-446C-8B32-6A3C5737A66C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{088D2023-6376-446C-8B32-6A3C5737A66C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{088D2023-6376-446C-8B32-6A3C5737A66C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Release|Any CPU.ActiveCfg = Release|Any CPU

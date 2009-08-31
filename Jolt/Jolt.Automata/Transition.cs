@@ -23,7 +23,7 @@ namespace Jolt.Automata
     /// The type that represents the alphabet operated upon by the FSM.
     /// </typeparam>
     [Serializable]
-    public sealed class Transition<TAlphabet> : Edge<string>, IEquatable<Transition<TAlphabet>>
+    public sealed class Transition<TAlphabet> : EquatableEdge<string>
     {
         #region constructors ----------------------------------------------------------------------
 
@@ -106,8 +106,7 @@ namespace Jolt.Automata
         /// </summary>
         public override int GetHashCode()
         {
-            int hashCode = base.Source.GetHashCode() ^
-                           base.Target.GetHashCode() ^
+            int hashCode = base.GetHashCode() ^
                            m_transitionPredicate.GetHashCode();
             
             if (Description != null) { hashCode ^= Description.GetHashCode(); }
@@ -125,9 +124,7 @@ namespace Jolt.Automata
         /// </summary>
         public bool Equals(Transition<TAlphabet> transition)
         {
-            bool areEqual = transition != null &&
-                   base.Source == transition.Source &&
-                   base.Target == transition.Target &&
+            bool areEqual = base.Equals(transition) &&
                    m_transitionPredicate.Equals(transition.m_transitionPredicate) &&
                    Description == transition.Description;
 
