@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Jolt Testing Library")]
-[assembly: AssemblyDescription("Contains classes supporting the development of strong unit tests and injectable components.")]
+[assembly: AssemblyTitle("Jolt Testing Visual Studio Assertions Extension Test Assembly")]
+[assembly: AssemblyDescription("Contains unit tests for the data structures and algorithms in Jolt.Testing.Assertions.VisualStudio.dll.")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Jolt.Testing")]
-[assembly: AssemblyCopyright("Copyright © Steve Guidi 2007")]
+[assembly: AssemblyProduct("Jolt.Testing.Assertions.VisualStudio.Test")]
+[assembly: AssemblyCopyright("Copyright © Steve Guidi 2009")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]
 
@@ -26,15 +25,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
+// You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("0.3.*")]
 [assembly: AssemblyFileVersion("0.3.*")]
-
-// Friend assemblies.
-[assembly: InternalsVisibleTo("Jolt.Testing.Test")]
-[assembly: InternalsVisibleTo("Jolt.Testing.Assertions.NUnit")]
-[assembly: InternalsVisibleTo("Jolt.Testing.Assertions.NUnit.Test")]
-[assembly: InternalsVisibleTo("Jolt.Testing.Assertions.VisualStudio")]
-[assembly: InternalsVisibleTo("Jolt.Testing.Assertions.VisualStudio.Test")]
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

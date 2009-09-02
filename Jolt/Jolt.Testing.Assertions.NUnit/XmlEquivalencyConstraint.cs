@@ -33,7 +33,7 @@ namespace Jolt.Testing.Assertions.NUnit
         /// The expected XML.
         /// </param>
         public XmlEquivalencyConstraint(XmlReader expectedXml)
-            : this(expectedXml, flags => new XmlEquivalencyAssertion(flags)) { }
+            : this(expectedXml, Factory.CreateXmlEquivalencyAssertion) { }
 
         /// <summary>
         /// Initializes the constraint with the expected XML

@@ -28,7 +28,7 @@ namespace Jolt.Testing.Assertions.NUnit
         /// The expected XML.
         /// </param>
         public XmlEqualityConstraint(XmlReader expectedXml)
-            : this(expectedXml, new XmlEqualityAssertion()) { }
+            : this(expectedXml, Factory.CreateXmlEqualityAssertion()) { }
 
         /// <summary>
         /// Initializes the constraint with the expected XML

@@ -238,6 +238,5 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         }
 
         #endregion
-
     }
 }

@@ -109,10 +109,16 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #endregion
 
+        #region internal data ---------------------------------------------------------------------
+
+        internal static readonly IAssertionFactory Factory = new AssertionFactory();
+
+        #endregion
+
         #region private data ----------------------------------------------------------------------
 
         private string m_assertionErrorMessage;
-
+ 
         #endregion
     }
 }

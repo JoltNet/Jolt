@@ -26,9 +26,7 @@ namespace Jolt.Testing.Test.Assertions
         [Test]
         public void DefaultConstruction()
         {
-            XmlEqualityAssertion assertion = new XmlEqualityAssertion();
-            Assert.That(assertion.EquivalencyAssertion, Is.Not.Null);
-            Assert.That(assertion.EquivalencyAssertion.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.Strict));
+            AssertionConstructionTests.XmlEqualityAssertion(() => new XmlEqualityAssertion());
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assertions\AssertionConstructionTests.cs" />
+    <Compile Include="Assertions\AssertionFactoryTestFixture.cs" />
     <Compile Include="Assertions\XmlComparisonResultTestFixture.cs" />
     <Compile Include="Assertions\XmlEqualityAssertionTestFixture.cs" />
     <Compile Include="Assertions\XmlEquivalencyAssertionTestFixture.cs" />

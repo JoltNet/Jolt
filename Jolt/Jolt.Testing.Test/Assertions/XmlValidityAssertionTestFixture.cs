@@ -32,14 +32,7 @@ namespace Jolt.Testing.Test.Assertions
         [Test]
         public void Construction_SchemaSet()
         {
-            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-            XmlValidityAssertion assertion = new XmlValidityAssertion(expectedSchemas);
-
-            XmlReaderSettings settings = assertion.CreateReaderSettings(null);
-            Assert.That(settings.Schemas, Is.SameAs(expectedSchemas));
-            Assert.That(settings.ValidationFlags | XmlSchemaValidationFlags.ReportValidationWarnings, Is.EqualTo(settings.ValidationFlags));
-            Assert.That(settings.ValidationType, Is.EqualTo(ValidationType.Schema));
-            Assert.That(GetValidationEventHandler(settings), Is.Null);
+            AssertionConstructionTests.XmlValidityAssertion_Schemas(schemas => new XmlValidityAssertion(schemas));
         }
 
         /// <summary>
@@ -49,16 +42,7 @@ namespace Jolt.Testing.Test.Assertions
         [Test]
         public void Construction_SchemaSet_Flags()
         {
-            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-            XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.None;
-            XmlValidityAssertion assertion = new XmlValidityAssertion(expectedSchemas, expectedFlags);
-            ValidationEventHandler handler = (s, a) => { };
-
-            XmlReaderSettings settings = assertion.CreateReaderSettings(handler);
-            Assert.That(settings.Schemas, Is.SameAs(expectedSchemas));
-            Assert.That(settings.ValidationFlags | expectedFlags, Is.EqualTo(settings.ValidationFlags));
-            Assert.That(settings.ValidationType, Is.EqualTo(ValidationType.Schema));
-            Assert.That(GetValidationEventHandler(settings), Is.SameAs(handler.Method));
+            AssertionConstructionTests.XmlValidityAssertion_Schemas_Flags((schemas, flags) => new XmlValidityAssertion(schemas, flags));
         }
 
         /// <summary>
@@ -124,22 +108,6 @@ namespace Jolt.Testing.Test.Assertions
         {
             Type resourceSiblingType = typeof(Jolt.Testing.Test.CodeGeneration.Xml.XmlConfiguratorTestFixture);
             return resourceSiblingType.Assembly.GetManifestResourceStream(resourceSiblingType, resourceName);
-        }
-
-        /// <summary>
-        /// Retrieves the method that is subscribed to the validation event
-        /// handler of the given XML reader settings.
-        /// </summary>
-        /// 
-        /// <param name="settings">
-        /// The XML reader settings whose validation event handler is retrieved.
-        /// </param>
-        private static MethodInfo GetValidationEventHandler(XmlReaderSettings settings)
-        {
-            ValidationEventHandler handler = typeof(XmlReaderSettings)
-                .GetField("valEventHandler", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(settings) as ValidationEventHandler;
-            return handler == null ? null : handler.Method;
         }
 
         #endregion

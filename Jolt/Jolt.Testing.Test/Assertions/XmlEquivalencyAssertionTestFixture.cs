@@ -40,17 +40,13 @@ namespace Jolt.Testing.Test.Assertions
         #endregion
 
         /// <summary>
-        /// Verifies the construction of the class, in storing
-        /// the given XML comparison flags.
+        /// Verifies the construction of the class; only the storage of a
+        /// given XML comparison flags enumeration.
         /// </summary>
         [Test]
-        public void Construction_XmlComparisonFlags()
+        public void Construction()
         {
-            XmlComparisonFlags[] enumValues = Enum.GetValues(typeof(XmlComparisonFlags)) as XmlComparisonFlags[];
-            XmlComparisonFlags expectedValue = enumValues[new Random().Next(enumValues.Length - 1)];
-
-            XmlEquivalencyAssertion assertion = new XmlEquivalencyAssertion(expectedValue);
-            Assert.That(assertion.ComparisonFlags, Is.EqualTo(expectedValue));
+            AssertionConstructionTests.XmlEquivalencyAssertion(flags => new XmlEquivalencyAssertion(flags));
         }
 
         /// <summary>

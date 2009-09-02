@@ -31,7 +31,7 @@ namespace Jolt.Testing.Assertions.NUnit
         /// The schemas defining the valid XML structure.
         /// </param>
         public XmlValidityConstraint(XmlSchemaSet schemas)
-            : this(new XmlValidityAssertion(schemas)) { }
+            : this(Factory.CreateXmlValidityAssertion(schemas)) { }
 
         /// <summary>
         /// Initializes the constraint with the schemas
@@ -47,7 +47,7 @@ namespace Jolt.Testing.Assertions.NUnit
         /// The configuration of the XML validator.
         /// </param>
         public XmlValidityConstraint(XmlSchemaSet schemas, XmlSchemaValidationFlags validationFlags)
-            : this(new XmlValidityAssertion(schemas, validationFlags)) { }
+            : this(Factory.CreateXmlValidityAssertion(schemas, validationFlags)) { }
 
         /// <summary>
         /// Initializes the constraint with the assertion
