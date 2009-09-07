@@ -17,7 +17,6 @@ using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
-using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -95,21 +94,15 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private void VerifyBehavior(Action<XmlDocCommentBuilderBase> exerciseBehavior)
         {
-            With.Mocks(delegate
-            {
-                IXmlDocCommentReader reader = Mocker.Current.CreateMock<IXmlDocCommentReader>();
-                Mocker.Current.ReplayAll();
+            XmlDocCommentBuilderBase builder = new XmlDocCommentBuilderBase();
+            exerciseBehavior(builder);
 
-                XmlDocCommentBuilderBase builder = new XmlDocCommentBuilderBase();
-                exerciseBehavior(builder);
+            MethodInfo getXmlDocComments = typeof(XmlDocCommentBuilderBase)
+                .GetProperty("XmlDocComments", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetGetMethod(true);
 
-                MethodInfo getXmlDocComments = typeof(XmlDocCommentBuilderBase)
-                    .GetProperty("XmlDocComments", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .GetGetMethod(true);
-
-                XDocument xmlDocComments = getXmlDocComments.Invoke(builder, null) as XDocument;
-                Assert.That(xmlDocComments.Root, Is.Null);
-            });
+            XDocument xmlDocComments = getXmlDocComments.Invoke(builder, null) as XDocument;
+            Assert.That(xmlDocComments.Root, Is.Null);
         }
 
         #endregion

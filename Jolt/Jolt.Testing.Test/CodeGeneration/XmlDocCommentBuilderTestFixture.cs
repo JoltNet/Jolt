@@ -29,29 +29,23 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction()
         {
-            With.Mocks(delegate
-            {
-                IXmlDocCommentReader reader = Mocker.Current.CreateMock<IXmlDocCommentReader>();
+            IXmlDocCommentReader reader = MockRepository.GenerateMock<IXmlDocCommentReader>();
 
-                // Expectations
-                // The reader successfully returns an element for a given type.
-                Type realSubjectType = typeof(string);
-                Expect.Call(reader.GetComments(realSubjectType))
-                    .Return(CreateExistingMember(Jolt.Convert.ToXmlDocCommentMember(realSubjectType)));
+            Type realSubjectType = typeof(string);
+            reader.Expect(r => r.GetComments(realSubjectType))
+                .Return(CreateExistingMember(Jolt.Convert.ToXmlDocCommentMember(realSubjectType)));
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, realSubjectType, typeof(List<>), typeof(IList<>));
+            XElement docComments = XElement.Load(builder.CreateReader());
 
-                XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, realSubjectType, typeof(List<>), typeof(IList<>));
-                XElement docComments = XElement.Load(builder.CreateReader());
+            Assert.That(builder.XmlDocCommentReader, Is.SameAs(reader));
+            Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
+            AssertMembersExist(
+                docComments,
+                String.Concat(XDCTypePrefix, GenericIListXDCTypeName),
+                String.Concat(XDCTypePrefix, GenericListXDFTypeName));
 
-                Assert.That(builder.XmlDocCommentReader, Is.SameAs(reader));
-                Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
-                AssertMembersExist(
-                    docComments,
-                    String.Concat(XDCTypePrefix, GenericIListXDCTypeName),
-                    String.Concat(XDCTypePrefix, GenericListXDFTypeName));
-            });
+            reader.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -62,25 +56,19 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_InvalidRealSubjectType()
         {
-            With.Mocks(delegate
-            {
-                IXmlDocCommentReader reader = Mocker.Current.CreateMock<IXmlDocCommentReader>();
+            IXmlDocCommentReader reader = MockRepository.GenerateMock<IXmlDocCommentReader>();
 
-                // Expectations
-                // The reader did not locate a member that corresponds to the given type.
-                Type realSubjectType = typeof(string);
-                Expect.Call(reader.GetComments(realSubjectType)).Return(null);
+            Type realSubjectType = typeof(string);
+            reader.Expect(r => r.GetComments(realSubjectType)).Return(null);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, realSubjectType, typeof(List<>), typeof(IList<>));
+            XElement docComments = XElement.Load(builder.CreateReader());
 
-                XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, realSubjectType, typeof(List<>), typeof(IList<>));
-                XElement docComments = XElement.Load(builder.CreateReader());
+            Assert.That(builder.XmlDocCommentReader, Is.SameAs(reader));
+            Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
+            Assert.That(docComments.IsEmpty);
 
-                Assert.That(builder.XmlDocCommentReader, Is.SameAs(reader));
-                Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
-                Assert.That(docComments.IsEmpty);
-            });
+            reader.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -216,37 +204,29 @@ namespace Jolt.Testing.Test.CodeGeneration
             Func<TMember, string> convertToXmlDocCommentMember)
             where TMember : MemberInfo
         {
-            With.Mocks(delegate
-            {
-                IXmlDocCommentReader reader = Mocker.Current.CreateMock<IXmlDocCommentReader>();
-                Func<TMember, XElement> getComments = CreateGetCommentsDelegateFor<TMember>(reader);
+            IXmlDocCommentReader reader = MockRepository.GenerateMock<IXmlDocCommentReader>();
 
-                // Expectations
-                // The reader successfully returns an element for the given member.
-                Expect.Call(reader.GetComments(member.DeclaringType)).Return(null);
+            reader.Expect(r => r.GetComments(member.DeclaringType)).Return(null);
 
-                string xdcMemberName = convertToXmlDocCommentMember(member);
-                Expect.Call(getComments(member)).Return(CreateExistingMember(xdcMemberName));
+            string xdcMemberName = convertToXmlDocCommentMember(member);
+            MethodInfo getComments = GetGetCommmentsMethodFor<TMember>();
+            reader.Expect(r => getComments.Invoke(r, new object[] { member })).Return(CreateExistingMember(xdcMemberName));
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, member.DeclaringType, typeof(List<>), typeof(IList<>));
+            CreateAddMemberDelegateFor<TMember>(builder)(member);
 
-                XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, member.DeclaringType, typeof(List<>), typeof(IList<>));
-                Action<TMember> addMember = CreateAddMemberDelegateFor<TMember>(builder);
+            XElement docComments = XElement.Load(builder.CreateReader());
 
-                addMember(member);
+            string memberNameWithParameters = xdcMemberName.Substring(xdcMemberName.IndexOf('.' + expectedXDCMemberName));
+            string memberTypePrefix = xdcMemberName.Substring(0, 2);
 
-                XElement docComments = XElement.Load(builder.CreateReader());
+            Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
+            AssertMembersExist(
+                docComments,
+                String.Concat(memberTypePrefix, GenericIListXDCTypeName, memberNameWithParameters),
+                String.Concat(memberTypePrefix, GenericListXDFTypeName, memberNameWithParameters));
 
-                string memberNameWithParameters = xdcMemberName.Substring(xdcMemberName.IndexOf('.' + expectedXDCMemberName));
-                string memberTypePrefix = xdcMemberName.Substring(0, 2);
-
-                Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
-                AssertMembersExist(
-                    docComments,
-                    String.Concat(memberTypePrefix, GenericIListXDCTypeName, memberNameWithParameters),
-                    String.Concat(memberTypePrefix, GenericListXDFTypeName, memberNameWithParameters));
-            });
+            reader.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -264,29 +244,22 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static void VerifyBehavior_AddMember_InvalidDeclaringType<TMember>(TMember member)
             where TMember : MemberInfo
         {
-            With.Mocks(delegate
-            {
-                IXmlDocCommentReader reader = Mocker.Current.CreateMock<IXmlDocCommentReader>();
-                Func<TMember, XElement> getComments = CreateGetCommentsDelegateFor<TMember>(reader);
+            IXmlDocCommentReader reader = MockRepository.GenerateMock<IXmlDocCommentReader>();
 
-                // Expectations
-                // The reader did not locate a member that corresponds to the given member.
-                Expect.Call(reader.GetComments(member.DeclaringType)).Return(null);
-                Expect.Call(getComments(member)).Return(null);
+            reader.Expect(r => r.GetComments(member.DeclaringType)).Return(null);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            MethodInfo getComments = GetGetCommmentsMethodFor<TMember>();
+            reader.Expect(r => getComments.Invoke(r, new object[] { member })).Return(null);
 
-                XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, member.DeclaringType, typeof(List<>), typeof(IList<>));
-                Action<TMember> addMember = CreateAddMemberDelegateFor<TMember>(builder);
+            XmlDocCommentBuilder builder = new XmlDocCommentBuilder(reader, member.DeclaringType, typeof(List<>), typeof(IList<>));
+            CreateAddMemberDelegateFor<TMember>(builder)(member);
 
-                addMember(member);
+            XElement docComments = XElement.Load(builder.CreateReader());
 
-                XElement docComments = XElement.Load(builder.CreateReader());
+            Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
+            Assert.That(docComments.IsEmpty);
 
-                Assert.That(docComments.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MembersElement));
-                Assert.That(docComments.IsEmpty);
-            });
+            reader.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -349,23 +322,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         }
 
         /// <summary>
-        /// Creates a delegate bound to the given reader, for the GetComments()
-        /// method overload accepting a parameter of type TMember.
+        /// Retrieves the MethodInfo object that represents the
+        /// <see cref="IXmlDocCommentReader.GetComments"/> method overload,
+        /// accepting a single parameter of type TMember.
         /// </summary>
         /// 
         /// <typeparam name="TMember">
-        /// The type of the single delegate argument.
+        /// The type of the single method argument.
         /// </typeparam>
-        /// 
-        /// <param name="reader">
-        /// The instance the delegate is bound to.
-        /// </param>
-        private static Func<TMember, XElement> CreateGetCommentsDelegateFor<TMember>(IXmlDocCommentReader reader)
+        private static MethodInfo GetGetCommmentsMethodFor<TMember>()
         {
-            return Delegate.CreateDelegate(
-                typeof(Func<TMember, XElement>),
-                reader,
-                reader.GetType().GetMethod("GetComments", new Type[] { typeof(TMember) })) as Func<TMember, XElement>;
+            return typeof(IXmlDocCommentReader).GetMethod("GetComments", new Type[] { typeof(TMember) });
         }
 
         /// <summary>

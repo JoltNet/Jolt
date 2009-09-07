@@ -7,11 +7,11 @@
 // File created: 8/31/2009 10:46:58
 // ----------------------------------------------------------------------------
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jolt.Testing.Assertions.VisualStudio
 {

@@ -47,25 +47,17 @@ namespace Jolt.Testing.Test.Assertions
         [Test]
         public void AreEqual()
         {
-            With.Mocks(delegate
-            {
-                XmlEquivalencyAssertion equivalencyAssertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+            XmlEquivalencyAssertion equivalencyAssertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
 
-                // Expectations
-                // AreEquals() immediately forwards to "strict" AreEquivalent() method.
-                XmlReader expectedXml = XmlReader.Create(Stream.Null);
-                XmlReader actualXml = XmlReader.Create(Stream.Null);
-                XmlComparisonResult expectedResult = new XmlComparisonResult();
+            XmlReader expectedXml = XmlReader.Create(Stream.Null);
+            XmlReader actualXml = XmlReader.Create(Stream.Null);
+            XmlComparisonResult expectedResult = new XmlComparisonResult();
+            equivalencyAssertion.Expect(a => a.AreEquivalent(expectedXml, actualXml)).Return(expectedResult);
 
-                Expect.Call(equivalencyAssertion.AreEquivalent(expectedXml, actualXml))
-                    .Return(expectedResult);
+            XmlEqualityAssertion assertion = new XmlEqualityAssertion(equivalencyAssertion);
+            Assert.That(assertion.AreEqual(expectedXml, actualXml), Is.SameAs(expectedResult));
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                XmlEqualityAssertion assertion = new XmlEqualityAssertion(equivalencyAssertion);
-                Assert.That(assertion.AreEqual(expectedXml, actualXml), Is.SameAs(expectedResult));
-            });
+            equivalencyAssertion.VerifyAllExpectations();
         }
     }
 }

@@ -95,26 +95,20 @@ namespace Jolt.Test
         [Test]
         public void Construction_Assembly_ReadPolicy()
         {
-            With.Mocks(delegate
-            {
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateMock<CreateReadPolicyDelegate>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
 
-                // Expectations
-                // The read policy is created via the factory method.
-                string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
-                Expect.Call(createPolicy(expectedDocCommentsFullPath)).Return(readPolicy);
+            string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
+            createPolicy.Expect(cp => cp(expectedDocCommentsFullPath)).Return(readPolicy);
+            
+            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, createPolicy);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-                
-                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, createPolicy);
+            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
+            Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+            Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
 
-                Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
-                Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
-                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
-                Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
-            });
+            createPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -125,13 +119,8 @@ namespace Jolt.Test
         [Test, ExpectedException(typeof(FileNotFoundException))]
         public void Construction_Assembly_ReadPolicy_FileNotFound()
         {
-            With.Mocks(delegate
-            {
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                Mocker.Current.ReplayAll();
-
-                XmlDocCommentReader reader = new XmlDocCommentReader(GetType().Assembly, createPolicy);
-            });
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateStub<CreateReadPolicyDelegate>();
+            new XmlDocCommentReader(GetType().Assembly, createPolicy);
         }
 
         /// <summary>
@@ -142,27 +131,23 @@ namespace Jolt.Test
         [Test]
         public void Construction_Assembly_ExplicitSettings_ReadPolicy()
         {
-            With.Mocks(delegate
-            {
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateMock<CreateReadPolicyDelegate>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // The read policy is created via the factory method.
-                string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
-                Expect.Call(createPolicy(expectedDocCommentsFullPath)).Return(readPolicy);
+            // Expectations.
+            // The read policy is created via the factory method.
+            string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
+            createPolicy.Expect(cp => cp(expectedDocCommentsFullPath)).Return(readPolicy);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
+            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, settings, createPolicy);
 
-                XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
-                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, settings, createPolicy);
+            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FullPath, Is.EqualTo(expectedDocCommentsFullPath));
+            Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+            Assert.That(reader.Settings, Is.SameAs(settings));
 
-                Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
-                Assert.That(reader.FullPath, Is.EqualTo(expectedDocCommentsFullPath));
-                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
-                Assert.That(reader.Settings, Is.SameAs(settings));
-            });
+            createPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -174,14 +159,10 @@ namespace Jolt.Test
         [Test, ExpectedException(typeof(FileNotFoundException))]
         public void Construction_Assembly_ExplicitSettings_ReadPolicy_FileNotFound()
         {
-            With.Mocks(delegate
-            {
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                Mocker.Current.ReplayAll();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateStub<CreateReadPolicyDelegate>();
 
-                XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
-                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, createPolicy);
-            });
+            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
+            new XmlDocCommentReader(typeof(int).Assembly, settings, createPolicy);
         }
 
         /// <summary>
@@ -191,42 +172,32 @@ namespace Jolt.Test
         [Test]
         public void InternalConstruction_Assembly()
         {
-            With.Mocks(delegate
+            IFile fileSystem = MockRepository.GenerateMock<IFile>();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateMock<CreateReadPolicyDelegate>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
+
+            string[] expectedDirectoryNames = { @"C:\a", @"C:\a\b", @"C:\a\b\c", @"C:\a\b\c\d" };
+            string expectedFileName = Path.GetFileName(MscorlibXml);
+            for (int i = 0; i < expectedDirectoryNames.Length - 1; ++i)
             {
-                IFile fileSystem = Mocker.Current.CreateMock<IFile>();
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+                fileSystem.Expect(fs => fs.Exists(Path.Combine(expectedDirectoryNames[i], expectedFileName)))
+                    .Return(false);
+            }
 
-                // Expectations
-                // Each directory in the settings object is searched
-                // for the desired XML comments file.
-                string[] expectedDirectoryNames = { @"C:\a", @"C:\a\b", @"C:\a\b\c", @"C:\a\b\c\d" };
-                string expectedFileName = Path.GetFileName(MscorlibXml);
+            string expectedFullPath = Path.Combine(expectedDirectoryNames[expectedDirectoryNames.Length - 1], expectedFileName);
+            fileSystem.Expect(fs => fs.Exists(expectedFullPath)).Return(true);
+            createPolicy.Expect(cp => cp(expectedFullPath)).Return(readPolicy);
 
-                for (int i = 0; i < expectedDirectoryNames.Length - 1; ++i)
-                {
-                    Expect.Call(fileSystem.Exists(Path.Combine(expectedDirectoryNames[i], expectedFileName)))
-                        .Return(false);
-                }
+            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
+            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy);
 
-                // The file is located in the last directory searched.
-                string expectedFullPath = Path.Combine(expectedDirectoryNames[expectedDirectoryNames.Length - 1], expectedFileName);
-                Expect.Call(fileSystem.Exists(expectedFullPath)).Return(true);
+            Assert.That(reader.FileProxy, Is.SameAs(fileSystem));
+            Assert.That(reader.FullPath, Is.EqualTo(expectedFullPath));
+            Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+            Assert.That(reader.Settings, Is.SameAs(settings));
 
-                // The read policy is created via the factory method.
-                Expect.Call(createPolicy(expectedFullPath)).Return(readPolicy);
-
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
-                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy);
-
-                Assert.That(reader.FileProxy, Is.SameAs(fileSystem));
-                Assert.That(reader.FullPath, Is.EqualTo(expectedFullPath));
-                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
-                Assert.That(reader.Settings, Is.SameAs(settings));
-            });
+            fileSystem.VerifyAllExpectations();
+            createPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -237,29 +208,21 @@ namespace Jolt.Test
         [Test, ExpectedException(typeof(FileNotFoundException))]
         public void InternalConstruction_Assembly_FileNotFound()
         {
-            With.Mocks(delegate
+            IFile fileSystem = MockRepository.GenerateMock<IFile>();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateStub<CreateReadPolicyDelegate>();
+
+            string[] expectedDirectoryNames = { @"C:\a", @"C:\a\b", @"C:\a\b\c", @"C:\a\b\c\d" };
+            string expectedFileName = Path.GetFileName(MscorlibXml);
+            for (int i = 0; i < expectedDirectoryNames.Length; ++i)
             {
-                IFile fileSystem = Mocker.Current.CreateMock<IFile>();
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
+                fileSystem.Expect(fs => fs.Exists(Path.Combine(expectedDirectoryNames[i], expectedFileName)))
+                    .Return(false);
+            }
 
-                // Expectations
-                // Each directory in the settings object is searched
-                // for the desired XML comments file.
-                string[] expectedDirectoryNames = { @"C:\a", @"C:\a\b", @"C:\a\b\c", @"C:\a\b\c\d" };
-                string expectedFileName = Path.GetFileName(MscorlibXml);
+            XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
+            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy);
 
-                for (int i = 0; i < expectedDirectoryNames.Length; ++i)
-                {
-                    Expect.Call(fileSystem.Exists(Path.Combine(expectedDirectoryNames[i], expectedFileName)))
-                        .Return(false);
-                }
-
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
-                XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy);
-            });
+            fileSystem.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -295,26 +258,20 @@ namespace Jolt.Test
         [Test]
         public void Construction_FullPath_ReadPolicy()
         {
-            With.Mocks(delegate
-            {
-                CreateReadPolicyDelegate createPolicy = Mocker.Current.CreateMock<CreateReadPolicyDelegate>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            CreateReadPolicyDelegate createPolicy = MockRepository.GenerateMock<CreateReadPolicyDelegate>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // The read policy is created via the factory method.
-                string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
-                Expect.Call(createPolicy(expectedDocCommentsFullPath)).Return(readPolicy);
+            string expectedDocCommentsFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
+            createPolicy.Expect(cp => cp(expectedDocCommentsFullPath)).Return(readPolicy);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(expectedDocCommentsFullPath, createPolicy);
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(expectedDocCommentsFullPath, createPolicy);
+            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FullPath, Is.SameAs(expectedDocCommentsFullPath));
+            Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+            Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
 
-                Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
-                Assert.That(reader.FullPath, Is.SameAs(expectedDocCommentsFullPath));
-                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
-                Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
-            });
+            createPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -324,26 +281,20 @@ namespace Jolt.Test
         [Test]
         public void InternalConstruction_FullPath()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
 
-                // Expectations
-                // XML doc comments file is checked for existence.
-                string expectedFullPath = Path.GetRandomFileName();
-                Expect.Call(fileProxy.Exists(expectedFullPath)).Return(true);
+            string expectedFullPath = Path.GetRandomFileName();
+            fileProxy.Expect(fp => fp.Exists(expectedFullPath)).Return(true);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy);
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy);
+            Assert.That(reader.FileProxy, Is.SameAs(fileProxy));
+            Assert.That(reader.FullPath, Is.SameAs(expectedFullPath));
+            Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
+            Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
 
-                Assert.That(reader.FileProxy, Is.SameAs(fileProxy));
-                Assert.That(reader.FullPath, Is.SameAs(expectedFullPath));
-                Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
-                Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
-            });
+            fileProxy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -353,21 +304,15 @@ namespace Jolt.Test
         [Test, ExpectedException(typeof(FileNotFoundException))]
         public void InternalConstruction_FullPath_FileNotFound()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateStub<IXmlDocCommentReadPolicy>();
 
-                // Expectations
-                // XML doc comments file is checked for existence.
-                string expectedFullPath = Path.GetRandomFileName();
-                Expect.Call(fileProxy.Exists(expectedFullPath)).Return(false);
+            string expectedFullPath = Path.GetRandomFileName();
+            fileProxy.Expect(fp => fp.Exists(expectedFullPath)).Return(false);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy);
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy);
-            });
+            fileProxy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -376,25 +321,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Type()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                Type expectedType = GetType();
-                XElement expectedComments = new XElement("comments");
+            Type expectedType = GetType();
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedType))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedType))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedType), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedType), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -403,25 +343,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Event()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                EventInfo expectedEvent = typeof(Console).GetEvent("CancelKeyPress");
-                XElement expectedComments = new XElement("comments");
+            EventInfo expectedEvent = typeof(Console).GetEvent("CancelKeyPress");
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedEvent))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedEvent))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedEvent), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedEvent), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -430,25 +365,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Field()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                FieldInfo expectedField = typeof(Int32).GetField("MaxValue", BindingFlags.Public | BindingFlags.Static);
-                XElement expectedComments = new XElement("comments");
+            FieldInfo expectedField = typeof(Int32).GetField("MaxValue", BindingFlags.Public | BindingFlags.Static);
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedField))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedField))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedField), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedField), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -457,25 +387,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Property()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                PropertyInfo expectedProperty = typeof(Array).GetProperty("Length");
-                XElement expectedComments = new XElement("comments");
+            PropertyInfo expectedProperty = typeof(Array).GetProperty("Length");
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedProperty))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedProperty))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedProperty), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedProperty), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -484,25 +409,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Constructor()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                ConstructorInfo expectedConstructor = GetType().GetConstructor(Type.EmptyTypes);
-                XElement expectedComments = new XElement("comments");
+            ConstructorInfo expectedConstructor = GetType().GetConstructor(Type.EmptyTypes);
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedConstructor))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedConstructor))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedConstructor), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedConstructor), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -511,25 +431,20 @@ namespace Jolt.Test
         [Test]
         public void GetComments_Method()
         {
-            With.Mocks(delegate
-            {
-                IFile fileProxy = Mocker.Current.CreateMock<IFile>();
-                IXmlDocCommentReadPolicy readPolicy = Mocker.Current.CreateMock<IXmlDocCommentReadPolicy>();
+            IFile fileProxy = MockRepository.GenerateMock<IFile>();
+            IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-                // Expectations.
-                // Comments are retrieved for a given entity.
-                MethodInfo expectedMethod = MethodInfo.GetCurrentMethod() as MethodInfo;
-                XElement expectedComments = new XElement("comments");
+            MethodInfo expectedMethod = MethodInfo.GetCurrentMethod() as MethodInfo;
+            XElement expectedComments = new XElement("comments");
 
-                Expect.Call(fileProxy.Exists(String.Empty)).Return(true);
-                Expect.Call(readPolicy.ReadMember(Convert.ToXmlDocCommentMember(expectedMethod))).Return(expectedComments);
+            fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);
+            readPolicy.Expect(rp => rp.ReadMember(Convert.ToXmlDocCommentMember(expectedMethod))).Return(expectedComments);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
+            Assert.That(reader.GetComments(expectedMethod), Is.SameAs(expectedComments));
 
-                XmlDocCommentReader reader = new XmlDocCommentReader(String.Empty, fileProxy, readPolicy);
-                Assert.That(reader.GetComments(expectedMethod), Is.SameAs(expectedComments));
-            });
+            fileProxy.VerifyAllExpectations();
+            readPolicy.VerifyAllExpectations();
         }
 
         #region private class methods -------------------------------------------------------------

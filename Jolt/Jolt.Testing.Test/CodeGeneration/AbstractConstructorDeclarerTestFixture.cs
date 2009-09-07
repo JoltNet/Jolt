@@ -16,7 +16,6 @@ using Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
-using RMC = Rhino.Mocks.Constraints;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -67,35 +66,29 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         protected void AssertConstructorDeclaredFrom(ConstructorInfo expectedConstructor, Action<ConstructorInfo, ConstructorInfo> assertConstructorAttributes)
         {
-            With.Mocks(delegate
-            {
-                IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation = Mocker.Current.CreateMock<IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>>();
+            IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation =
+                MockRepository.GenerateMock<IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>>();
 
-                List<ConstructorBuilder> implementationArgs = new List<ConstructorBuilder>();
+            List<ConstructorBuilder> implementationArgs = new List<ConstructorBuilder>();
 
-                // Expectations
-                // The constructor's parameters are defined.
-                implementation.DefineMethodParameters(null, expectedConstructor);
-                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedConstructor))
-                    .Do(CreateStoreMethodBuilderDelegate_2Args(implementationArgs));
+            implementation.Expect(i => i.DefineMethodParameters(Arg<ConstructorBuilder>.Is.Anything, Arg<ConstructorInfo>.Is.Same(expectedConstructor)))
+                .Do(CreateStoreMethodBuilderDelegate_2Args(implementationArgs));
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = CreateConstructorDeclarer(expectedConstructor, implementation);
+            ConstructorBuilder constructorBuilder = declarer.Declare();
+            constructorBuilder.GetILGenerator().Emit(OpCodes.Ret);
+            CurrentTypeBuilder.CreateType();
 
-                AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = CreateConstructorDeclarer(expectedConstructor, implementation);
-                ConstructorBuilder constructorBuilder = declarer.Declare();
-                constructorBuilder.GetILGenerator().Emit(OpCodes.Ret);
-                CurrentTypeBuilder.CreateType();
+            Assert.That(constructorBuilder.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
+            Assert.That(implementationArgs.TrueForAll(storedConstructorBuilder => constructorBuilder == storedConstructorBuilder));
+            ConstructorInfo constructor = CurrentTypeBuilder.GetConstructors()[0];
+            Assert.That(constructor.CallingConvention, Is.EqualTo(CallingConventions.Standard | CallingConventions.HasThis));
+            Assert.That(constructor.IsPublic);
+            Assert.That(constructor.IsSpecialName);
+            Assert.That(constructor.Attributes & MethodAttributes.RTSpecialName, Is.EqualTo(MethodAttributes.RTSpecialName));
+            assertConstructorAttributes(constructor, expectedConstructor);
 
-                Assert.That(constructorBuilder.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
-                Assert.That(implementationArgs.TrueForAll(storedConstructorBuilder => constructorBuilder == storedConstructorBuilder));
-                ConstructorInfo constructor = CurrentTypeBuilder.GetConstructors()[0];
-                Assert.That(constructor.CallingConvention, Is.EqualTo(CallingConventions.Standard | CallingConventions.HasThis));
-                Assert.That(constructor.IsPublic);
-                Assert.That(constructor.IsSpecialName);
-                Assert.That(constructor.Attributes & MethodAttributes.RTSpecialName, Is.EqualTo(MethodAttributes.RTSpecialName));
-                assertConstructorAttributes(constructor, expectedConstructor);
-            });
+            implementation.VerifyAllExpectations();
         }
 
         #endregion

@@ -127,21 +127,15 @@ namespace Jolt.Automata.Test
         [Test]
         public void AddStates()
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            BidirectionalGraph<string, Transition<int>> graph = MockRepository.GenerateMock<BidirectionalGraph<string, Transition<int>>>();
 
-                // Expectations
-                // The states are added to the graph.
-                string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
-                Expect.Call(graph.AddVertexRange(expectedStates)).Return(expectedStates.Length);
+            string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
+            graph.Expect(g => g.AddVertexRange(expectedStates)).Return(expectedStates.Length);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            Assert.That(fsm.AddStates(expectedStates), Is.EqualTo(expectedStates.Length));
 
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                Assert.That(fsm.AddStates(expectedStates), Is.EqualTo(expectedStates.Length));
-            });
+            graph.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -162,21 +156,15 @@ namespace Jolt.Automata.Test
         [Test]
         public void AddTransition()
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            BidirectionalGraph<string, Transition<int>> graph = MockRepository.GenerateMock<BidirectionalGraph<string, Transition<int>>>();
 
-                // Expectations
-                // The transition is added to the graph.
-                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
-                Expect.Call(graph.AddEdge(expectedTransition)).Return(true);
+            Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
+            graph.Expect(g => g.AddEdge(expectedTransition)).Return(true);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            fsm.AddTransition(expectedTransition);
 
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                fsm.AddTransition(expectedTransition);
-            });
+            graph.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -604,21 +592,15 @@ namespace Jolt.Automata.Test
         /// </param>
         private static void AssertAddState(bool stateExists)
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            BidirectionalGraph<string, Transition<int>> graph = MockRepository.GenerateMock<BidirectionalGraph<string, Transition<int>>>();
 
-                // Expectations
-                // The state is added to the graph.
-                string expectedState = "start-state";
-                Expect.Call(graph.AddVertex(expectedState)).Return(!stateExists);
+            string expectedState = "start-state";
+            graph.Expect(g => g.AddVertex(expectedState)).Return(!stateExists);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            Assert.That(fsm.AddState(expectedState), Is.EqualTo(!stateExists));
 
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                Assert.That(fsm.AddState(expectedState), Is.EqualTo(!stateExists));
-            });
+            graph.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -630,20 +612,15 @@ namespace Jolt.Automata.Test
         /// </param>
         private static void AssertRemoveState(bool stateExists)
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            BidirectionalGraph<string, Transition<int>> graph = MockRepository.GenerateMock<BidirectionalGraph<string, Transition<int>>>();
 
-                // Attempt to remove the state from the graph.
-                string expectedState = "start-state";
-                Expect.Call(graph.RemoveVertex(expectedState)).Return(stateExists);
+            string expectedState = "start-state";
+            graph.Expect(g => g.RemoveVertex(expectedState)).Return(stateExists);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            Assert.That(fsm.RemoveState(expectedState), Is.EqualTo(stateExists));
 
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                Assert.That(fsm.RemoveState(expectedState), Is.EqualTo(stateExists));
-            });
+            graph.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -655,20 +632,15 @@ namespace Jolt.Automata.Test
         /// </param>
         private static void AssertRemoveTransition(bool transitionExists)
         {
-            With.Mocks(delegate
-            {
-                BidirectionalGraph<string, Transition<int>> graph = Mocker.Current.CreateMock<BidirectionalGraph<string, Transition<int>>>();
+            BidirectionalGraph<string, Transition<int>> graph = MockRepository.GenerateMock<BidirectionalGraph<string, Transition<int>>>();
 
-                // Attempt to remove the transition from the graph.
-                Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
-                Expect.Call(graph.RemoveEdge(expectedTransition)).Return(transitionExists);
+            Transition<int> expectedTransition = new Transition<int>("start-state", "end-state", (100).Equals);
+            graph.Expect(g => g.RemoveEdge(expectedTransition)).Return(transitionExists);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            Assert.That(fsm.RemoveTransition(expectedTransition), Is.EqualTo(transitionExists));
 
-                FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-                Assert.That(fsm.RemoveTransition(expectedTransition), Is.EqualTo(transitionExists));
-            });
+            graph.VerifyAllExpectations();
         }
 
         #endregion

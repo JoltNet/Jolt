@@ -39,18 +39,14 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Construction_Internal()
         {
-            With.Mocks(delegate
-            {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                Mocker.Current.ReplayAll();
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateStub<CreateXmlEquivalencyAssertionDelegate>();
 
-                XmlReader expectedXml = XmlReader.Create(Stream.Null);
-                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedXml, createAssertion);
+            XmlReader expectedXml = XmlReader.Create(Stream.Null);
+            XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedXml, createAssertion);
 
-                Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.Strict));
-                Assert.That(constraint.CreateAssertion, Is.SameAs(createAssertion));
-                Assert.That(constraint.ExpectedXml, Is.SameAs(expectedXml));
-            });
+            Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.Strict));
+            Assert.That(constraint.CreateAssertion, Is.SameAs(createAssertion));
+            Assert.That(constraint.ExpectedXml, Is.SameAs(expectedXml));
         }
 
         /// <summary>
@@ -71,29 +67,21 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches()
         {
-            With.Mocks(delegate
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+                createAssertion.Expect(ca => ca(XmlComparisonFlags.Strict)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Return(new XmlComparisonResult());
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(XmlComparisonFlags.Strict)).Return(assertion);
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
+                Assert.That(constraint.Matches(actualReader));
+            }
 
-                    // The XML reader pair are equivalent.
-                    Expect.Call(assertion.AreEquivalent(expectedReader, actualReader))
-                        .Return(new XmlComparisonResult());
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
-                    Assert.That(constraint.Matches(actualReader));
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -103,37 +91,29 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches_WithComparisonFlags()
         {
-            With.Mocks(delegate
+            XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder |
+                XmlComparisonFlags.IgnoreAttributes |
+                XmlComparisonFlags.IgnoreElementValues;
+
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(expectedFlags);
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder |
-                    XmlComparisonFlags.IgnoreAttributes |
-                    XmlComparisonFlags.IgnoreElementValues;
+                createAssertion.Expect(ca => ca(expectedFlags)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Return(new XmlComparisonResult());
 
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(expectedFlags);
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion)
+                    .IgnoreAttributes
+                    .IgnoreElementValues
+                    .IgnoreSequenceOrder;
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(expectedFlags)).Return(assertion);
+                Assert.That(constraint.Matches(actualReader));
+            }
 
-                    // The XML reader pair are equivalent.
-                    Expect.Call(assertion.AreEquivalent(expectedReader, actualReader))
-                        .Return(new XmlComparisonResult());
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion)
-                        .IgnoreAttributes
-                        .IgnoreElementValues
-                        .IgnoreSequenceOrder;
-
-                    Assert.That(constraint.Matches(actualReader));
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -143,29 +123,21 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches_DoesNotMatch()
         {
-            With.Mocks(delegate
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+                createAssertion.Expect(ca => ca(XmlComparisonFlags.Strict)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Return(CreateFailedComparisonResult());
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(XmlComparisonFlags.Strict)).Return(assertion);
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
+                Assert.That(!constraint.Matches(actualReader));
+            }
 
-                    // The XML reader pair are not equivalent.
-                    Expect.Call(assertion.AreEquivalent(expectedReader, actualReader))
-                        .Return(CreateFailedComparisonResult());
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
-                    Assert.That(!constraint.Matches(actualReader));
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -175,29 +147,21 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(InvalidProgramException))]
         public void Matches_UnexpectedException()
         {
-            With.Mocks(delegate
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+                createAssertion.Expect(ca => ca(XmlComparisonFlags.Strict)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Throw(new InvalidProgramException());
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(XmlComparisonFlags.Strict)).Return(assertion);
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
+                constraint.Matches(actualReader);
+            }
 
-                    // The XML reader pair are not equivalent.
-                    assertion.AreEquivalent(expectedReader, actualReader);
-                    LastCall.Throw(new InvalidProgramException());
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
-                    constraint.Matches(actualReader);
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -206,14 +170,10 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(NotImplementedException))]
         public void WriteDescriptionTo()
         {
-            With.Mocks(delegate
-            {
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
-                Mocker.Current.ReplayAll();
+            MessageWriter writer = MockRepository.GenerateStub<MessageWriter>();
 
-                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(null);
-                constraint.WriteDescriptionTo(writer);
-            });
+            XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(null);
+            constraint.WriteDescriptionTo(writer);
         }
 
         /// <summary>
@@ -222,35 +182,28 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteMessageTo()
         {
-            With.Mocks(delegate
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                createAssertion.Expect(ca => ca(XmlComparisonFlags.Strict)).Return(assertion);
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(XmlComparisonFlags.Strict)).Return(assertion);
+                XmlComparisonResult assertionResult = CreateFailedComparisonResult();
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Return(assertionResult);
 
-                    // The XML reader pair are not equal.
-                    XmlComparisonResult assertionResult = CreateFailedComparisonResult();
-                    Expect.Call(assertion.AreEquivalent(expectedReader, actualReader))
-                        .Return(assertionResult);
+                writer.Expect(w => w.WriteLine("message\r\nXPath: /ns:element"));
 
-                    // The message writer receives the error message.
-                    writer.WriteLine("message\r\nXPath: /ns:element");
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
+                constraint.Matches(actualReader);
+                constraint.WriteMessageTo(writer);
+            }
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
-                    constraint.Matches(actualReader);
-                    constraint.WriteMessageTo(writer);
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -259,32 +212,25 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteActualValueTo()
         {
-            With.Mocks(delegate
+            CreateXmlEquivalencyAssertionDelegate createAssertion = MockRepository.GenerateMock<CreateXmlEquivalencyAssertionDelegate>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                CreateXmlEquivalencyAssertionDelegate createAssertion = Mocker.Current.CreateMock<CreateXmlEquivalencyAssertionDelegate>();
-                XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(XmlComparisonFlags.Strict);
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                createAssertion.Expect(ca => ca(XmlComparisonFlags.Strict)).Return(assertion);
+                writer.Expect(w => w.WriteActualValue(actualReader));
+                assertion.Expect(a => a.AreEquivalent(expectedReader, actualReader)).Return(new XmlComparisonResult());
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML eqivalency assertion is created.
-                    Expect.Call(createAssertion(XmlComparisonFlags.Strict)).Return(assertion);
+                XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
+                constraint.Matches(actualReader);
+                constraint.WriteActualValueTo(writer);
+            }
 
-                    // The message writer receives the "actual" parameter.
-                    writer.WriteActualValue(actualReader);
-                    Expect.Call(assertion.AreEquivalent(expectedReader, actualReader))
-                        .Return(new XmlComparisonResult());
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEquivalencyConstraint constraint = new XmlEquivalencyConstraint(expectedReader, createAssertion);
-                    constraint.Matches(actualReader);
-                    constraint.WriteActualValueTo(writer);
-                }
-            });
+            createAssertion.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         /// <summary>

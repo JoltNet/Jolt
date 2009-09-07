@@ -9,15 +9,15 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 using MVTU = Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Xml.Schema;
-using System.Reflection;
 
 namespace Jolt.Testing.Assertions.VisualStudio.Test
 {
@@ -43,22 +43,21 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void AreEqual_AssertPassed()
         {
-            With.Mocks(delegate
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+
+            using (XmlReader expected = XmlReader.Create(Stream.Null),
+                             actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader expected = XmlReader.Create(Stream.Null),
-                                 actual = XmlReader.Create(Stream.Null))
-                {
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
+                assertionFactory.Expect(af => af.CreateXmlEqualityAssertion()).Return(assertion);
+                assertion.Expect(a => a.AreEqual(expected, actual)).Return(new XmlComparisonResult());
 
-                    Expect.Call(assertionFactory.CreateXmlEqualityAssertion()).Return(assertion);
-                    Expect.Call(assertion.AreEqual(expected, actual)).Return(new XmlComparisonResult());
-                    Mocker.Current.ReplayAll();
+                XmlAssert.Factory = assertionFactory;
+                XmlAssert.AreEqual(expected, actual);
+            }
 
-                    XmlAssert.Factory = assertionFactory;
-                    XmlAssert.AreEqual(expected, actual);
-                }
-            });
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -67,31 +66,30 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void AreEqual_AssertFailed()
         {
-            With.Mocks(delegate
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            
+            using (XmlReader expected = XmlReader.Create(Stream.Null),
+                             actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader expected = XmlReader.Create(Stream.Null),
-                                 actual = XmlReader.Create(Stream.Null))
+                assertionFactory.Expect(af => af.CreateXmlEqualityAssertion()).Return(assertion);
+                assertion.Expect(a => a.AreEqual(expected, actual)).Return(CreateFailedComparisonResult());
+
+                XmlAssert.Factory = assertionFactory;
+
+                try
                 {
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-
-                    Expect.Call(assertionFactory.CreateXmlEqualityAssertion()).Return(assertion);
-                    Expect.Call(assertion.AreEqual(expected, actual)).Return(CreateFailedComparisonResult());
-                    Mocker.Current.ReplayAll();
-
-                    XmlAssert.Factory = assertionFactory;
-
-                    try
-                    {
-                        XmlAssert.AreEqual(expected, actual);
-                        Assert.Fail();
-                    }
-                    catch (MVTU.AssertFailedException ex)
-                    {
-                        Assert.That(ex.Message, Is.EqualTo("message" + Environment.NewLine + "XPath: /ns:element"));
-                    }
+                    XmlAssert.AreEqual(expected, actual);
+                    Assert.Fail();
                 }
-            });
+                catch (MVTU.AssertFailedException ex)
+                {
+                    Assert.That(ex.Message, Is.EqualTo("message" + Environment.NewLine + "XPath: /ns:element"));
+                }
+            }
+
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -99,24 +97,23 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         /// </summary>
         [Test]
         public void AreEquivalent_AssertPassed()
-        {
-            With.Mocks(delegate
+        {       
+            XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder | XmlComparisonFlags.IgnoreElementValues;
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(expectedFlags);
+
+            using (XmlReader expected = XmlReader.Create(Stream.Null),
+                             actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader expected = XmlReader.Create(Stream.Null),
-                                 actual = XmlReader.Create(Stream.Null))
-                {
-                    XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder | XmlComparisonFlags.IgnoreElementValues;
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(expectedFlags);
+                assertionFactory.Expect(af => af.CreateXmlEquivalencyAssertion(expectedFlags)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expected, actual)).Return(new XmlComparisonResult());
 
-                    Expect.Call(assertionFactory.CreateXmlEquivalencyAssertion(expectedFlags)).Return(assertion);
-                    Expect.Call(assertion.AreEquivalent(expected, actual)).Return(new XmlComparisonResult());
-                    Mocker.Current.ReplayAll();
+                XmlAssert.Factory = assertionFactory;
+                XmlAssert.AreEquivalent(expectedFlags, expected, actual);
+            }
 
-                    XmlAssert.Factory = assertionFactory;
-                    XmlAssert.AreEquivalent(expectedFlags, expected, actual);
-                }
-            });
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -125,32 +122,31 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void AreEquivalent_AssertFailed()
         {
-            With.Mocks(delegate
+            XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder | XmlComparisonFlags.IgnoreElementValues;
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlEquivalencyAssertion assertion = MockRepository.GenerateMock<XmlEquivalencyAssertion>(expectedFlags);
+
+            using (XmlReader expected = XmlReader.Create(Stream.Null),
+                             actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader expected = XmlReader.Create(Stream.Null),
-                                 actual = XmlReader.Create(Stream.Null))
+                assertionFactory.Expect(af => af.CreateXmlEquivalencyAssertion(expectedFlags)).Return(assertion);
+                assertion.Expect(a => a.AreEquivalent(expected, actual)).Return(CreateFailedComparisonResult());
+
+                XmlAssert.Factory = assertionFactory;
+
+                try
                 {
-                    XmlComparisonFlags expectedFlags = XmlComparisonFlags.IgnoreSequenceOrder | XmlComparisonFlags.IgnoreElementValues;
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlEquivalencyAssertion assertion = Mocker.Current.CreateMock<XmlEquivalencyAssertion>(expectedFlags);
-
-                    Expect.Call(assertionFactory.CreateXmlEquivalencyAssertion(expectedFlags)).Return(assertion);
-                    Expect.Call(assertion.AreEquivalent(expected, actual)).Return(CreateFailedComparisonResult());
-                    Mocker.Current.ReplayAll();
-
-                    XmlAssert.Factory = assertionFactory;
-
-                    try
-                    {
-                        XmlAssert.AreEquivalent(expectedFlags, expected, actual);
-                        Assert.Fail();
-                    }
-                    catch (MVTU.AssertFailedException ex)
-                    {
-                        Assert.That(ex.Message, Is.EqualTo("message" + Environment.NewLine + "XPath: /ns:element"));
-                    }
+                    XmlAssert.AreEquivalent(expectedFlags, expected, actual);
+                    Assert.Fail();
                 }
-            });
+                catch (MVTU.AssertFailedException ex)
+                {
+                    Assert.That(ex.Message, Is.EqualTo("message" + Environment.NewLine + "XPath: /ns:element"));
+                }
+            }
+
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -160,22 +156,21 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void IsValid_Schema_AssertPassed()
         {
-            With.Mocks(delegate
+            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(expectedSchemas);
+            
+            using (XmlReader actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader actual = XmlReader.Create(Stream.Null))
-                {
-                    XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(expectedSchemas);
+                assertionFactory.Expect(af => af.CreateXmlValidityAssertion(expectedSchemas)).Return(assertion);
+                assertion.Expect(a => a.Validate(actual)).Return(new ValidationEventArgs[0]);
 
-                    Expect.Call(assertionFactory.CreateXmlValidityAssertion(expectedSchemas)).Return(assertion);
-                    Expect.Call(assertion.Validate(actual)).Return(new ValidationEventArgs[0]);
-                    Mocker.Current.ReplayAll();
+                XmlAssert.Factory = assertionFactory;
+                XmlAssert.IsValid(expectedSchemas, actual);
+            }
 
-                    XmlAssert.Factory = assertionFactory;
-                    XmlAssert.IsValid(expectedSchemas, actual);
-                }
-            });
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -185,30 +180,29 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void IsValid_Schema_AssertFailed()
         {
-            With.Mocks(delegate
+            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(expectedSchemas);
+
+            using (XmlReader actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader actual = XmlReader.Create(Stream.Null))
+                assertionFactory.Expect(af => af.CreateXmlValidityAssertion(expectedSchemas)).Return(assertion);
+                assertion.Expect(a => a.Validate(actual)).Return(CreateFailedValidationResult());
+
+                XmlAssert.Factory = assertionFactory;
+
+                try
                 {
-                    XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(expectedSchemas);
-
-                    Expect.Call(assertionFactory.CreateXmlValidityAssertion(expectedSchemas)).Return(assertion);
-                    Expect.Call(assertion.Validate(actual)).Return(CreateFailedValidationResult());
-                    Mocker.Current.ReplayAll();
-
-                    XmlAssert.Factory = assertionFactory;
-
-                    try
-                    {
-                        XmlAssert.IsValid(expectedSchemas, actual);
-                    }
-                    catch (MVTU.AssertFailedException ex)
-                    {
-                        Assert.That(ex.Message, Is.EqualTo("message"));
-                    }
+                    XmlAssert.IsValid(expectedSchemas, actual);
                 }
-            });
+                catch (MVTU.AssertFailedException ex)
+                {
+                    Assert.That(ex.Message, Is.EqualTo("message"));
+                }
+            }
+
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -218,24 +212,23 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void IsValid_Schema_Flags_AssertPassed()
         {
-            With.Mocks(delegate
+            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
+            XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.ProcessInlineSchema;
+
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(expectedSchemas, expectedFlags);
+
+            using (XmlReader actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader actual = XmlReader.Create(Stream.Null))
-                {
-                    XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-                    XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.ProcessInlineSchema;
+                assertionFactory.Expect(af => af.CreateXmlValidityAssertion(expectedSchemas, expectedFlags)).Return(assertion);
+                assertion.Expect(a => a.Validate(actual)).Return(new ValidationEventArgs[0]);
 
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(expectedSchemas, expectedFlags);
+                XmlAssert.Factory = assertionFactory;
+                XmlAssert.IsValid(expectedSchemas, expectedFlags, actual);
+            }
 
-                    Expect.Call(assertionFactory.CreateXmlValidityAssertion(expectedSchemas, expectedFlags)).Return(assertion);
-                    Expect.Call(assertion.Validate(actual)).Return(new ValidationEventArgs[0]);
-                    Mocker.Current.ReplayAll();
-
-                    XmlAssert.Factory = assertionFactory;
-                    XmlAssert.IsValid(expectedSchemas, expectedFlags, actual);
-                }
-            });
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -245,32 +238,31 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
         [Test]
         public void IsValid_Schema_Flags_AssertFailed()
         {
-            With.Mocks(delegate
+            XmlSchemaSet expectedSchemas = new XmlSchemaSet();
+            XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.ProcessInlineSchema;
+
+            IAssertionFactory assertionFactory = MockRepository.GenerateMock<IAssertionFactory>();
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(expectedSchemas, expectedFlags);
+
+            using (XmlReader actual = XmlReader.Create(Stream.Null))
             {
-                using (XmlReader actual = XmlReader.Create(Stream.Null))
+                assertionFactory.Expect(af => af.CreateXmlValidityAssertion(expectedSchemas, expectedFlags)).Return(assertion);
+                assertion.Expect(a => a.Validate(actual)).Return(CreateFailedValidationResult());
+
+                XmlAssert.Factory = assertionFactory;
+
+                try
                 {
-                    XmlSchemaSet expectedSchemas = new XmlSchemaSet();
-                    XmlSchemaValidationFlags expectedFlags = XmlSchemaValidationFlags.ProcessInlineSchema;
-
-                    IAssertionFactory assertionFactory = Mocker.Current.CreateMock<IAssertionFactory>();
-                    XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(expectedSchemas, expectedFlags);
-
-                    Expect.Call(assertionFactory.CreateXmlValidityAssertion(expectedSchemas, expectedFlags)).Return(assertion);
-                    Expect.Call(assertion.Validate(actual)).Return(CreateFailedValidationResult());
-                    Mocker.Current.ReplayAll();
-
-                    XmlAssert.Factory = assertionFactory;
-
-                    try
-                    {
-                        XmlAssert.IsValid(expectedSchemas, expectedFlags, actual);
-                    }
-                    catch (MVTU.AssertFailedException ex)
-                    {
-                        Assert.That(ex.Message, Is.EqualTo("message"));
-                    }
+                    XmlAssert.IsValid(expectedSchemas, expectedFlags, actual);
                 }
-            });
+                catch (MVTU.AssertFailedException ex)
+                {
+                    Assert.That(ex.Message, Is.EqualTo("message"));
+                }
+            }
+
+            assertionFactory.VerifyAllExpectations();
+            assertion.VerifyAllExpectations();
         }
 
         #region private methods -------------------------------------------------------------------

@@ -28,16 +28,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_OneArg_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    Assert.That(boundFunction(), Is.EqualTo(InnerFunctionResult.ToString()));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                Assert.That(boundFunction(), Is.EqualTo(InnerFunctionResult.ToString()));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -48,16 +47,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_OneArg_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<int, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<int, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    Assert.That(boundFunction(i), Is.EqualTo(InnerFunctionResult.ToString()));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                Assert.That(boundFunction(i), Is.EqualTo(InnerFunctionResult.ToString()));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -68,16 +66,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_OneArg_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<int, TimeSpan, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<int, TimeSpan, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i)), Is.EqualTo(InnerFunctionResult.ToString()));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i)), Is.EqualTo(InnerFunctionResult.ToString()));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -88,16 +85,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_OneArg_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<int, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<int, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(InnerFunctionResult.ToString()));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(InnerFunctionResult.ToString()));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -108,16 +104,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_OneArg_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_1Arg_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(InnerFunctionResult.ToString()));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(InnerFunctionResult.ToString()));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -128,17 +123,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_TwoArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -149,17 +143,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_TwoArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<int, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<int, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(i, functionArg), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(i, functionArg), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -170,18 +163,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_TwoArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<int, TimeSpan, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<int, TimeSpan, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -192,18 +184,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_TwoArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<int, TimeSpan, double, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<int, TimeSpan, double, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -214,18 +205,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_TwoArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<int, TimeSpan, double, DayOfWeek, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<int, TimeSpan, double, DayOfWeek, TimeSpan, string> boundFunction = Compose.First(FuncToBind_2Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -236,19 +226,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -259,19 +248,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<int, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<int, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(i, functionArg_1, functionArg_2),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(i, functionArg_1, functionArg_2),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -282,19 +270,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<int, TimeSpan, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<int, TimeSpan, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -305,19 +292,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<int, TimeSpan, double, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<int, TimeSpan, double, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -328,19 +314,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<int, TimeSpan, double, DayOfWeek, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<int, TimeSpan, double, DayOfWeek, TimeSpan, double, string> boundFunction = Compose.First(FuncToBind_3Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -351,20 +336,19 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -375,20 +359,19 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(i, functionArg_1, functionArg_2, functionArg_3),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(i, functionArg_1, functionArg_2, functionArg_3),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -399,20 +382,19 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<int, TimeSpan, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<int, TimeSpan, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2, functionArg_3),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2, functionArg_3),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -423,20 +405,19 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<int, TimeSpan, double, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<int, TimeSpan, double, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2, functionArg_3),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2, functionArg_3),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -447,20 +428,19 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Func_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<int, TimeSpan, double, DayOfWeek, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<int, TimeSpan, double, DayOfWeek, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.First(FuncToBind_4Args_ForFirst, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2, functionArg_3),
-                        Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2, functionArg_3),
+                    Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -471,21 +451,20 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_OneArg_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                boundFunction();
 
-                StringBuilder builder = new StringBuilder();
-                Action boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    boundFunction();
-
-                    Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -496,21 +475,20 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_OneArg_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                boundFunction(i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    boundFunction(i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -521,21 +499,20 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_OneArg_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                boundFunction(i, TimeSpan.FromDays(i));
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    boundFunction(i, TimeSpan.FromDays(i));
-
-                    Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -546,21 +523,20 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_OneArg_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -571,21 +547,20 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_OneArg_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_1Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(InnerFunctionResult.ToString()));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -596,22 +571,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_TwoArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -622,22 +596,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_TwoArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(i, functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(i, functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -648,22 +621,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_TwoArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(i, TimeSpan.FromDays(i), functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(i, TimeSpan.FromDays(i), functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -674,22 +646,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_TwoArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -700,22 +671,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_TwoArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, DayOfWeek, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, DayOfWeek, TimeSpan> boundFunction = Compose.First(CreateActionToBind_2Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -726,23 +696,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -753,23 +722,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(i, functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(i, functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -780,23 +748,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -807,23 +774,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -834,23 +800,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, DayOfWeek, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, DayOfWeek, TimeSpan, double> boundFunction = Compose.First(CreateActionToBind_3Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -861,24 +826,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -889,24 +853,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(i, functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(i, functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -917,24 +880,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(i, TimeSpan.FromDays(i), functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -945,24 +907,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -973,24 +934,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void First_Action_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<int, TimeSpan, double, DayOfWeek, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<int, TimeSpan, double, DayOfWeek, TimeSpan, double, DayOfWeek> boundFunction = Compose.First(CreateActionToBind_4Arg_ForFirst(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(InnerFunctionResult, functionArg_1, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1001,17 +961,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_TwoArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1022,17 +981,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_TwoArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, int, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, int, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg, i), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg, i), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1043,17 +1001,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_TwoArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, int, TimeSpan, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, int, TimeSpan, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1064,17 +1021,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_TwoArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, int, TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, int, TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -1085,17 +1041,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_TwoArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_2Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                Assert.That(boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1106,18 +1061,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1128,18 +1082,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, int, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, int, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, i, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, i, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1150,18 +1103,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, int, TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, int, TimeSpan, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1172,18 +1124,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, int, TimeSpan, double, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, int, TimeSpan, double, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -1194,18 +1145,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, int, TimeSpan, double, DayOfWeek, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, int, TimeSpan, double, DayOfWeek, double, string> boundFunction = Compose.Second(FuncToBind_3Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1216,19 +1166,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1239,19 +1188,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, int, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, int, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, i, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, i, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1262,19 +1210,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1285,19 +1232,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, int, TimeSpan, double, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, int, TimeSpan, double, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -1308,19 +1254,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Func_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, int, TimeSpan, double, DayOfWeek, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, int, TimeSpan, double, DayOfWeek, double, DayOfWeek, string> boundFunction = Compose.Second(FuncToBind_4Args_ForSecond, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1331,22 +1276,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_TwoArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1357,22 +1301,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_TwoArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg, i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg, i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1383,22 +1326,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_TwoArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg, i, TimeSpan.FromDays(i));
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg, i, TimeSpan.FromDays(i));
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1409,22 +1351,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_TwoArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1435,22 +1376,21 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_TwoArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg = TimeSpan.FromTicks(i);
+                boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_2Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg = TimeSpan.FromTicks(i);
-                    boundFunction(functionArg, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1461,23 +1401,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1488,23 +1427,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, i, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, i, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1515,23 +1453,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1542,23 +1479,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1569,23 +1505,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, DayOfWeek, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, DayOfWeek, double> boundFunction = Compose.Second(CreateActionToBind_3Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1596,24 +1531,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1624,24 +1558,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, i, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, i, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1652,24 +1585,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1680,24 +1612,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1708,24 +1639,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Second_Action_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, int, TimeSpan, double, DayOfWeek, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, int, TimeSpan, double, DayOfWeek, double, DayOfWeek> boundFunction = Compose.Second(CreateActionToBind_4Arg_ForSecond(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, InnerFunctionResult, functionArg_2, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1736,18 +1666,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1758,18 +1687,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, double, int, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, double, int, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1780,18 +1708,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, double, int, TimeSpan, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, double, int, TimeSpan, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1802,18 +1729,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, double, int, TimeSpan, double, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, double, int, TimeSpan, double, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -1824,18 +1750,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_3Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1846,19 +1771,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1869,19 +1793,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, double, int, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, double, int, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1892,19 +1815,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, double, int, TimeSpan, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, double, int, TimeSpan, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1915,19 +1837,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -1938,19 +1859,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Func_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, double, int, TimeSpan, double, DayOfWeek, DayOfWeek, string> boundFunction = Compose.Third(FuncToBind_4Args_ForThird, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1961,23 +1881,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_ThreeArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -1988,23 +1907,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_ThreeArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2, i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2, i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2015,23 +1933,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_ThreeArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i));
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i));
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2042,23 +1959,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_ThreeArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan, double> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan, double> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2069,23 +1985,22 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_ThreeArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_3Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2096,24 +2011,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2124,24 +2038,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, i, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, i, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2152,24 +2065,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2180,24 +2092,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2208,24 +2119,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Third_Action_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, int, TimeSpan, double, DayOfWeek, DayOfWeek> boundFunction = Compose.Third(CreateActionToBind_4Arg_ForThird(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, InnerFunctionResult, functionArg_3)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2236,19 +2146,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Func_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
-                Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+            Func<TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                }
-            });
+            for (uint i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2259,19 +2168,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Func_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
-                Func<TimeSpan, double, DayOfWeek, int, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+            Func<TimeSpan, double, DayOfWeek, int, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2282,19 +2190,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Func_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
-                Func<TimeSpan, double, DayOfWeek, int, TimeSpan, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+            Func<TimeSpan, double, DayOfWeek, int, TimeSpan, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i)), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2305,19 +2212,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Func_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
-                Func<TimeSpan, double, DayOfWeek, int, TimeSpan, double, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+            Func<TimeSpan, double, DayOfWeek, int, TimeSpan, double, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>s
@@ -2328,19 +2234,18 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Func_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
-            {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
-                Func<TimeSpan, double, DayOfWeek, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+            Func<TimeSpan, double, DayOfWeek, int, TimeSpan, double, DayOfWeek, string> boundFunction = Compose.Fourth(FuncToBind_4Args_ForFourth, innerFunction);
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                }
-            });
+            for (int i = 0; i < 20; ++i)
+            {
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                Assert.That(boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+            }
+
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2351,24 +2256,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Action_FourArgs_Compose_ZeroArgFunc()
         {
-            With.Mocks(delegate
+            Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+
+            for (uint i = 0; i < 20; ++i)
             {
-                Func<uint> innerFunction = InitializeMockInnerFunctionExpectations_0Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (uint i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2379,24 +2283,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Action_FourArgs_Compose_OneArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek, int> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, uint> innerFunction = InitializeMockInnerFunctionExpectations_1Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3, i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek, int> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3, i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2407,24 +2310,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Action_FourArgs_Compose_TwoArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek, int, TimeSpan> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, uint> innerFunction = InitializeMockInnerFunctionExpectations_2Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i));
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek, int, TimeSpan> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i));
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2435,24 +2337,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Action_FourArgs_Compose_ThreeArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek, int, TimeSpan, double> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, uint> innerFunction = InitializeMockInnerFunctionExpectations_3Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek, int, TimeSpan, double> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -2463,24 +2364,23 @@ namespace Jolt.Test.Functional
         [Test]
         public void Fourth_Action_FourArgs_Compose_FourArgFunc()
         {
-            With.Mocks(delegate
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+
+            StringBuilder builder = new StringBuilder();
+            Action<TimeSpan, double, DayOfWeek, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+
+            for (int i = 0; i < 20; ++i)
             {
-                Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = InitializeMockInnerFunctionExpectations_4Arg();
+                TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
+                double functionArg_2 = 5.5 * i;
+                DayOfWeek functionArg_3 = DayOfWeek.Thursday;
+                boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
 
-                StringBuilder builder = new StringBuilder();
-                Action<TimeSpan, double, DayOfWeek, int, TimeSpan, double, DayOfWeek> boundFunction = Compose.Fourth(CreateActionToBind_4Arg_ForFourth(builder), innerFunction);
+                Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
+                builder.Length = 0;
+            }
 
-                for (int i = 0; i < 20; ++i)
-                {
-                    TimeSpan functionArg_1 = TimeSpan.FromTicks(i);
-                    double functionArg_2 = 5.5 * i;
-                    DayOfWeek functionArg_3 = DayOfWeek.Thursday;
-                    boundFunction(functionArg_1, functionArg_2, functionArg_3, i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday);
-
-                    Assert.That(builder.ToString(), Is.EqualTo(String.Concat(functionArg_1, functionArg_2, functionArg_3, InnerFunctionResult)));
-                    builder.Length = 0;
-                }
-            });
+            innerFunction.VerifyAllExpectations();
         }
 
         #region private methods -------------------------------------------------------------------
@@ -2492,11 +2392,9 @@ namespace Jolt.Test.Functional
         /// </summary>
         private static Func<uint> InitializeMockInnerFunctionExpectations_0Arg()
         {
-            Func<uint> innerFunction = Mocker.Current.CreateMock<Func<uint>>();
+            Func<uint> innerFunction = MockRepository.GenerateMock<Func<uint>>();
 
-            Expect.Call(innerFunction()).Return(InnerFunctionResult).Repeat.Times(20);
-
-            Mocker.Current.ReplayAll();
+            innerFunction.Expect(f => f()).Return(InnerFunctionResult).Repeat.Times(20);
             return innerFunction;
         }
 
@@ -2507,14 +2405,13 @@ namespace Jolt.Test.Functional
         /// </summary>
         private static Func<int, uint> InitializeMockInnerFunctionExpectations_1Arg()
         {
-            Func<int, uint> innerFunction = Mocker.Current.CreateMock<Func<int, uint>>();
+            Func<int, uint> innerFunction = MockRepository.GenerateMock<Func<int, uint>>();
 
             for (int i = 0; i < 20; ++i)
             {
-                Expect.Call(innerFunction(i)).Return(InnerFunctionResult);
+                innerFunction.Expect(f => f(i)).Return(InnerFunctionResult);
             }
 
-            Mocker.Current.ReplayAll();
             return innerFunction;
         }
 
@@ -2525,14 +2422,13 @@ namespace Jolt.Test.Functional
         /// </summary>
         private static Func<int, TimeSpan, uint> InitializeMockInnerFunctionExpectations_2Arg()
         {
-            Func<int, TimeSpan, uint> innerFunction = Mocker.Current.CreateMock<Func<int, TimeSpan, uint>>();
+            Func<int, TimeSpan, uint> innerFunction = MockRepository.GenerateMock<Func<int, TimeSpan, uint>>();
 
             for (int i = 0; i < 20; ++i)
             {
-                Expect.Call(innerFunction(i, TimeSpan.FromDays(i))).Return(InnerFunctionResult);
+                innerFunction.Expect(f => f(i, TimeSpan.FromDays(i))).Return(InnerFunctionResult);
             }
 
-            Mocker.Current.ReplayAll();
             return innerFunction;
         }
 
@@ -2543,14 +2439,13 @@ namespace Jolt.Test.Functional
         /// </summary>
         private static Func<int, TimeSpan, double, uint> InitializeMockInnerFunctionExpectations_3Arg()
         {
-            Func<int, TimeSpan, double, uint> innerFunction = Mocker.Current.CreateMock<Func<int, TimeSpan, double, uint>>();
+            Func<int, TimeSpan, double, uint> innerFunction = MockRepository.GenerateMock<Func<int, TimeSpan, double, uint>>();
 
             for (int i = 0; i < 20; ++i)
             {
-                Expect.Call(innerFunction(i, TimeSpan.FromDays(i), 2.5 * i)).Return(InnerFunctionResult);
+                innerFunction.Expect(f => f(i, TimeSpan.FromDays(i), 2.5 * i)).Return(InnerFunctionResult);
             }
 
-            Mocker.Current.ReplayAll();
             return innerFunction;
         }
 
@@ -2561,14 +2456,13 @@ namespace Jolt.Test.Functional
         /// </summary>
         private static Func<int, TimeSpan, double, DayOfWeek, uint> InitializeMockInnerFunctionExpectations_4Arg()
         {
-            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = Mocker.Current.CreateMock<Func<int, TimeSpan, double, DayOfWeek, uint>>();
+            Func<int, TimeSpan, double, DayOfWeek, uint> innerFunction = MockRepository.GenerateMock<Func<int, TimeSpan, double, DayOfWeek, uint>>();
 
             for (int i = 0; i < 20; ++i)
             {
-                Expect.Call(innerFunction(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday)).Return(InnerFunctionResult);
+                innerFunction.Expect(f => f(i, TimeSpan.FromDays(i), 2.5 * i, DayOfWeek.Friday)).Return(InnerFunctionResult);
             }
 
-            Mocker.Current.ReplayAll();
             return innerFunction;
         }
 

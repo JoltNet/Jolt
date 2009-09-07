@@ -18,7 +18,6 @@ using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
-using RMC = Rhino.Mocks.Constraints;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -212,37 +211,30 @@ namespace Jolt.Testing.Test.CodeGeneration
             Func<MethodDeclarer, Type, MethodBuilder> declareMethodBuilder,
             Action<MethodBuilder> assertMethodBuilderAttributes)
         {
-            With.Mocks(delegate
-            {
-                IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = Mocker.Current.CreateMock<IMethodDeclarerImpl<MethodBuilder, MethodInfo>>();
+            IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation =
+                MockRepository.GenerateMock<IMethodDeclarerImpl<MethodBuilder, MethodInfo>>();
 
-                List<MethodBuilder> implementationArgs = new List<MethodBuilder>();
-                Action<MethodBuilder, MethodInfo, Type> storeMethodBuilderForMethods = CreateStoreMethodBuilderDelegate_3Args(implementationArgs);
-                Action<MethodBuilder, MethodInfo> storeMethodBuilderForParameters = Bind.Third(storeMethodBuilderForMethods, GetType());
+            List<MethodBuilder> implementationArgs = new List<MethodBuilder>();
+            Action<MethodBuilder, MethodInfo, Type> storeMethodBuilderForMethods = CreateStoreMethodBuilderDelegate_3Args(implementationArgs);
+            Action<MethodBuilder, MethodInfo> storeMethodBuilderForParameters = Bind.Third(storeMethodBuilderForMethods, GetType());
 
-                // Expectations
-                // The method and its parameters are defined/declared.
-                implementation.DeclareMethod(null, expectedMethod, expectedMethodReturnType);
-                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod), RMC.Is.Same(expectedMethodReturnType))
-                    .Do(storeMethodBuilderForMethods);
+            implementation.Expect(i => i.DeclareMethod(Arg<MethodBuilder>.Is.Anything, Arg<MethodInfo>.Is.Same(expectedMethod), Arg<Type>.Is.Same(expectedMethodReturnType)))
+                .Do(storeMethodBuilderForMethods);
 
-                implementation.DefineMethodParameters(null, expectedMethod);
-                LastCall.Constraints(RMC.Is.Anything(), RMC.Is.Same(expectedMethod))
-                    .Do(storeMethodBuilderForParameters);
+            implementation.Expect(i => i.DefineMethodParameters(Arg<MethodBuilder>.Is.Anything, Arg<MethodInfo>.Is.Same(expectedMethod)))
+                .Do(storeMethodBuilderForParameters);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            MethodDeclarer declarer = new MethodDeclarer(CurrentTypeBuilder, methodDeclarerAttributes, expectedMethod, implementation);
+            MethodBuilder method = declareMethodBuilder(declarer, expectedMethodReturnType);
 
-                MethodDeclarer declarer = new MethodDeclarer(CurrentTypeBuilder, methodDeclarerAttributes, expectedMethod, implementation);
-                MethodBuilder method = declareMethodBuilder(declarer, expectedMethodReturnType);
+            Assert.That(method.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
+            Assert.That(method.Name, Is.EqualTo(expectedMethod.Name));
+            Assert.That(method.Attributes & MethodAttributes.NewSlot, Is.Not.EqualTo(MethodAttributes.NewSlot));
+            Assert.That(implementationArgs.TrueForAll(storedMethod => method == storedMethod));
 
-                Assert.That(method.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
-                Assert.That(method.Name, Is.EqualTo(expectedMethod.Name));
-                Assert.That(method.Attributes & MethodAttributes.NewSlot, Is.Not.EqualTo(MethodAttributes.NewSlot));
-                Assert.That(implementationArgs.TrueForAll(storedMethod => method == storedMethod));
+            assertMethodBuilderAttributes(method);
 
-                assertMethodBuilderAttributes(method);
-            });
+            implementation.VerifyAllExpectations();
         }
 
         #endregion

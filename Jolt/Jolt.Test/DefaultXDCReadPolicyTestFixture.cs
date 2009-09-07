@@ -32,7 +32,7 @@ namespace Jolt.Test
             {
                 base.Constructrion_Internal(
                     CreatePolicy,
-                    (expectedFilename, fileProxy) => Expect.Call(fileProxy.OpenText(expectedFilename)).Return(expectedReader),
+                    (expectedFilename, fileProxy) => fileProxy.Expect(f => f.OpenText(expectedFilename)).Return(expectedReader),
                     p => Assert.That(expectedReader.BaseStream.Position, Is.EqualTo(expectedReader.BaseStream.Length)));
             }
         }
@@ -48,7 +48,7 @@ namespace Jolt.Test
             {
                 base.Constructrion_Internal(
                     CreatePolicy,
-                    (expectedFilename, fileProxy) => Expect.Call(fileProxy.OpenText(expectedFilename)).Return(expectedReader),
+                    (expectedFilename, fileProxy) => fileProxy.Expect(f => f.OpenText(expectedFilename)).Return(expectedReader),
                     NullAssert);
             }
         }

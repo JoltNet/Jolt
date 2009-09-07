@@ -62,24 +62,17 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches()
         {
-            With.Mocks(delegate
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML reader pair are equal.
-                    Expect.Call(assertion.AreEqual(expectedReader, actualReader))
-                        .Return(new XmlComparisonResult());
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Return(new XmlComparisonResult());
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
+                Assert.That(constraint.Matches(actualReader));
+            }
 
-                    XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                    Assert.That(constraint.Matches(actualReader));
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -89,24 +82,17 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches_DoesNotMatch()
         {
-            With.Mocks(delegate
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML reader pair are not equal.
-                    Expect.Call(assertion.AreEqual(expectedReader, actualReader))
-                        .Return(CreateFailedComparisonResult());
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Return(CreateFailedComparisonResult());
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
+                Assert.That(!constraint.Matches(actualReader));
+            }
 
-                    XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                    Assert.That(!constraint.Matches(actualReader));
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -116,24 +102,17 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(InvalidProgramException))]
         public void Matches_UnexpectedException()
         {
-            With.Mocks(delegate
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML reader pair are not equal.
-                    assertion.AreEqual(expectedReader, actualReader);
-                    LastCall.Throw(new InvalidProgramException());
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Throw(new InvalidProgramException());
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
+                constraint.Matches(actualReader);
+            }
 
-                    XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                    constraint.Matches(actualReader);
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -142,14 +121,10 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(NotImplementedException))]
         public void WriteDescriptionTo()
         {
-            With.Mocks(delegate
-            {
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
-                Mocker.Current.ReplayAll();
+            MessageWriter writer = MockRepository.GenerateStub<MessageWriter>();
 
-                XmlEqualityConstraint constraint = new XmlEqualityConstraint(null);
-                constraint.WriteDescriptionTo(writer);
-            });
+            XmlEqualityConstraint constraint = new XmlEqualityConstraint(null);
+            constraint.WriteDescriptionTo(writer);
         }
 
         /// <summary>
@@ -158,31 +133,23 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteMessageTo()
         {
-            With.Mocks(delegate
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                XmlComparisonResult assertionResult = CreateFailedComparisonResult();
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Return(assertionResult);                    
+                writer.Expect(w => w.WriteLine("message\r\nXPath: /ns:element"));
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The XML reader pair are not equal.
-                    XmlComparisonResult assertionResult = CreateFailedComparisonResult();
-                    Expect.Call(assertion.AreEqual(expectedReader, actualReader))
-                        .Return(assertionResult);                    
+                XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
+                constraint.Matches(actualReader);
+                constraint.WriteMessageTo(writer);
+            }
 
-                    // The message writer receives the error message.
-                    writer.WriteLine("message\r\nXPath: /ns:element");
-
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                    constraint.Matches(actualReader);
-                    constraint.WriteMessageTo(writer);
-                }
-            });
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -191,28 +158,22 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteActualValueTo()
         {
-            With.Mocks(delegate
+            XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
+                             actualReader = XmlReader.Create(Stream.Null))
             {
-                XmlEqualityAssertion assertion = Mocker.Current.CreateMock<XmlEqualityAssertion>();
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                writer.Expect(w => w.WriteActualValue(actualReader));
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Return(new XmlComparisonResult());
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
-                                 actualReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The message writer receives the "actual" parameter.
-                    writer.WriteActualValue(actualReader);
-                    Expect.Call(assertion.AreEqual(expectedReader, actualReader))
-                        .Return(new XmlComparisonResult());
+                XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
+                constraint.Matches(actualReader);
+                constraint.WriteActualValueTo(writer);
+            }
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                    constraint.Matches(actualReader);
-                    constraint.WriteActualValueTo(writer);
-                }
-            });
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         #region private methods -------------------------------------------------------------------

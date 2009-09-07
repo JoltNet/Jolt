@@ -34,13 +34,10 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareParametersWith_NoParameters()
         {
-            With.Mocks(delegate
-            {
-                DefineParameterDelegate defineParameter = Mocker.Current.CreateMock<DefineParameterDelegate>();
-                Mocker.Current.ReplayAll();
+            DefineParameterDelegate defineParameter = MockRepository.GenerateMock<DefineParameterDelegate>();
+            DeclarationHelper.DefineParametersWith(defineParameter, new ParameterInfo[0]);
 
-                DeclarationHelper.DefineParametersWith(defineParameter, new ParameterInfo[0]);
-            });
+            defineParameter.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -50,21 +47,14 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareParametersWith_OneParameter()
         {
-            With.Mocks(delegate
-            {
-                DefineParameterDelegate defineParameter = Mocker.Current.CreateMock<DefineParameterDelegate>();
+            DefineParameterDelegate defineParameter = MockRepository.GenerateMock<DefineParameterDelegate>();
 
-                // Expectations.
-                // The defineParameter delegate is called for each
-                // of the given parameters.
-                ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) }).GetParameters();
-                Expect.Call(defineParameter(1, expectedParameters[0].Attributes, expectedParameters[0].Name))
-                    .Return(null);
+            ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) }).GetParameters();
+            defineParameter.Expect(d => d(1, expectedParameters[0].Attributes, expectedParameters[0].Name)).Return(null);
 
-                Mocker.Current.ReplayAll();
+            DeclarationHelper.DefineParametersWith(defineParameter, expectedParameters);
 
-                DeclarationHelper.DefineParametersWith(defineParameter, expectedParameters);
-            });
+            defineParameter.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -74,29 +64,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareParametersWith_ManyParameters()
         {
-            With.Mocks(delegate
+            DefineParameterDelegate defineParameter = MockRepository.GenerateMock<DefineParameterDelegate>();
+
+            ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod").GetParameters();
+            for (int i = 0; i < expectedParameters.Length; ++i)
             {
-                DefineParameterDelegate defineParameter = Mocker.Current.CreateMock<DefineParameterDelegate>();
+                defineParameter.Expect(d => d(i + 1, expectedParameters[i].Attributes, expectedParameters[i].Name)).Return(null);
+            }
 
-                // Expectations.
-                // The defineParameter delegate is called for each
-                // of the given parameters.
-                ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod").GetParameters();
+            DeclarationHelper.DefineParametersWith(defineParameter, expectedParameters);
 
-                using (Mocker.Current.Ordered())
-                {
-                    for (int i = 0; i < expectedParameters.Length; ++i)
-                    {
-                        Expect.Call(defineParameter(i + 1, expectedParameters[i].Attributes, expectedParameters[i].Name))
-                            .Return(null);
-                    }
-                }
-
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
-
-                DeclarationHelper.DefineParametersWith(defineParameter, expectedParameters);
-            });
+            defineParameter.VerifyAllExpectations();
         }
 
         /// <summary>

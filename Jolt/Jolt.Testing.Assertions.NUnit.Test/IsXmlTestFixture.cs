@@ -7,14 +7,8 @@
 // File created: 8/23/2009 08:51:12
 // ----------------------------------------------------------------------------
 
-using System;
-using System.IO;
-using System.Xml;
-using System.Xml.Schema;
-
 using Jolt.Testing.Assertions.NUnit.SyntaxHelpers;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Assertions.NUnit.Test
 {

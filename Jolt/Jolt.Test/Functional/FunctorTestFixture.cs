@@ -29,15 +29,13 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_NoArgs()
         {
-            With.Mocks(delegate
-            {
-                Func<int> function = Mocker.Current.CreateMock<Func<int>>();
-                Expect.Call(function()).Return(0);
-                Mocker.Current.ReplayAll();
+            Func<int> function = MockRepository.GenerateMock<Func<int>>();
+            function.Expect(f => f()).Return(0);
 
-                Action action = Functor.ToAction(function);
-                action();
-            });
+            Action action = Functor.ToAction(function);
+            action();
+
+            function.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -47,17 +45,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_OneArg()
         {
-            With.Mocks(delegate
-            {
-                Func<string, int> function = Mocker.Current.CreateMock<Func<string, int>>();
+            Func<string, int> function = MockRepository.GenerateMock<Func<string, int>>();
 
-                string functionArg = "first-arg";
-                Expect.Call(function(functionArg)).Return(0);
-                Mocker.Current.ReplayAll();
+            string functionArg = "first-arg";
+            function.Expect(f => f(functionArg)).Return(0);
 
-                Action<string> action = Functor.ToAction(function);
-                action(functionArg);
-            });
+            Action<string> action = Functor.ToAction(function);
+            action(functionArg);
+
+            function.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -67,17 +63,15 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_TwoArgs()
         {
-            With.Mocks(delegate
-            {
-                Func<string, Stream, int> function = Mocker.Current.CreateMock<Func<string, Stream, int>>();
+            Func<string, Stream, int> function = MockRepository.GenerateMock<Func<string, Stream, int>>();
 
-                string functionArg = "first-arg";
-                Expect.Call(function(functionArg, Stream.Null)).Return(0);
-                Mocker.Current.ReplayAll();
+            string functionArg = "first-arg";
+            function.Expect(f => f(functionArg, Stream.Null)).Return(0);
 
-                Action<string, Stream> action = Functor.ToAction(function);
-                action(functionArg, Stream.Null);
-            });
+            Action<string, Stream> action = Functor.ToAction(function);
+            action(functionArg, Stream.Null);
+
+            function.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -87,18 +81,16 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_ThreeArgs()
         {
-            With.Mocks(delegate
-            {
-                Func<string, Stream, TextReader, int> function = Mocker.Current.CreateMock<Func<string, Stream, TextReader, int>>();
+            Func<string, Stream, TextReader, int> function = MockRepository.GenerateMock<Func<string, Stream, TextReader, int>>();
 
-                string functionArg_1 = "first-arg";
-                StreamReader functionArg_3 = new StreamReader(Stream.Null);
-                Expect.Call(function(functionArg_1, Stream.Null, functionArg_3)).Return(0);
-                Mocker.Current.ReplayAll();
+            string functionArg_1 = "first-arg";
+            StreamReader functionArg_3 = new StreamReader(Stream.Null);
+            function.Expect(f => f(functionArg_1, Stream.Null, functionArg_3)).Return(0);
 
-                Action<string, Stream, TextReader> action = Functor.ToAction(function);
-                action(functionArg_1, Stream.Null, functionArg_3);
-            });
+            Action<string, Stream, TextReader> action = Functor.ToAction(function);
+            action(functionArg_1, Stream.Null, functionArg_3);
+
+            function.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -108,19 +100,17 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_FourArgs()
         {
-            With.Mocks(delegate
-            {
-                Func<string, Stream, TextReader, DayOfWeek, int> function = Mocker.Current.CreateMock<Func<string, Stream, TextReader, DayOfWeek, int>>();
+            Func<string, Stream, TextReader, DayOfWeek, int> function = MockRepository.GenerateMock<Func<string, Stream, TextReader, DayOfWeek, int>>();
 
-                string functionArg_1 = "first-arg";
-                StreamReader functionArg_3 = new StreamReader(Stream.Null);
-                DayOfWeek functionArg_4 = DayOfWeek.Friday;
-                Expect.Call(function(functionArg_1, Stream.Null, functionArg_3, functionArg_4)).Return(0);
-                Mocker.Current.ReplayAll();
+            string functionArg_1 = "first-arg";
+            StreamReader functionArg_3 = new StreamReader(Stream.Null);
+            DayOfWeek functionArg_4 = DayOfWeek.Friday;
+            function.Expect(f => f(functionArg_1, Stream.Null, functionArg_3, functionArg_4)).Return(0);
 
-                Action<string, Stream, TextReader, DayOfWeek> action = Functor.ToAction(function);
-                action(functionArg_1, Stream.Null, functionArg_3, functionArg_4);
-            });
+            Action<string, Stream, TextReader, DayOfWeek> action = Functor.ToAction(function);
+            action(functionArg_1, Stream.Null, functionArg_3, functionArg_4);
+
+            function.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -130,15 +120,13 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToAction_EventHandler()
         {
-            With.Mocks(delegate
-            {
-                EventHandler<EventArgs> eventHandler = Mocker.Current.CreateMock<EventHandler<EventArgs>>();
-                Mocker.Current.ReplayAll();
+            EventHandler<EventArgs> eventHandler = MockRepository.GenerateStub<EventHandler<EventArgs>>();
 
-                Action<object, EventArgs> action = Functor.ToAction(eventHandler);
-                Assert.That(action.Method, Is.SameAs(eventHandler.Method));
-                Assert.That(action.Target, Is.SameAs(eventHandler.Target));
-            });
+            Action<object, EventArgs> action = Functor.ToAction(eventHandler);
+            Assert.That(action.Method, Is.SameAs(eventHandler.Method));
+            Assert.That(action.Target, Is.SameAs(eventHandler.Target));
+
+            eventHandler.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -147,15 +135,13 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToEventHandler()
         {
-            With.Mocks(delegate
-            {
-                Action<object, EventArgs> action = Mocker.Current.CreateMock<Action<object, EventArgs>>();
-                Mocker.Current.ReplayAll();
+            Action<object, EventArgs> action = MockRepository.GenerateStub<Action<object, EventArgs>>();
 
-                EventHandler<EventArgs> eventHandler = Functor.ToEventHandler(action);
-                Assert.That(eventHandler.Method, Is.SameAs(action.Method));
-                Assert.That(eventHandler.Target, Is.SameAs(action.Target));
-            });
+            EventHandler<EventArgs> eventHandler = Functor.ToEventHandler(action);
+            Assert.That(eventHandler.Method, Is.SameAs(action.Method));
+            Assert.That(eventHandler.Target, Is.SameAs(action.Target));
+
+            action.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -164,15 +150,11 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToPredicate()
         {
-            With.Mocks(delegate
-            {
-                Func<int, bool> functionPredicate = Mocker.Current.CreateMock<Func<int, bool>>();
-                Mocker.Current.ReplayAll();
+            Func<int, bool> functionPredicate = MockRepository.GenerateStub<Func<int, bool>>();
 
-                Predicate<int> predicate = Functor.ToPredicate(functionPredicate);
-                Assert.That(predicate.Method, Is.SameAs(functionPredicate.Method));
-                Assert.That(predicate.Target, Is.SameAs(functionPredicate.Target));
-            });
+            Predicate<int> predicate = Functor.ToPredicate(functionPredicate);
+            Assert.That(predicate.Method, Is.SameAs(functionPredicate.Method));
+            Assert.That(predicate.Target, Is.SameAs(functionPredicate.Target));
         }
 
         /// <summary>
@@ -181,15 +163,11 @@ namespace Jolt.Test.Functional
         [Test]
         public void ToPredicateFunc()
         {
-            With.Mocks(delegate
-            {
-                Predicate<int> predicate = Mocker.Current.CreateMock<Predicate<int>>();
-                Mocker.Current.ReplayAll();
+            Predicate<int> predicate = MockRepository.GenerateStub<Predicate<int>>();
 
-                Func<int, bool> functionPredicate = Functor.ToPredicateFunc(predicate);
-                Assert.That(functionPredicate.Method, Is.SameAs(predicate.Method));
-                Assert.That(functionPredicate.Target, Is.SameAs(predicate.Target));
-            });
+            Func<int, bool> functionPredicate = Functor.ToPredicateFunc(predicate);
+            Assert.That(functionPredicate.Method, Is.SameAs(predicate.Method));
+            Assert.That(functionPredicate.Target, Is.SameAs(predicate.Target));
         }
 
         /// <summary>

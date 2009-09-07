@@ -72,23 +72,16 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches()
         {
-            With.Mocks(delegate
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(new XmlSchemaSet());
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // A given XmlReader is successfully validated.
-                    Expect.Call(assertion.Validate(expectedReader))
-                        .Return(new ValidationEventArgs[0]);
+                assertion.Expect(a => a.Validate(expectedReader)).Return(new ValidationEventArgs[0]);
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
+                Assert.That(constraint.Matches(expectedReader));
+            }
 
-                    XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                    Assert.That(constraint.Matches(expectedReader));
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -98,23 +91,16 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void Matches_DoesNotMatch()
         {
-            With.Mocks(delegate
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(new XmlSchemaSet());
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // A given XmlReader is contains invalid XML.
-                    Expect.Call(assertion.Validate(expectedReader))
-                        .Return(CreateFailedComparisonResult());
+                assertion.Expect(a => a.Validate(expectedReader)).Return(CreateFailedComparisonResult());
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
+                Assert.That(!constraint.Matches(expectedReader));
+            }
 
-                    XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                    Assert.That(!constraint.Matches(expectedReader));
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -124,23 +110,16 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(InvalidProgramException))]
         public void Matches_UnexpectedException()
         {
-            With.Mocks(delegate
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(new XmlSchemaSet());
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // An error occurs during validation.
-                    assertion.Validate(expectedReader);
-                    LastCall.Throw(new InvalidProgramException());
+                assertion.Expect(a => a.Validate(expectedReader)).Throw(new InvalidProgramException());
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
+                XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
+                constraint.Matches(expectedReader);
+            }
 
-                    XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                    constraint.Matches(expectedReader);
-                }
-            });
+            assertion.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -149,14 +128,10 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test, ExpectedException(typeof(NotImplementedException))]
         public void WriteDescriptionTo()
         {
-            With.Mocks(delegate
-            {
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
-                Mocker.Current.ReplayAll();
+            MessageWriter writer = MockRepository.GenerateStub<MessageWriter>();
 
-                XmlValidityConstraint constraint = new XmlValidityConstraint(new XmlSchemaSet());
-                constraint.WriteDescriptionTo(writer);
-            });
+            XmlValidityConstraint constraint = new XmlValidityConstraint(new XmlSchemaSet());
+            constraint.WriteDescriptionTo(writer);
         }
 
         /// <summary>
@@ -165,30 +140,23 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteMessageTo()
         {
-            With.Mocks(delegate
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(new XmlSchemaSet());
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                IList<ValidationEventArgs> assertionResult = CreateFailedComparisonResult();
+                assertion.Expect(a => a.Validate(expectedReader)).Return(assertionResult);
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // A given XmlReader is contains invalid XML.
-                    IList<ValidationEventArgs> assertionResult = CreateFailedComparisonResult();
-                    Expect.Call(assertion.Validate(expectedReader))
-                        .Return(assertionResult);
+                writer.Expect(w => w.WriteLine("message"));
 
-                    // The message writer receives the error message.
-                    writer.WriteLine("message");
+                XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
+                constraint.Matches(expectedReader);
+                constraint.WriteMessageTo(writer);
+            }
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                    constraint.Matches(expectedReader);
-                    constraint.WriteMessageTo(writer);
-                }
-            });
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         /// <summary>
@@ -197,27 +165,21 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         [Test]
         public void WriteActualValueTo()
         {
-            With.Mocks(delegate
+            XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
+            MessageWriter writer = MockRepository.GenerateMock<MessageWriter>();
+
+            using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                XmlValidityAssertion assertion = Mocker.Current.CreateMock<XmlValidityAssertion>(new XmlSchemaSet());
-                MessageWriter writer = Mocker.Current.CreateMock<MessageWriter>();
+                writer.Expect(w => w.WriteActualValue(expectedReader));
+                assertion.Expect(a => a.Validate(expectedReader)).Return(new ValidationEventArgs[0]);
 
-                using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
-                {
-                    // Expectations
-                    // The message writer receives the "actual" parameter.
-                    writer.WriteActualValue(expectedReader);
-                    Expect.Call(assertion.Validate(expectedReader))
-                        .Return(new ValidationEventArgs[0]);
+                XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
+                constraint.Matches(expectedReader);
+                constraint.WriteActualValueTo(writer);
+            }
 
-                    // Verification and assertions.
-                    Mocker.Current.ReplayAll();
-
-                    XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                    constraint.Matches(expectedReader);
-                    constraint.WriteActualValueTo(writer);
-                }
-            });
+            assertion.VerifyAllExpectations();
+            writer.VerifyAllExpectations();
         }
 
         #region private methods -------------------------------------------------------------------

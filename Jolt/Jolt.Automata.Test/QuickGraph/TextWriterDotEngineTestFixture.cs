@@ -27,24 +27,16 @@ namespace Jolt.Automata.Test.QuickGraph
         [Test]
         public void Run()
         {
-            With.Mocks(delegate
-            {
-                TextWriter writer = Mocker.Current.CreateMock<TextWriter>();
+            TextWriter writer = MockRepository.GenerateMock<TextWriter>();
 
-                // Expectations.
-                // GraphViz data is written to the writer.
-                string expectedGraphViz = "graph-viz-data";
-                writer.Write(expectedGraphViz);
+            IDotEngine engine = new TextWriterDotEngine(writer);
+            string expectedResult = Path.GetRandomFileName();
+            string expectedGraphViz = "graph-viz-data";
+            string result = engine.Run(GraphvizImageType.Png, expectedGraphViz, expectedResult);
 
-                // Verification and assertions.
-                Mocker.Current.ReplayAll();
+            Assert.That(result, Is.SameAs(expectedResult));
 
-                IDotEngine engine = new TextWriterDotEngine(writer);
-                string expectedResult = Path.GetRandomFileName();
-                string result = engine.Run(GraphvizImageType.Png, expectedGraphViz, expectedResult);
-
-                Assert.That(result, Is.SameAs(expectedResult));
-            });
+            writer.AssertWasCalled(w => w.Write(expectedGraphViz));
         }
     }
 }
