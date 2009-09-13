@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 using Jolt.Testing.CodeGeneration.Xml;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration.Xml
 {

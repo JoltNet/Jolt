@@ -7,13 +7,12 @@
 // File created: 3/27/2009 08:02:04
 // ----------------------------------------------------------------------------
 
-using Microsoft.Glee.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 
 using Jolt.Automata.Test;
+using Microsoft.Glee.Drawing;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Glee.Test
 {

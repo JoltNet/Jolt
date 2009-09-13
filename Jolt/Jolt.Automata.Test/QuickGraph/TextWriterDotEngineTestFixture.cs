@@ -11,7 +11,6 @@ using System.IO;
 
 using Jolt.Automata.QuickGraph;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using Rhino.Mocks;

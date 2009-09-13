@@ -10,13 +10,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.Assertions
 {
@@ -70,7 +68,7 @@ namespace Jolt.Testing.Test.Assertions
             using (XmlReader xmlReader = XmlReader.Create(GetEmbeddedResource("InvalidConfiguration.xml")))
             {
                 IList<ValidationEventArgs> validationErrors = assertion.Validate(xmlReader);
-                Assert.That(validationErrors.Count, Is.EqualTo(1));
+                Assert.That(validationErrors, Has.Count.EqualTo(1));
                 Assert.That(validationErrors[0].Exception, Is.Not.Null);
                 Assert.That(validationErrors[0].Message, Is.Not.Empty);
                 Assert.That(validationErrors[0].Severity, Is.EqualTo(XmlSeverityType.Error));

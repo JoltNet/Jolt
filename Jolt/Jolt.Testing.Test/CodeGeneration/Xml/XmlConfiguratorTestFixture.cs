@@ -14,7 +14,6 @@ using System.Xml.Schema;
 
 using Jolt.Testing.CodeGeneration.Xml;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration.Xml
 {
@@ -41,7 +40,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
             {
                 foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
                 {
-                    Assert.That(expectedTypes, List.Contains(typeDescriptor.RealSubjectType));
+                    Assert.That(expectedTypes, Has.Member(typeDescriptor.RealSubjectType));
                     Assert.That(typeDescriptor.ReturnTypeOverrides, Is.Empty);
                 }
             }
@@ -59,8 +58,8 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
             {
                 foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
                 {
-                    Assert.That(expectedTypes, List.Contains(typeDescriptor.RealSubjectType));
-                    Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(0));
+                    Assert.That(expectedTypes, Has.Member(typeDescriptor.RealSubjectType));
+                    Assert.That(typeDescriptor.ReturnTypeOverrides, Is.Empty);
                 }
             }
         }
@@ -101,10 +100,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
         {
             using (Stream resource = GetEmbeddedResource("EmptyConfiguration.xml"))
             {
-                foreach (TypeDescriptor typeDescriptor in XmlConfigurator.LoadRealSubjectTypes(resource))
-                {
-                    Assert.Fail();
-                }
+                Assert.That(XmlConfigurator.LoadRealSubjectTypes(resource), Is.Empty);
             }
         }
 
@@ -119,7 +115,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
             {
                 TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
                     .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
-                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(2));
+                Assert.That(typeDescriptor.ReturnTypeOverrides, Has.Count.EqualTo(2));
 
                 Assert.That(typeDescriptor.ReturnTypeOverrides.ContainsKey(typeof(System.IO.FileStream)));
                 Assert.That(typeDescriptor.ReturnTypeOverrides[typeof(System.IO.FileStream)], Is.EqualTo(typeof(System.IO.Stream)));
@@ -140,7 +136,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
             {
                 TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
                     .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
-                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(0));
+                Assert.That(typeDescriptor.ReturnTypeOverrides, Is.Empty);
             }
         }
 
@@ -155,7 +151,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
             {
                 TypeDescriptor typeDescriptor = XmlConfigurator.LoadRealSubjectTypes(resource)
                     .First(descriptor => descriptor.RealSubjectType == typeof(System.IO.File));
-                Assert.That(typeDescriptor.ReturnTypeOverrides.Count, Is.EqualTo(1));
+                Assert.That(typeDescriptor.ReturnTypeOverrides, Has.Count.EqualTo(1));
 
                 Assert.That(typeDescriptor.ReturnTypeOverrides.ContainsKey(typeof(System.IO.FileStream)));
                 Assert.That(typeDescriptor.ReturnTypeOverrides[typeof(System.IO.FileStream)], Is.EqualTo(typeof(System.IO.Stream)));

@@ -22,9 +22,9 @@ namespace Jolt.Testing.CodeGeneration
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(ConstructorBuilder, ConstructorInfo>"/>
         void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DeclareMethod(ConstructorBuilder builder, ConstructorInfo realSubjectTypeMethod, Type returnType)
         {
-            // The method is already declared as part of the constructor of the
-            // given constructor builder.
-            throw new NotSupportedException(String.Format(Resources.Error_DelayedConstructorDeclaration, builder.Name));
+            // The requested method is already declared as part of the
+            // constructor of the given constructor builder.
+            throw new NotSupportedException(String.Format(Resources.Error_DelayedConstructorDeclaration, builder.DeclaringType.Name));
         }
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(ConstructorBuilder, ConstructorInfo>"/>

@@ -15,7 +15,6 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 using MVTU = Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -34,7 +33,7 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
             // is present for this test.
             typeof(XmlAssert).TypeInitializer.Invoke(null, null);
             Assert.That(XmlAssert.Factory, Is.Not.Null);
-            Assert.That(XmlAssert.Factory, Is.InstanceOfType(typeof(AssertionFactory)));
+            Assert.That(XmlAssert.Factory, Is.InstanceOf<AssertionFactory>());
         }
 
         /// <summary>

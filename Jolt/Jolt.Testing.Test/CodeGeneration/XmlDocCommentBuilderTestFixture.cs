@@ -15,7 +15,6 @@ using System.Xml.Linq;
 
 using Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
@@ -296,9 +295,14 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private static void AssertMembersExist(XElement members, string expectedInterfaceMemberName, string expectedProxyMemberName)
         {
-            Assert.That(members.Elements().Count(), Is.EqualTo(2));
-            AssertMemberState(members.Elements().First(), expectedInterfaceMemberName);
-            AssertMemberState(members.Elements().Last(), expectedProxyMemberName);
+            IEnumerator<XElement> elements = members.Elements().GetEnumerator();
+            foreach (string expectedMemberName in new[] {expectedInterfaceMemberName, expectedProxyMemberName})
+            {
+                Assert.That(elements.MoveNext());
+                AssertMemberState(elements.Current, expectedMemberName);
+            }
+            
+            Assert.That(!elements.MoveNext());
         }
 
         /// <summary>
@@ -316,9 +320,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static void AssertMemberState(XElement member, string expectedName)
         {
             Assert.That(member.Attribute(XmlDocCommentNames.NameAttribute).Value, Is.EqualTo(expectedName));
-            Assert.That(member.Elements().Count(), Is.EqualTo(1));
-            Assert.That(member.Elements().First().Name.LocalName, Is.EqualTo(ContentElementName));
-            Assert.That(member.Elements().First().IsEmpty);
+            Assert.That(member.Elements().Single().Name.LocalName, Is.EqualTo(ContentElementName));
+            Assert.That(member.Elements().Single().IsEmpty);
         }
 
         /// <summary>

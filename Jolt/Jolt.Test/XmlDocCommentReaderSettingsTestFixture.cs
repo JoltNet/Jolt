@@ -8,16 +8,16 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Test
 {
-    // TODO: Static property tests; interrogate ElementInformation.
     [TestFixture]
     public sealed class XmlDocCommentReaderSettingsTestFixture
     {
@@ -41,7 +41,7 @@ namespace Jolt.Test
             XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
 
             Assert.That(
-                settings.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name).ToList(),
+                settings.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name),
                 Is.EquivalentTo(expectedDirectoryNames));
         }
 
@@ -66,8 +66,29 @@ namespace Jolt.Test
                 Path.Combine(windowsDirectoryName, @"Microsoft.NET\Framework\v1.0.3705") };
 
             Assert.That(
-                XmlDocCommentReaderSettings.Default.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name).ToArray(),
+                XmlDocCommentReaderSettings.Default.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name),
                 Is.EqualTo(expectedDirectoryNames));
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the DirectoryNames property.
+        /// </summary>
+        [Test]
+        public void DirectoryNames_Configuration()
+        {
+            PropertyInfo property = typeof(XmlDocCommentReaderSettings).GetProperty("DirectoryNames");
+
+            Assert.That(
+                property,
+                Has.Attribute<ConfigurationPropertyAttribute>()
+                    .With.Property("Name").EqualTo("XmlDocCommentDirectories")
+                    .And.Property("IsRequired").True);
+
+            Assert.That(
+                property,
+                Has.Attribute<ConfigurationCollectionAttribute>()
+                    .With.Property("ItemType").EqualTo(typeof(XmlDocCommentDirectoryElementCollection))
+                    .And.Property("AddItemName").EqualTo("Directory"));
         }
     }
 }

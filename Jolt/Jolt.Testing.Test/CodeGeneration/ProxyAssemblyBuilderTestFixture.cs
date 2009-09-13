@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml;
@@ -22,7 +21,6 @@ using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using log4net.Config;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
@@ -184,16 +182,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_ConfigFileSettings()
         {
-            string sAssemblyConfigFileName = Assembly.GetExecutingAssembly().GetName().Name + ".dll.config";
-            string sSettingsSection = "proxyBuilderSettings";
-
-            try
+            WithConfigurationFile(delegate
             {
-                // Prime the configuration file to load.
-                File.Copy("Construction_ConfigFileSettings.config", sAssemblyConfigFileName);
-                ConfigurationManager.RefreshSection(sSettingsSection);
-
-                // Test
                 string sExpectedNamespace = "Internal.Testing.CodeGeneration";
                 string sExpectedAssemblyName = "Proxies";
                 string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
@@ -220,13 +210,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Assert.That(validatedDocComments, Is.Not.Null);
                 Assert.That(validatedDocComments.Element(XmlDocCommentNames.AssemblyElement).Element(XmlDocCommentNames.NameElement).Value, Is.EqualTo(sExpectedAssemblyName));
                 Assert.That(validatedDocComments.Element(XmlDocCommentNames.MembersElement).IsEmpty);
-            }
-            finally
-            {
-                // Reset configuration state for subsequent tests.
-                File.Delete(sAssemblyConfigFileName);
-                ConfigurationManager.RefreshSection(sSettingsSection);
-            }
+            });
         }
 
         /// <summary>
@@ -1129,7 +1113,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(memberElement, Is.Not.Null);
             Assert.That(memberElement.Attribute(XmlDocCommentNames.NameAttribute).Value, Is.EqualTo("member-name"));
             Assert.That(memberElement.IsEmpty);
-            Assert.That(memberElement.ElementsAfterSelf().Count(), Is.EqualTo(0));
+            Assert.That(memberElement.ElementsAfterSelf(), Is.Empty);
 
             createProxyTypeBuilder.VerifyAllExpectations();
             proxyTypeBuilder.VerifyAllExpectations();
@@ -1276,6 +1260,36 @@ namespace Jolt.Testing.Test.CodeGeneration
         private static ProxyAssemblyBuilder CreateTestAssemblyBuilder(CreateProxyTypeBuilderDelegate createProxyTypeBuilder, ProxyAssemblyBuilderSettings settings)
         {
             return new ProxyAssemblyBuilder("a.b.c", "Proxies.dll", settings, createProxyTypeBuilder);
+        }
+
+        /// <summary>
+        /// Initializes the application configuration file for this test fixture,
+        /// then executes a given method prior to reverting the configuration changes.
+        /// </summary>
+        /// 
+        /// <param name="method">
+        /// The method to invoke while the configuration is loaded and active.
+        /// </param>
+        private static void WithConfigurationFile(Action method)
+        {
+            // Create the assembly configuration.
+            string settingsSection = "proxyBuilderSettings";
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.Sections.Add(settingsSection, new ProxyAssemblyBuilderSettings(false, true, true, true, true));
+            config.Save();
+
+            try
+            {
+                // Invoke the method with the new configuration.
+                ConfigurationManager.RefreshSection(settingsSection);
+                method();
+            }
+            finally
+            {
+                // Revert the assembly configuration.
+                File.Delete(config.FilePath);
+                ConfigurationManager.RefreshSection(settingsSection);
+            }
         }
 
         #endregion

@@ -17,11 +17,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Linq;
 
-using log4net.Config;
 using Jolt.Automata.QuickGraph;
 using Jolt.Functional;
+using log4net.Config;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Test
 {
@@ -47,13 +46,13 @@ namespace Jolt.Automata.Test
                 state => new GraphMLState(state, fsm.StartState == state, fsm.IsFinalState(state)));
 
             XElement[] nodes = CreateGraphMLFor(fsm).Root.Descendants(GraphMLNamespace + "node").ToArray();
-            Assert.That(nodes, Has.Length(expectedVertices.Count));
+            Assert.That(nodes, Has.Length.EqualTo(expectedVertices.Count));
 
             for (int i = 0; i < nodes.Length; ++i)
             {
                 // id
                 int id = Int32.Parse(nodes[i].Attribute("id").Value);
-                Assert.That(expectedVertices.ContainsKey(id));
+                Assert.That(expectedVertices.Keys, Has.Member(id));
                 Assert.That(id, Is.EqualTo(expectedVertices[id].Name.GetHashCode()));
 
                 // stateName
@@ -86,7 +85,7 @@ namespace Jolt.Automata.Test
             Transition<char>[] expectedEdges = fsm.AsGraph.Edges.ToArray();
 
             XElement[] edges = CreateGraphMLFor(fsm).Root.Descendants(GraphMLNamespace + "edge").ToArray();
-            Assert.That(edges, Has.Length(expectedEdges.Length));
+            Assert.That(edges, Has.Length.EqualTo(expectedEdges.Length));
 
             for (int i = 0; i < edges.Length; ++i)
             {
@@ -140,7 +139,7 @@ namespace Jolt.Automata.Test
 
             string[] states = fsm.AsGraph.Vertices.ToArray();
             Assert.That(states, Is.Unique);
-            Assert.That(states, Has.Length(3));
+            Assert.That(states, Has.Length.EqualTo(3));
 
             for (int i = 0; i < states.Length; ++i)
             {
@@ -180,7 +179,7 @@ namespace Jolt.Automata.Test
                 fsm = FsmConverter.FromGraphML<char>(reader);
             }
 
-            Assert.That(fsm.AsGraph.Edges.ToArray(), Is.EqualTo(FsmFactory.CreateLengthMod3Machine().AsGraph.Edges.ToArray()));
+            Assert.That(fsm.AsGraph.Edges, Is.EqualTo(FsmFactory.CreateLengthMod3Machine().AsGraph.Edges));
         }
 
         /// <summary>
@@ -202,9 +201,9 @@ namespace Jolt.Automata.Test
             }
 
             Assert.That(serializedFsm, Is.Not.Null);
-            Assert.That(fsm.AsGraph.Vertices.ToArray(), Is.EqualTo(serializedFsm.AsGraph.Vertices.ToArray()));
+            Assert.That(fsm.AsGraph.Vertices, Is.EqualTo(serializedFsm.AsGraph.Vertices));
             Assert.That(fsm.StartState, Is.EqualTo(serializedFsm.StartState));
-            Assert.That(fsm.FinalStates.ToArray(), Is.EqualTo(fsm.FinalStates.ToArray()));
+            Assert.That(fsm.FinalStates, Is.EqualTo(serializedFsm.FinalStates));
         }
 
         /// <summary>
@@ -227,7 +226,7 @@ namespace Jolt.Automata.Test
             }
 
             Assert.That(serializedFsm, Is.Not.Null);
-            Assert.That(fsm.AsGraph.Edges.ToArray(), Is.EqualTo(serializedFsm.AsGraph.Edges.ToArray()));
+            Assert.That(fsm.AsGraph.Edges, Is.EqualTo(serializedFsm.AsGraph.Edges));
         }
 
         /// <summary>
@@ -264,9 +263,9 @@ namespace Jolt.Automata.Test
                 deserializedFsm = FsmConverter.FromBinary<char>(stream);
             }
 
-            Assert.That(fsm.AsGraph.Vertices.ToArray(), Is.EqualTo(deserializedFsm.AsGraph.Vertices.ToArray()));
+            Assert.That(fsm.AsGraph.Vertices, Is.EqualTo(deserializedFsm.AsGraph.Vertices));
             Assert.That(fsm.StartState, Is.EqualTo(deserializedFsm.StartState));
-            Assert.That(fsm.FinalStates.ToArray(), Is.EqualTo(fsm.FinalStates.ToArray()));
+            Assert.That(fsm.FinalStates, Is.EqualTo(deserializedFsm.FinalStates));
         }
 
         /// <summary>

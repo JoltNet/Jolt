@@ -12,7 +12,6 @@ using System.Xml;
 
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.Assertions

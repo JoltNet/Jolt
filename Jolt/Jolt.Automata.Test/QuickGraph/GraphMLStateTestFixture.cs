@@ -7,6 +7,7 @@
 // File created: 1/24/2009 11:32:38 AM
 // ----------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +15,6 @@ using System.Xml.Serialization;
 
 using Jolt.Automata.QuickGraph;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Test.QuickGraph
 {
@@ -73,11 +73,10 @@ namespace Jolt.Automata.Test.QuickGraph
         public void Name_Serializable()
         {
             PropertyInfo property = typeof(GraphMLState).GetProperty("Name");
-            object[] attributes = property.GetCustomAttributes(false);
 
-            Assert.That(attributes, Has.Length(1));
-            Assert.That(attributes[0], Is.InstanceOfType(typeof(XmlAttributeAttribute)));
-            Assert.That((attributes[0] as XmlAttributeAttribute).AttributeName, Is.EqualTo("stateName"));
+            Assert.That(
+                property,
+                Has.Attribute<XmlAttributeAttribute>().With.Property("AttributeName").EqualTo("stateName"));
         }
 
         /// <summary>
@@ -102,11 +101,14 @@ namespace Jolt.Automata.Test.QuickGraph
         public void IsStartState_Serializable()
         {
             PropertyInfo property = typeof(GraphMLState).GetProperty("IsStartState");
-            object[] attributes = property.GetCustomAttributes(false);
 
-            Assert.That(attributes, Has.Length(2));
-            Assert.That(attributes.OfType<DefaultValueAttribute>().Single().Value, Is.False);
-            Assert.That(attributes.OfType<XmlAttributeAttribute>().Single().AttributeName, Is.EqualTo("isStartState"));
+            Assert.That(
+                property,
+                Has.Attribute<XmlAttributeAttribute>().With.Property("AttributeName").EqualTo("isStartState"));
+
+            Assert.That(
+                property,
+                Has.Attribute<DefaultValueAttribute>().With.Property("Value").False);
         }
 
         /// <summary>
@@ -131,11 +133,14 @@ namespace Jolt.Automata.Test.QuickGraph
         public void IsFinalState_Serializable()
         {
             PropertyInfo property = typeof(GraphMLState).GetProperty("IsFinalState");
-            object[] attributes = property.GetCustomAttributes(false);
 
-            Assert.That(attributes, Has.Length(2));
-            Assert.That(attributes.OfType<DefaultValueAttribute>().Single().Value, Is.False);
-            Assert.That(attributes.OfType<XmlAttributeAttribute>().Single().AttributeName, Is.EqualTo("isFinalState"));
+            Assert.That(
+                property,
+                Has.Attribute<XmlAttributeAttribute>().With.Property("AttributeName").EqualTo("isFinalState"));
+
+            Assert.That(
+                property,
+                Has.Attribute<DefaultValueAttribute>().With.Property("Value").False);
         }
     }
 }

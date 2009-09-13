@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -68,7 +67,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         protected void AssertMethodParametersEqual(ParameterInfo[] actualParameters, ParameterInfo[] expectedParameters)
         {
-            Assert.That(actualParameters, Has.Length(expectedParameters.Length));
+            Assert.That(actualParameters, Has.Length.EqualTo(expectedParameters.Length));
 
             for (int i = 0; i < actualParameters.Length; ++i)
             {

@@ -10,8 +10,8 @@
 using System;
 using System.Linq;
 
+using Jolt.Automata.Properties;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Test
 {
@@ -67,13 +67,17 @@ namespace Jolt.Automata.Test
         /// Verifies the behavior of the NextState() method when a non-
         /// deterministic transition is detected.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void NextState_NonDeterministic()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateNonDeterministicMachine();
-
             IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
-            enumerator.NextState('a');
+            char inputSymbol = 'a';
+
+            Assert.That(
+                () => enumerator.NextState(inputSymbol),    // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_NDFSM_NotSupported, fsm.StartState, inputSymbol.ToString())));
         }
 
         /// <summary>

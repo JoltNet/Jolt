@@ -14,7 +14,6 @@ using System.Reflection.Emit;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -49,9 +48,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_interfaceBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(NonGenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<NonGenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract));
         }
@@ -68,9 +67,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_proxyBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(NonGenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<NonGenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final));
         }
@@ -87,9 +86,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_interfaceBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(GenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<GenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract));
         }
@@ -106,9 +105,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_interfaceBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(NonGenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<NonGenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract));
         }
@@ -125,9 +124,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_proxyBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(GenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<GenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final));
         }
@@ -144,9 +143,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(MethodDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<MethodDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_proxyBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(NonGenericMethodDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<NonGenericMethodDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedMethod));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final));
         }
@@ -162,9 +161,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = factory.Create(expectedConstructor);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(NonGenericConstructorDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<NonGenericConstructorDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_proxyBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(ConstructorDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<ConstructorDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedConstructor));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName));
         }
@@ -184,9 +183,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = factory.Create(expectedConstructor);
 
-            Assert.That(declarer, Is.InstanceOfType(typeof(GenericConstructorDeclarer)));
+            Assert.That(declarer, Is.InstanceOf<GenericConstructorDeclarer>());
             Assert.That(GetPropertyValue(declarer, "Builder"), Is.SameAs(m_proxyBuilder));
-            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOfType(typeof(ConstructorDeclarerImpl)));
+            Assert.That(GetPropertyValue(declarer, "Implementation"), Is.InstanceOf<ConstructorDeclarerImpl>());
             Assert.That(GetPropertyValue(declarer, "RealSubjectTypeMethod"), Is.SameAs(expectedConstructor));
             Assert.That(GetPropertyValue(declarer, "MethodAttributes"), Is.EqualTo(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName));
         }

@@ -14,7 +14,6 @@ using System.Reflection.Emit;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
@@ -163,9 +162,9 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             AssertExpectedParameterConstraints(genericArguments, new Type[][]
             {
-                new Type[] { typeof(ValueType) },
-                new Type[] { genericArguments[2] },
-                new Type[] { typeof(IDisposable), typeof(MarshalByRefObject) }
+                new[] { typeof(ValueType) },
+                new[] { genericArguments[2] },
+                new[] { typeof(IDisposable), typeof(MarshalByRefObject) }
             });
         }
 

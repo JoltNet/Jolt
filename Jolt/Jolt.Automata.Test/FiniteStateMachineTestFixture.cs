@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Jolt.Automata.Properties;
 using Jolt.Functional;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using QuickGraph;
 using Rhino.Mocks;
 
@@ -32,14 +32,14 @@ namespace Jolt.Automata.Test
         {
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
             Assert.That(fsm.AsGraph, Is.Not.Null);
-            Assert.That(fsm.AsGraph, Is.InstanceOfType(typeof(BidirectionalGraph<string, Transition<char>>)));
+            Assert.That(fsm.AsGraph, Is.InstanceOf<BidirectionalGraph<string, Transition<char>>>());
             Assert.That(fsm.AsGraph.AllowParallelEdges);
             Assert.That(fsm.AsGraph.IsDirected);
 
             Assert.That(fsm.AsGraph.EdgeCount, Is.EqualTo(0));
             Assert.That(fsm.AsGraph.VertexCount, Is.EqualTo(0));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Jolt.Automata.Test
 
             Assert.That(fsm.AsGraph, Is.SameAs(graph));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
         }
 
         /// <summary>
@@ -79,14 +79,14 @@ namespace Jolt.Automata.Test
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>(graph as IBidirectionalGraph<string, Transition<char>>);
             Assert.That(fsm.AsGraph, Is.Not.Null);
             Assert.That(fsm.AsGraph, Is.Not.SameAs(graph));
-            Assert.That(fsm.AsGraph, Is.InstanceOfType(typeof(BidirectionalGraph<string, Transition<char>>)));
+            Assert.That(fsm.AsGraph, Is.InstanceOf<BidirectionalGraph<string, Transition<char>>>());
             Assert.That(fsm.AsGraph.AllowParallelEdges);
             Assert.That(fsm.AsGraph.IsDirected);
 
-            Assert.That(fsm.AsGraph.Edges.ToList(), Is.EquivalentTo(expectedTransitions));
-            Assert.That(fsm.AsGraph.Vertices.ToList(), Is.EquivalentTo(expectedStates));
+            Assert.That(fsm.AsGraph.Edges, Is.EquivalentTo(expectedTransitions));
+            Assert.That(fsm.AsGraph.Vertices, Is.EquivalentTo(expectedStates));
             Assert.That(fsm.StartState, Is.Null);
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
         }
 
         /// <summary>
@@ -113,11 +113,15 @@ namespace Jolt.Automata.Test
         /// Verifies the behavior of the AddState() method when
         /// the given state is the implicit error state.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddState_InvalidState()
         {
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            fsm.AddState(FiniteStateMachine<char>.ErrorState);
+
+            Assert.That(
+                () => fsm.AddState(FiniteStateMachine<char>.ErrorState),    // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                Throws.ArgumentException.With.Message.EqualTo(
+                    String.Format(Resources.Error_AddState_ImplicitErrorState, FiniteStateMachine<char>.ErrorState)));
         }
 
         /// <summary>
@@ -142,11 +146,16 @@ namespace Jolt.Automata.Test
         /// Verifies the behavior of the AddState() method when
         /// the given state is the implicit error state.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddStates_InvalidState()
         {
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
-            fsm.AddStates(new string[] { "start-state", "state-0", FiniteStateMachine<int>.ErrorState, "state-2", "end-state" });
+            string[] states = { "start-state", "state-0", FiniteStateMachine<int>.ErrorState, "state-2", "end-state" };
+
+            Assert.That(
+                () => fsm.AddStates(states),    // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                Throws.ArgumentException.With.Message.EqualTo(
+                    String.Format(Resources.Error_AddStates_ImplicitErrorState, FiniteStateMachine<int>.ErrorState)));
         }
 
         /// <summary>
@@ -201,7 +210,7 @@ namespace Jolt.Automata.Test
             fsm.SetFinalState(expectedState);
 
             Assert.That(fsm.RemoveState(expectedState));
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
         }
 
         /// <summary>
@@ -234,7 +243,7 @@ namespace Jolt.Automata.Test
             string expectedState = "final-state";
 
             fsm.AddState(expectedState);
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
 
             fsm.SetFinalState(expectedState);
             Assert.That(fsm.FinalStates.First(), Is.SameAs(expectedState));
@@ -253,19 +262,23 @@ namespace Jolt.Automata.Test
             fsm.SetFinalState(expectedState);
             fsm.SetFinalState(expectedState);
 
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(1));
-            Assert.That(fsm.FinalStates.First(), Is.SameAs(expectedState));
+            Assert.That(fsm.FinalStates, Is.EqualTo(new[] { expectedState }));
         }
 
         /// <summary>
         /// Verifies the behavior of the SetFinalState() method when
         /// the given state is not a valid state in the FSM.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void SetFinalState_InvalidState()
         {
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
-            fsm.SetFinalState("final-state");
+            string finalState = "final-state";
+
+            Assert.That(
+                new TestDelegate(Bind.First(fsm.SetFinalState, finalState)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.ArgumentException.With.Message.EqualTo(
+                    String.Format(Resources.Error_SetFinalState_InvalidState, finalState)));
         }
 
         /// <summary>
@@ -278,10 +291,10 @@ namespace Jolt.Automata.Test
             string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
             
             fsm.AddStates(expectedStates);
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
 
             fsm.SetFinalStates(expectedStates);
-            Assert.That(fsm.FinalStates.ToList(), Is.EquivalentTo(expectedStates));
+            Assert.That(fsm.FinalStates, Is.EquivalentTo(expectedStates));
         }
 
         /// <summary>
@@ -297,21 +310,24 @@ namespace Jolt.Automata.Test
             fsm.SetFinalStates(expectedStates);
             fsm.SetFinalStates(expectedStates);
 
-            Assert.That(fsm.FinalStates.ToList(), Is.EquivalentTo(expectedStates));
+            Assert.That(fsm.FinalStates, Is.EquivalentTo(expectedStates));
         }
 
         /// <summary>
         /// Verifies the behavior of the SetFinalStateS() method when at
         /// least one of the given states is not a valid state in the FSM.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void SetFinalStates_InvalidState()
         {
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>();
             string[] expectedStates = { "start-state", "state-0", "state-1", "state-2", "end-state" };
             
             fsm.AddStates(expectedStates.TakeWhile(state => state.StartsWith("s")));
-            fsm.SetFinalStates(expectedStates);
+
+            Assert.That(
+                new TestDelegate(Bind.First(fsm.SetFinalStates, expectedStates)),   // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_SetFinalStates_InvalidState));
         }
 
         /// <summary>
@@ -327,8 +343,8 @@ namespace Jolt.Automata.Test
             fsm.SetFinalState(expectedState);
 
             Assert.That(fsm.ClearFinalState(expectedState));
-            Assert.That(!fsm.FinalStates.Contains(expectedState));
-            Assert.That(fsm.AsGraph.Vertices.Contains(expectedState));
+            Assert.That(fsm.FinalStates, Has.No.Member(expectedState));
+            Assert.That(fsm.AsGraph.Vertices, Has.Member(expectedState));
         }
 
         /// <summary>
@@ -357,7 +373,7 @@ namespace Jolt.Automata.Test
             fsm.SetFinalStates(expectedStates);
             fsm.ClearFinalStates(expectedStates);
 
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
+            Assert.That(fsm.FinalStates, Is.Empty);
             Assert.That(fsm.AsGraph.Vertices, Is.EquivalentTo(expectedStates));
         }
 
@@ -376,8 +392,8 @@ namespace Jolt.Automata.Test
             fsm.SetFinalStates(expectedStates.TakeWhile(isLastCharDigit));
             fsm.ClearFinalStates(expectedStates);
 
-            Assert.That(fsm.FinalStates.Count(), Is.EqualTo(0));
-            Assert.That(!fsm.AsGraph.Vertices.Contains("end-state"));
+            Assert.That(fsm.FinalStates, Is.Empty);
+            Assert.That(fsm.AsGraph.Vertices, Has.No.Member("end-state"));
         }
 
         /// <summary>
@@ -413,7 +429,7 @@ namespace Jolt.Automata.Test
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
             IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator(startState);
 
-            Assert.That(enumerator, Is.InstanceOfType(typeof(FsmEnumerator<int>)));
+            Assert.That(enumerator, Is.InstanceOf<FsmEnumerator<int>>());
             Assert.That(enumerator.CurrentState, Is.SameAs(startState));
         }
 
@@ -421,14 +437,19 @@ namespace Jolt.Automata.Test
         /// Verifies the behavior of the CreateStateEnumerator() method
         /// when the given start state is invalid.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void CreateStateEnumerator_InvalidStartState()
         {
             BidirectionalGraph<string, Transition<int>> graph = new BidirectionalGraph<string, Transition<int>>();
             graph.AddVertex("start-state");
 
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-            IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator("end-state");
+            string initialState = "end-state";
+
+            Assert.That(
+                () => fsm.CreateStateEnumerator(initialState),  // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                Throws.ArgumentException.With.Message.EqualTo(
+                    String.Format(Resources.Error_CreateEnumerator_InvalidStartState, initialState)));
         }
 
         /// <summary>
@@ -505,14 +526,13 @@ namespace Jolt.Automata.Test
         }
 
         /// <summary>
-        /// Verifies the behavior of the Consume() mehtod when the FSM
+        /// Verifies the behavior of the Consume() method when the FSM
         /// contains an invalid start state.
         /// </summary>
         [Test, ExpectedException(typeof(ArgumentNullException))]
         public void Consume_InvalidStartState()
         {
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            fsm.Consume(Enumerable.Repeat('a', 10));
+            new FiniteStateMachine<char>().Consume(Enumerable.Repeat('a', 10));
         }
 
         /// <summary>
@@ -534,11 +554,15 @@ namespace Jolt.Automata.Test
         /// Verifies the behavior of the StartState property when
         /// the given state is not valid in the FSM.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void StartState_InvalidState()
         {
-            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            fsm.StartState = "start-state";
+            string invalidState = "start-state";
+
+            Assert.That(
+                () => new FiniteStateMachine<char>().StartState = invalidState,
+                Throws.ArgumentException.With.Message.EqualTo(
+                    String.Format(Resources.Error_SetStartState_InvalidState, invalidState)));
         }
 
         /// <summary>
@@ -553,9 +577,9 @@ namespace Jolt.Automata.Test
             fsm.SetFinalStates(expectedStates);
 
             IEnumerable<string> finalStates = fsm.FinalStates;
-            Assert.That(finalStates, Is.Not.InstanceOfType(typeof(HashSet<string>)));
+            Assert.That(finalStates, Is.Not.InstanceOf<HashSet<string>>());
             Assert.That(finalStates, Is.Not.SameAs(fsm.FinalStates));
-            Assert.That(finalStates.ToList(), Is.EquivalentTo(expectedStates));
+            Assert.That(finalStates, Is.EquivalentTo(expectedStates));
         }
 
         /// <summary>
@@ -574,8 +598,8 @@ namespace Jolt.Automata.Test
             bool isRemoved = (fsm.AsGraph as IMutableBidirectionalGraph<string, Transition<char>>).RemoveVertex(expectedStates[2]);
             
             Assert.That(isRemoved);
-            Assert.That(!fsm.AsGraph.Vertices.Contains(expectedStates[2]));
-            Assert.That(!fsm.FinalStates.Contains(expectedStates[2]));
+            Assert.That(fsm.AsGraph.Vertices, Has.No.Member(expectedStates[2]));
+            Assert.That(fsm.FinalStates, Has.No.Member(expectedStates[2]));
         }
 
         #endregion

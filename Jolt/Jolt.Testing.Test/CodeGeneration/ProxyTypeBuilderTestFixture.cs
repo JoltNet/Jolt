@@ -18,9 +18,9 @@ using System.Xml;
 
 using Jolt.Functional;
 using Jolt.Testing.CodeGeneration;
+using Jolt.Testing.Properties;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
@@ -58,7 +58,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
             Assert.That(!builder.Module.Assembly.ReflectionOnly);
             Assert.That(!builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>
@@ -77,10 +77,10 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
             Assert.That(!builder.Module.Assembly.ReflectionOnly);
             Assert.That(builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilder)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilder>());
 
             XmlDocCommentReader reader = (builder.XmlDocCommentBuilder as XmlDocCommentBuilder).XmlDocCommentReader as XmlDocCommentReader;
-            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+            Assert.That(reader.ReadPolicy, Is.InstanceOf<DefaultXDCReadPolicy>());
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
             Assert.That(!builder.Module.Assembly.ReflectionOnly);
             Assert.That(!builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.Module.Assembly.GetName().Name, Is.EqualTo("__transientAssembly"));
             Assert.That(!builder.Module.Assembly.ReflectionOnly);
             Assert.That(!builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>
@@ -137,10 +137,10 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
             Assert.That(builder.Module, Is.SameAs(expectedModule));
             Assert.That(builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilder)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilder>());
 
             XmlDocCommentReader reader = (builder.XmlDocCommentBuilder as XmlDocCommentBuilder).XmlDocCommentReader as XmlDocCommentReader;
-            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+            Assert.That(reader.ReadPolicy, Is.InstanceOf<DefaultXDCReadPolicy>());
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
             Assert.That(builder.Module, Is.SameAs(expectedModule));
             Assert.That(!builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(builder.ProxiedType, Is.SameAs(proxiedType));
             Assert.That(builder.Module, Is.SameAs(expectedModule));
             Assert.That(!builder.ProducesXmlDocComments);
-            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOfType(typeof(XmlDocCommentBuilderBase)));
+            Assert.That(builder.XmlDocCommentBuilder, Is.InstanceOf<XmlDocCommentBuilderBase>());
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -224,7 +224,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractType<>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -239,7 +239,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractSealedType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -254,7 +254,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractSealedType<,,>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -268,11 +268,13 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(string);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance );
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance );
 
             Assert.That(proxiedTypeField, Is.Not.Null);
             Assert.That(proxiedTypeField.FieldType, Is.EqualTo(proxiedType));
-            Assert.That(proxiedTypeField.IsInitOnly && proxiedTypeField.IsPrivate && !proxiedTypeField.IsStatic);
+            Assert.That(proxiedTypeField.IsInitOnly);
+            Assert.That(proxiedTypeField.IsPrivate);
+            Assert.That(!proxiedTypeField.IsStatic);
         }
 
         /// <summary>
@@ -285,13 +287,15 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(System.Collections.Generic.List<>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Not.Null);
             Assert.That(proxiedTypeField.FieldType, Is.Not.EqualTo(proxiedType));
             Assert.That(proxiedTypeField.FieldType.Name, Is.EqualTo(proxiedType.Name));
             Assert.That(proxiedTypeField.FieldType.Namespace, Is.EqualTo(proxiedType.Namespace));
-            Assert.That(proxiedTypeField.IsInitOnly && proxiedTypeField.IsPrivate && !proxiedTypeField.IsStatic);
+            Assert.That(proxiedTypeField.IsInitOnly);
+            Assert.That(proxiedTypeField.IsPrivate);
+            Assert.That(!proxiedTypeField.IsStatic);
         }
 
         /// <summary>
@@ -307,8 +311,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             ConstructorInfo[] expectedConstructors = realSubjectType.GetConstructors();
             ConstructorInfo[] actualConstructors = proxy.GetConstructors();
 
-            // Both proxy and proxied have the same number of constructors and same arguments.
-            Assert.That(actualConstructors, Has.Length(expectedConstructors.Length));
+            Assert.That(actualConstructors, Has.Length.EqualTo(expectedConstructors.Length));
 
             // Proxy constructor forwards to the proxied type constructor.
             AssertConstructorInvoked(proxy, null, "0");
@@ -329,8 +332,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             ConstructorInfo[] expectedConstructors = realSubjectType.GetConstructors();
             ConstructorInfo[] actualConstructors = specializedProxy.GetConstructors();
 
-            // Both proxy and proxied have the same number of constructors and same arguments.
-            Assert.That(actualConstructors, Has.Length(expectedConstructors.Length));
+            Assert.That(actualConstructors, Has.Length.EqualTo(expectedConstructors.Length));
 
             // Proxy constructor forwards to the proxied type constructor.
             AssertConstructorInvoked(specializedProxy, null, "0");
@@ -343,30 +345,39 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when an interface type
         /// is given to the proxy type builder as the real subject type.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void Construction_RealSubjectInterfaceType()
         {
-            new ProxyTypeBuilder(DefaultNamespace, typeof(__InterfaceType));
+            Assert.That(
+                CreateProxyTypeBuilderDelegate(typeof(__InterfaceType)),
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidRealSubjectType, typeof(__InterfaceType).Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when a delegate type
         /// is given to the proxy type builder as the real subject type.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void Construction_RealSubjectDelegateType()
         {
-            new ProxyTypeBuilder(DefaultNamespace, typeof(Action));
+            Assert.That(
+                CreateProxyTypeBuilderDelegate(typeof(Action)),
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidRealSubjectType, typeof(Action).Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when a real
         /// subject type does not contain a public constructor.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void Construction_NonConstructable()
         {
-            new ProxyTypeBuilder(DefaultNamespace, typeof(__HiddenConstructorType));
+            Assert.That(
+                CreateProxyTypeBuilderDelegate(typeof(__HiddenConstructorType)),
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_RealSubjectType_LackingConstructor, typeof(__HiddenConstructorType).Name)));
         }
 
         /// <summary>
@@ -847,7 +858,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             for (int i = 0; i < expectedTypes.Length; ++i)
             {
                 Assert.That(methodArgs[i], Is.Not.Null);
-                Assert.That(methodArgs[i], Is.InstanceOfType(expectedTypes[i]));
+                Assert.That(methodArgs[i], Is.InstanceOf(expectedTypes[i]));
             }
         }
 
@@ -855,34 +866,47 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when the AddMethod()
         /// method is invoked with a method from an invalid type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddMethod_InvalidMethod()
         {
+            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
-            builder.AddMethod(typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddMethod, method)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_MethodNotMemberOfRealSubject, method.Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddMethod()
         /// method is invoked with an instance method from an abstract type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddMethod_InvalidInstanceMethod()
         {
+            MethodInfo method = typeof(__AbstractType).GetMethod("ToString");
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__AbstractType));
-            builder.AddMethod(typeof(__AbstractType).GetMethod("ToString"));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddMethod, method)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, method.Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddMethod()
         /// method is invoked with a private method.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddMethod_PrivateMethod()
         {
+            MethodInfo method = typeof(__MethodTestType).GetMethod("PrivateMethod", NonPublicInstance, null, Type.EmptyTypes, null);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__MethodTestType));
-            builder.AddMethod(typeof(__MethodTestType).GetMethod("PrivateMethod", BindingFlags.NonPublic | BindingFlags.Instance,
-                null, Type.EmptyTypes, null));
+            
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddMethod, method)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(Resources.Error_MemberNotPublic));
         }
 
         /// <summary>
@@ -934,7 +958,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies the behavior of the AddMethod() method when the
         /// same method is added to the builder more than once.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddMethod_DuplicateMethod()
         {
             Type expectedType = typeof(__MethodTestType);
@@ -942,7 +966,10 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
             builder.AddMethod(method);
-            builder.AddMethod(method);
+
+            Assert.That(
+                () => builder.AddMethod(method),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         /// <summary>
@@ -972,7 +999,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxy.GetMethod(realSubjectTypeMethod.Name).ReturnType, Is.EqualTo(typeof(IOException)));
 
             IOException result = (IOException)proxy.InvokeMember(realSubjectTypeMethod.Name, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
-            Assert.That(result, Is.InstanceOfType(typeof(PathTooLongException)));
+            Assert.That(result, Is.InstanceOf<PathTooLongException>());
         }
 
         /// <summary>
@@ -992,7 +1019,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxy.GetMethod(realSubjectTypeMethod.Name).ReturnType, Is.EqualTo(typeof(IOException)));
 
             IOException result = (IOException)proxy.InvokeMember(realSubjectTypeMethod.Name, ProxyMethodInvocationFlags, null, Activator.CreateInstance(proxy), null);
-            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+            Assert.That(result, Is.InstanceOf<DirectoryNotFoundException>());
         }
 
         /// <summary>
@@ -1013,19 +1040,24 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxyMethod.ReturnType, Is.EqualTo(typeof(IOException)));
 
             IOException result = (IOException)proxyMethod.Invoke(Activator.CreateInstance(proxy), ProxyMethodInvocationFlags, null, null, null);
-            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+            Assert.That(result, Is.InstanceOf<DirectoryNotFoundException>());
         }
 
         /// <summary>
         /// Verifies the behavior of the AddMethod() method when given
         /// an invalid override for the method's return type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddMethod_ReturnTypeOverride_InvalidOverride()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
-            builder.AddMethod(realSubjectTypeMethod, typeof(NotImplementedException));
+            MethodInfo method = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
+            Type desiredReturnType = typeof(NotImplementedException);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, method.DeclaringType);
+            
+            Assert.That(
+                new TestDelegate(Bind.First(Bind.Second<MethodInfo, Type>(builder.AddMethod, desiredReturnType), method)),  // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidReturnTypeOverride, method.Name, desiredReturnType.Name, method.ReturnType.Name)));
         }
 
         /// <summary>
@@ -1087,6 +1119,8 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("StaticProperty"),
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
+                typeof(__PropertyTestType).TypeInitializer.Invoke(null, null);
+
                 // Verify the behavior of the generated proxy.
                 // Get operation.
                 object proxyInstance = Activator.CreateInstance(proxy);
@@ -1113,6 +1147,8 @@ namespace Jolt.Testing.Test.CodeGeneration
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
                 proxyProperty = specializedProxy.GetProperty(proxyProperty.Name);
+
+                typeof(__PropertyTestType<DateTime, TimeSpan, StringBuilder>).TypeInitializer.Invoke(null, null);
 
                 // Verify the behavior of the generated proxy.
                 // Get operation.
@@ -1152,33 +1188,48 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when the AddProperty()
         /// method is invoked with a property from an invalid type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddProperty_InvalidProperty()
         {
+            PropertyInfo property = typeof(__PropertyTestType).GetProperty("Getter");
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
-            builder.AddProperty(typeof(__PropertyTestType).GetProperty("Getter"));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddProperty, property)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_MethodNotMemberOfRealSubject, property.GetGetMethod().Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddProperty()
         /// method is invoked with an instance property from an abstract type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddProperty_InvalidInstanceProperty()
         {
+            PropertyInfo property = typeof(__AbstractType).GetProperty("InstanceProperty");
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__AbstractType));
-            builder.AddProperty(typeof(__AbstractType).GetProperty("InstanceProperty"));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddProperty, property)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, property.GetGetMethod().Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddProperty()
         /// method is invoked with a private property.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void AddProperty_PrivateProperty()
         {
+            PropertyInfo property = typeof(__PropertyTestType).GetProperty("PrivateProperty", NonPublicInstance);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
-            builder.AddProperty(typeof(__PropertyTestType).GetProperty("PrivateProperty", BindingFlags.NonPublic | BindingFlags.Instance));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddProperty, property)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidProperty, property.Name)));
         }
 
         /// <summary>
@@ -1257,7 +1308,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies the behavior of the AddProperty() method when the
         /// same setter property is added to the builder more than once.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddProperty_DuplicateSetterProperty()
         {
             Type expectedType = typeof(__PropertyTestType);
@@ -1265,7 +1316,10 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
             builder.AddProperty(property);
-            builder.AddProperty(property);
+
+            Assert.That(
+                () => builder.AddProperty(property),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         /// <summary>
@@ -1439,7 +1493,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxyProperty.GetGetMethod().ReturnType, Is.EqualTo(typeof(IOException)));
 
             IOException result = (IOException)proxyProperty.GetValue(Activator.CreateInstance(proxy), null);
-            Assert.That(result, Is.InstanceOfType(typeof(PathTooLongException)));
+            Assert.That(result, Is.InstanceOf<PathTooLongException>());
         }
 
         /// <summary>
@@ -1461,31 +1515,42 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(proxyProperty.GetGetMethod().ReturnType, Is.EqualTo(typeof(IOException)));
 
             IOException result = (IOException)proxyProperty.GetValue(Activator.CreateInstance(proxy), null);
-            Assert.That(result, Is.InstanceOfType(typeof(DirectoryNotFoundException)));
+            Assert.That(result, Is.InstanceOf<DirectoryNotFoundException>());
         }
 
         /// <summary>
         /// Verifies the behavior of the AddProperty() method when given
         /// an invalid override for the property's return type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddProperty_ReturnTypeOverride_InvalidOverride()
         {
-            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
-            builder.AddProperty(realSubjectTypeProperty, typeof(NotImplementedException));
+            PropertyInfo property = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, property.DeclaringType);
+            Type desiredReturnType = typeof(NotImplementedException);
+
+            Assert.That(
+                () => builder.AddProperty(property, desiredReturnType),
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidReturnTypeOverride, property.GetGetMethod().Name, desiredReturnType.Name, property.PropertyType.Name)));
         }
 
         /// <summary>
         /// Verifies the behavior of the AddProperty() method when attempting
         /// to override an invalid property.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddProperty_ReturnTypeOverride_InvalidProperty()
         {
-            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InvalidProperty");
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
-            builder.AddProperty(realSubjectTypeProperty, typeof(IOException));
+            PropertyInfo property = typeof(__ReturnTypeOverrideType<,>).GetProperty("InvalidProperty");
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, property.DeclaringType);
+            Type desiredReturnType = typeof(IOException);
+
+            Assert.That(
+                () => builder.AddProperty(property, desiredReturnType),
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InvalidProperty_ReturnTypeOverride, property.Name)));
+
         }
 
         /// <summary>
@@ -1582,7 +1647,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertAddEventBehavior(typeof(__EventTestType).GetEvent("StaticEvent"),
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
-                int[] initialState = __EventTestType.StaticEventData.Clone() as int[];
+                typeof(__EventTestType).TypeInitializer.Invoke(null, null);
 
                 try
                 {
@@ -1615,7 +1680,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 }
                 finally
                 {
-                    __EventTestType.StaticEventData = initialState;
+                    typeof(__EventTestType).TypeInitializer.Invoke(null, null);
                 }
             });
         }
@@ -1634,7 +1699,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 proxyEvent = specializedProxy.GetEvent(proxyEvent.Name);
                 proxyRaiseEventMethod = specializedProxy.GetMethod(proxyRaiseEventMethod.Name);
 
-                int[] initialState = __EventTestType<ResolveEventArgs>.StaticEventData.Clone() as int[];
+                typeof(__EventTestType<ResolveEventArgs>).TypeInitializer.Invoke(null, null);
 
                 try
                 {
@@ -1667,7 +1732,7 @@ namespace Jolt.Testing.Test.CodeGeneration
                 }
                 finally
                 {
-                    __EventTestType<ResolveEventArgs>.StaticEventData = initialState;
+                    typeof(__EventTestType<ResolveEventArgs>).TypeInitializer.Invoke(null, null);
                 }
             });
         }
@@ -1676,33 +1741,47 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies that an appropriate exception is thrown when the AddEvent()
         /// method is invoked with an event from an invalid type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddEvent_InvalidEvent()
         {
+            EventInfo eventInfo = typeof(__EventTestType).GetEvent("InstanceEvent");
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
-            builder.AddEvent(typeof(__EventTestType).GetEvent("InstanceEvent"));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddEvent, eventInfo)),  // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_MethodNotMemberOfRealSubject, eventInfo.GetAddMethod().Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddEvent()
         /// method is invoked with an instance event from an abstract type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddEvent_InvalidInstanceEvent()
         {
+            EventInfo eventInfo = typeof(__AbstractType).GetEvent("InstanceEvent");
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__AbstractType));
-            builder.AddEvent(typeof(__AbstractType).GetEvent("InstanceEvent"));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddEvent, eventInfo)),  // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(
+                    String.Format(Resources.Error_InstanceMethodAddedFromAbstractType, eventInfo.GetAddMethod().Name)));
         }
 
         /// <summary>
         /// Verifies that an appropriate exception is thrown when the AddEvent()
         /// method is invoked with a private event.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddEvent_PrivateEvent()
         {
+            EventInfo eventInfo = typeof(__EventTestType).GetEvent("PrivateEvent", NonPublicInstance);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__EventTestType));
-            builder.AddEvent(typeof(__EventTestType).GetEvent("PrivateEvent", BindingFlags.NonPublic | BindingFlags.Instance));
+
+            Assert.That(
+                new TestDelegate(Bind.First(builder.AddEvent, eventInfo)),  // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                Throws.InvalidOperationException.With.Message.EqualTo(Resources.Error_MemberNotPublic));
         }
 
         /// <summary>
@@ -1793,7 +1872,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// Verifies the behavior of the AddEvent() method when the
         /// same event is added to the builder more than once.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddEvent_DuplicateEvent()
         {
             Type realSubjectType = typeof(__EventTestType);
@@ -1801,7 +1880,10 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
             builder.AddEvent(eventInfo);
-            builder.AddEvent(eventInfo);
+
+            Assert.That(
+                () => builder.AddEvent(eventInfo),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));            
         }
 
         /// <summary>
@@ -1820,14 +1902,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// the given property (get/set methods) matches the signature
         /// of an existing method in the builder.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddProperty_DuplicatesExistingMethod()
         {
             Type realSubjectType = typeof(__PropertyTestType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
-
+        
             builder.AddMethod(realSubjectType.GetMethod("get_Getter"));
-            builder.AddProperty(realSubjectType.GetProperty("Getter"));
+
+            Assert.That(
+                () => builder.AddProperty(realSubjectType.GetProperty("Getter")),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         /// <summary>
@@ -1835,14 +1920,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// the given method matches the signature of an existing
         /// property (get/set methods) in the builder.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddMethod_DuplicatesExistingProperty()
         {
             Type realSubjectType = typeof(__PropertyTestType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
 
             builder.AddProperty(realSubjectType.GetProperty("Getter"));
-            builder.AddMethod(realSubjectType.GetMethod("get_Getter"));
+
+            Assert.That(
+                () => builder.AddMethod(realSubjectType.GetMethod("get_Getter")),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         /// <summary>
@@ -1850,14 +1938,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// the given event (add/remove methods) matches the signature
         /// of an existing method in the builder.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddEvent_DuplicatesExistingMethod()
         {
             Type realSubjectType = typeof(__EventTestType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
 
             builder.AddMethod(realSubjectType.GetMethod("add_InstanceEvent"));
-            builder.AddEvent(realSubjectType.GetEvent("InstanceEvent"));
+
+            Assert.That(
+                () => builder.AddEvent(realSubjectType.GetEvent("InstanceEvent")),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         /// <summary>
@@ -1865,14 +1956,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// the given method matches the signature of an existing
         /// event (add/remove methods) in the builder.
         /// </summary>
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void AddMethod_DuplicatesExistingEvent()
         {
             Type realSubjectType = typeof(__EventTestType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
 
             builder.AddEvent(realSubjectType.GetEvent("InstanceEvent"));
-            builder.AddMethod(realSubjectType.GetMethod("add_InstanceEvent"));
+
+            Assert.That(
+                () => builder.AddMethod(realSubjectType.GetMethod("add_InstanceEvent")),
+                Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
         #endregion
@@ -1935,7 +2029,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(!proxyType.IsAbstract);
             Assert.That(proxyType.IsPublic);
             Assert.That(proxyType.IsSealed);
-            Assert.That(proxyType.GetInterfaces(), List.Contains(interfaceType));
+            Assert.That(proxyType.GetInterfaces(), Has.Member(interfaceType));
         }
 
         /// <summary>
@@ -2148,7 +2242,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             XmlDocCommentBuilderBase xdcBuilder = MockRepository.GenerateMock<XmlDocCommentBuilderBase>();
 
             MethodInfo addMember = typeof(XmlDocCommentBuilderBase)
-                    .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetMethods(NonPublicInstance)
                     .Single(CreateBuilderMethodPredicate<TMember>());
 
             foreach (TMember member in expectedMembers)
@@ -2188,11 +2282,25 @@ namespace Jolt.Testing.Test.CodeGeneration
             };
         }
 
+        /// <summary>
+        /// Creates a delegate that constructs a proxy type builder
+        /// with the default namespace and for the given real subject type.
+        /// </summary>
+        /// 
+        /// <param name="assembly">
+        /// The real subjec typ used to initialize the proxy type builder.
+        /// </param>
+        private static TestDelegate CreateProxyTypeBuilderDelegate(Type realSubjectType)
+        {
+            return () => new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+        }
+
         #endregion
 
         #region private class data ----------------------------------------------------------------
 
         private static readonly string DefaultNamespace = "root";
+        private static readonly BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
         private static readonly BindingFlags ProxyMethodInvocationFlags =
             BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public;
 

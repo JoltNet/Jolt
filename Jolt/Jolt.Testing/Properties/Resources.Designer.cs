@@ -143,7 +143,7 @@ namespace Jolt.Testing.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The constructor &apos;{0}&apos; must be declared at the same time its corresponding ConstructorBuilder is created..
+        ///   Looks up a localized string similar to The constructor of type &apos;{0}&apos; must be declared at the same time its corresponding ConstructorBuilder is created..
         /// </summary>
         internal static string Error_DelayedConstructorDeclaration {
             get {

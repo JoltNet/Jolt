@@ -12,7 +12,6 @@ using System.Text;
 
 using Jolt.Functional;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Test.Functional

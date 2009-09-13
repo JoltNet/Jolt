@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
+using Jolt.Testing.Properties;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
 
@@ -25,12 +26,18 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <summary>
         /// Verifies the implementation of the DeclareMethod() method.
         /// </summary>
-        [Test, ExpectedException(typeof(NotSupportedException))]
+        [Test]
         public void DeclareMethod()
         {
             IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation = new ConstructorDeclarerImpl();
             ConstructorInfo constructor = typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes);
-            implementation.DeclareMethod(CreateConstructorBuilder(constructor), constructor, GetType());
+            ConstructorBuilder builder = CreateConstructorBuilder(constructor);
+
+            Assert.That(
+                () => implementation.DeclareMethod(builder, constructor, GetType()),
+                Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
+                    String.Format(Resources.Error_DelayedConstructorDeclaration, builder.DeclaringType.Name)));
+
         }
 
         /// <summary>
@@ -60,7 +67,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_ManyParameters()
         {
-            AssertDefineMethodParameters(typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int), typeof(int) }));
+            AssertDefineMethodParameters(typeof(__ConstructorTestType).GetConstructor(new[] { typeof(int), typeof(int) }));
         }
 
         #endregion

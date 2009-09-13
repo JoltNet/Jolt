@@ -8,14 +8,14 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Configuration;
+using System.Text;
 
 using Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
-    // TODO: Static property tests; interrogate ElementInformation.
     [TestFixture]
     public sealed class ProxyAssemblyBuilderSettingsTextFixture
     {
@@ -69,6 +69,84 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitEvents);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitStatics);
             Assert.That(!ProxyAssemblyBuilderSettings.Default.EmitXmlDocComments);
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the EmitStatics property.
+        /// </summary>
+        [Test]
+        public void EmitStatics_Configuration()
+        {
+            AssertStaticConfiguration_EmitProperty("EmitStatics", false, true);
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the EmitMethods property.
+        /// </summary>
+        [Test]
+        public void EmitMethods_Configuration()
+        {
+            AssertStaticConfiguration_EmitProperty("EmitMethods", false, true);
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the EmitProperties property.
+        /// </summary>
+        [Test]
+        public void EmitProperties_Configuration()
+        {
+            AssertStaticConfiguration_EmitProperty("EmitProperties", false, true);
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the EmitEvents property.
+        /// </summary>
+        [Test]
+        public void EmitEvents_Configuration()
+        {
+            AssertStaticConfiguration_EmitProperty("EmitEvents", false, true);
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the EmitXmlDocComments property.
+        /// </summary>
+        [Test]
+        public void EmitXmlDocComments_Configuration()
+        {
+            AssertStaticConfiguration_EmitProperty("EmitXmlDocComments", false, false);
+        }
+
+        #endregion
+
+        #region private methods -------------------------------------------------------------------
+
+        /// <summary>
+        /// Verifies the static configuration of a given property from the
+        /// <seealso cref="ProxyAssemblyBuilderSettings"/> type.
+        /// </summary>
+        /// 
+        /// <param name="propertyName">
+        /// The name of the property to validate.
+        /// </param>
+        /// 
+        /// <param name="isRequired">
+        /// The expected requirement status of the configuration property.
+        /// </param>
+        /// 
+        /// <param name="expectedDefaultValue">
+        /// The expected default value of the property.
+        /// </param>
+        private void AssertStaticConfiguration_EmitProperty(string propertyName, bool isRequired, bool expectedDefaultValue)
+        {
+            StringBuilder builder = new StringBuilder(propertyName);
+            builder[0] = Char.ToLower(builder[0]);
+
+            Assert.That(
+                typeof(ProxyAssemblyBuilderSettings).GetProperty(propertyName),
+                Has.Attribute<ConfigurationPropertyAttribute>()
+                    .With.Property("Name").EqualTo(builder.ToString())
+                    .And.Property("IsRequired").EqualTo(isRequired)
+                    .And.Property("DefaultValue").EqualTo(expectedDefaultValue));
         }
 
         #endregion

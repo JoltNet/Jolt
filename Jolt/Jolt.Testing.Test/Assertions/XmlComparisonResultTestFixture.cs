@@ -7,12 +7,11 @@
 // File created: 8/18/2009 18:08:57
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Xml.Linq;
 
-using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Jolt.Testing.Assertions;
-using System;
+using NUnit.Framework;
 
 namespace Jolt.Testing.Test.Assertions
 {

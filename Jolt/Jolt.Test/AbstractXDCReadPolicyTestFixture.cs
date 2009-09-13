@@ -14,7 +14,6 @@ using System.Xml.Linq;
 
 using Jolt.GeneratedTypes.System.IO;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Test
@@ -44,7 +43,7 @@ namespace Jolt.Test
             TPolicy policy = createPolicy(expectedFullPath);
 
             Assert.That(policy.XmlDocCommentsFullPath, Is.SameAs(expectedFullPath));
-            Assert.That(policy.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(policy.FileProxy, Is.InstanceOf<FileProxy>());
             assert(policy);
         }
 
@@ -114,8 +113,7 @@ namespace Jolt.Test
             Assert.That(element.Document, Is.Null);
             Assert.That(element.Name.LocalName, Is.EqualTo(XmlDocCommentNames.MemberElement));
             Assert.That(element.Attribute(XmlDocCommentNames.NameAttribute).Value, Is.EqualTo(memberName));
-            Assert.That(element.Elements().Count(), Is.EqualTo(1));
-            Assert.That(element.Element("otherContent"), Is.Not.Null);
+            Assert.That(element.Elements().Single().Name.LocalName, Is.EqualTo("otherContent"));
             Assert.That(element.Element("otherContent").IsEmpty);
             assert(policy);
 

@@ -14,7 +14,6 @@ using System.Reflection;
 using Jolt.Functional;
 using Jolt.Test.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Test
 {
@@ -218,8 +217,8 @@ namespace Jolt.Test
             ParameterInfo[] methodParams = GetType().GetMethod("__g", NonPublicInstance).GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
 
-            Assert.That(methodParamTypes, Has.Length(4));
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(4));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
             Assert.That(methodParamTypes[0], Is.EqualTo(typeof(int)));
             Assert.That(methodParamTypes[1], Is.EqualTo(typeof(int)));
             Assert.That(methodParamTypes[2], Is.EqualTo(typeof(double)));
@@ -237,7 +236,7 @@ namespace Jolt.Test
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
 
             Assert.That(methodParamTypes, Is.Empty);
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
         }
 
         /// <summary>
@@ -251,8 +250,8 @@ namespace Jolt.Test
             ParameterInfo[] methodParams = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction_MixedArgs").GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments);
 
-            Assert.That(methodParamTypes, Has.Length(3));
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(3));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
             Assert.That(methodParamTypes[0], Is.EqualTo(genericTypeArguments[1]));
             Assert.That(methodParamTypes[1], Is.EqualTo(genericTypeArguments[2]));
             Assert.That(methodParamTypes[2], Is.EqualTo(typeof(int)));
@@ -273,7 +272,7 @@ namespace Jolt.Test
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments);
 
             Assert.That(methodParamTypes, Is.Empty);
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
         }
 
         /// <summary>
@@ -291,8 +290,8 @@ namespace Jolt.Test
             ParameterInfo[] methodParams = genericMethod.GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
 
-            Assert.That(methodParamTypes, Has.Length(6));
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(6));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
             Assert.That(methodParamTypes[0], Is.EqualTo(genericMethodArguments[2]));
             Assert.That(methodParamTypes[1], Is.EqualTo(genericMethodArguments[0]));
             Assert.That(methodParamTypes[2], Is.EqualTo(genericMethodArguments[1]));
@@ -318,7 +317,7 @@ namespace Jolt.Test
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments, genericMethodArguments);
 
             Assert.That(methodParamTypes, Is.Empty);
-            Assert.That(methodParamTypes, Has.Length(methodParams.Length));
+            Assert.That(methodParamTypes, Has.Length.EqualTo(methodParams.Length));
         }
 
         /// <summary>
@@ -381,8 +380,8 @@ namespace Jolt.Test
             Type[] types = { typeof(int), typeof(int), typeof(double), typeof(byte) };
             string[] typeNames = Convert.ToTypeNames(types);
 
-            Assert.That(typeNames, Has.Length(4));
-            Assert.That(typeNames, Has.Length(types.Length));
+            Assert.That(typeNames, Has.Length.EqualTo(4));
+            Assert.That(typeNames, Has.Length.EqualTo(types.Length));
             Assert.That(typeNames[0], Is.EqualTo("Int32"));
             Assert.That(typeNames[1], Is.EqualTo("Int32"));
             Assert.That(typeNames[2], Is.EqualTo("Double"));

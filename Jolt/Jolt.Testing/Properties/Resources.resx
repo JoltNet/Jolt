@@ -152,7 +152,7 @@ Expected: {0}
 Actual: {1}</value>
   </data>
   <data name="Error_DelayedConstructorDeclaration" xml:space="preserve">
-    <value>The constructor '{0}' must be declared at the same time its corresponding ConstructorBuilder is created.</value>
+    <value>The constructor of type '{0}' must be declared at the same time its corresponding ConstructorBuilder is created.</value>
   </data>
   <data name="Error_DuplicateMember" xml:space="preserve">
     <value>Duplicate method, property, or event detected within a type.</value>

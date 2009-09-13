@@ -14,7 +14,6 @@ using System.Xml.Schema;
 
 using Jolt.GeneratedTypes.System.IO;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Test

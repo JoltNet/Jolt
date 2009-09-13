@@ -14,7 +14,6 @@ using System.Xml.Schema;
 
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.Assertions
 {

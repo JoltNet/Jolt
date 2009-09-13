@@ -14,7 +14,6 @@ using System.Xml.Linq;
 using Jolt.Testing.Assertions;
 using Jolt.Testing.Properties;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.Assertions
 {

@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+using NUnit.Framework.Constraints;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Assertions.NUnit.Test
@@ -99,17 +99,21 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         /// Verifies the behavior of the Matches() method,
         /// when an unexpected exception is raised.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidProgramException))]
+        [Test]
         public void Matches_UnexpectedException()
         {
             XmlEqualityAssertion assertion = MockRepository.GenerateMock<XmlEqualityAssertion>();
             using (XmlReader expectedReader = XmlReader.Create(Stream.Null),
                              actualReader = XmlReader.Create(Stream.Null))
             {
-                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Throw(new InvalidProgramException());
+                Exception expectedException = new InvalidProgramException();
+                assertion.Expect(a => a.AreEqual(expectedReader, actualReader)).Throw(expectedException);
 
                 XmlEqualityConstraint constraint = new XmlEqualityConstraint(expectedReader, assertion);
-                constraint.Matches(actualReader);
+
+                Assert.That(
+                    () => constraint.Matches(actualReader),
+                    Throws.Exception.SameAs(expectedException));
             }
 
             assertion.VerifyAllExpectations();

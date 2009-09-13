@@ -15,7 +15,6 @@ using System.Reflection.Emit;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -58,12 +57,12 @@ namespace Jolt.Testing.Test.CodeGeneration
                 Is.EqualTo(GenericParameterAttributes.NotNullableValueTypeConstraint | GenericParameterAttributes.DefaultConstructorConstraint));
 
             Type[] constraints = genericMethodArguments[1].GetGenericParameterConstraints();
-            Assert.That(constraints, Is.EquivalentTo(new Type[] { genericMethodArguments[2] }));
+            Assert.That(constraints, Is.EquivalentTo(new[] { genericMethodArguments[2] }));
             Assert.That(genericMethodArguments[1].GenericParameterAttributes,
                 Is.EqualTo(GenericParameterAttributes.DefaultConstructorConstraint | GenericParameterAttributes.ReferenceTypeConstraint));
 
             constraints = genericMethodArguments[2].GetGenericParameterConstraints();
-            Assert.That(constraints, Is.EquivalentTo(new Type[] { typeof(IDisposable), typeof(ICloneable), typeof(MarshalByRefObject) }));
+            Assert.That(constraints, Is.EquivalentTo(new[] { typeof(IDisposable), typeof(ICloneable), typeof(MarshalByRefObject) }));
         }
 
         /// <summary>
@@ -289,17 +288,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private static void AssertTypeEquivalence(Type[] actualTypes, Type[] expectedTypes)
         {
-            Assert.That(actualTypes, Has.Length(expectedTypes.Length));
+            Assert.That(actualTypes, Has.Length.EqualTo(expectedTypes.Length));
 
             if (actualTypes.Length > 0)
             {
                 // Compare the generic types from both type arrays.
-                Assert.That(actualTypes.Where(t => t.ContainsGenericParameters).Select(t => t.Name).ToList(),
-                    Is.EqualTo(expectedTypes.Where(t => t.ContainsGenericParameters).Select(t => t.Name).ToList()));
+                Assert.That(actualTypes.Where(ContainsGenericParameters).Select(GetTypeName),
+                    Is.EqualTo(expectedTypes.Where(ContainsGenericParameters).Select(GetTypeName)));
 
                 // Compare the non-generic types from both type arrays.
-                Assert.That(actualTypes.Where(t => !t.ContainsGenericParameters).ToList(),
-                    Is.EqualTo(expectedTypes.Where(t => !t.ContainsGenericParameters).ToList()));
+                Assert.That(actualTypes.Where(ContainsNoGenericParameters),
+                    Is.EqualTo(expectedTypes.Where(ContainsNoGenericParameters)));
             }
         }
 
@@ -318,14 +317,18 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// </param>
         private static void AssertTypeEquivalence(Type actualType, Type expectedType)
         {
-            AssertTypeEquivalence(new Type[] { actualType }, new Type[] { expectedType });
+            AssertTypeEquivalence(new[] { actualType }, new[] { expectedType });
         }
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private data ----------------------------------------------------------------------
 
         private MethodBuilder m_defaultMethodBuilder;
+
+        private static readonly Func<Type, bool> ContainsGenericParameters = t => t.ContainsGenericParameters;
+        private static readonly Func<Type, bool> ContainsNoGenericParameters = t => !ContainsGenericParameters(t);  // TODO: requires NOT functor.
+        private static readonly Func<Type, string> GetTypeName = t => t.Name;
 
         #endregion
     }

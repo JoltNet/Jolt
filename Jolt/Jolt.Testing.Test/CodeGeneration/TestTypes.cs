@@ -196,6 +196,8 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
 
     public class __EventTestType
     {
+        static __EventTestType() { StaticEvent = null; }
+
         public event EventHandler<EventArgs> InstanceEvent;
         public static event EventHandler<EventArgs> StaticEvent;
         private event EventHandler<EventArgs> PrivateEvent;
@@ -216,6 +218,8 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     public class __EventTestType<TEventArgs>
         where TEventArgs : EventArgs
     {
+        static __EventTestType() { StaticEvent = null; }
+
         public event EventHandler<TEventArgs> InstanceEvent;
         public static event EventHandler<TEventArgs> StaticEvent;
 

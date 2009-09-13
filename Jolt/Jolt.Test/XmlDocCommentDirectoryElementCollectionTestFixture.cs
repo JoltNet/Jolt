@@ -12,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Test
 {
@@ -41,7 +40,7 @@ namespace Jolt.Test
             XmlDocCommentDirectoryElementCollection collection = new XmlDocCommentDirectoryElementCollection(expectedDirectories);
 
             Assert.That(
-                collection.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name).ToList(),
+                collection.Cast<XmlDocCommentDirectoryElement>().Select(e => e.Name),
                 Is.EquivalentTo(expectedDirectories));
         }
 
@@ -55,7 +54,7 @@ namespace Jolt.Test
                 .Invoke(new XmlDocCommentDirectoryElementCollection(), null);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.InstanceOfType(typeof(XmlDocCommentDirectoryElement)));
+            Assert.That(result, Is.InstanceOf<XmlDocCommentDirectoryElement>());
             Assert.That((result as XmlDocCommentDirectoryElement).Name, Is.Empty);
         }
 
@@ -69,7 +68,7 @@ namespace Jolt.Test
                 .Invoke(new XmlDocCommentDirectoryElementCollection(), new object[] { ExpectedDirectoryName });
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.InstanceOfType(typeof(XmlDocCommentDirectoryElement)));
+            Assert.That(result, Is.InstanceOf<XmlDocCommentDirectoryElement>());
             Assert.That((result as XmlDocCommentDirectoryElement).Name, Is.SameAs(ExpectedDirectoryName));
         }
 

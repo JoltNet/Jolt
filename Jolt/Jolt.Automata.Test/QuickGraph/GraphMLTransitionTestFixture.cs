@@ -8,6 +8,8 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -15,7 +17,6 @@ using Jolt.Automata.QuickGraph;
 using Jolt.Functional;
 using log4net.Config;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Test.QuickGraph
 {
@@ -113,11 +114,10 @@ namespace Jolt.Automata.Test.QuickGraph
         public void Description_Serializable()
         {
             PropertyInfo property = typeof(GraphMLTransition<>).GetProperty("Description");
-            object[] attributes = property.GetCustomAttributes(false);
 
-            Assert.That(attributes, Has.Length(1));
-            Assert.That(attributes[0], Is.InstanceOfType(typeof(XmlAttributeAttribute)));
-            Assert.That((attributes[0] as XmlAttributeAttribute).AttributeName, Is.EqualTo("description"));
+            Assert.That(
+                property,
+                Has.Attribute<XmlAttributeAttribute>().With.Property("AttributeName").EqualTo("description"));
         }
 
         /// <summary>
@@ -143,11 +143,10 @@ namespace Jolt.Automata.Test.QuickGraph
         public void TransitionPredicate_Serializable()
         {
             PropertyInfo property = typeof(GraphMLTransition<>).GetProperty("TransitionPredicate");
-            object[] attributes = property.GetCustomAttributes(false);
 
-            Assert.That(attributes, Has.Length(1));
-            Assert.That(attributes[0], Is.InstanceOfType(typeof(XmlAttributeAttribute)));
-            Assert.That((attributes[0] as XmlAttributeAttribute).AttributeName, Is.EqualTo("transitionPredicate"));
+            Assert.That(
+                property,
+                Has.Attribute<XmlAttributeAttribute>().With.Property("AttributeName").EqualTo("transitionPredicate"));
         }
 
         /// <summary>

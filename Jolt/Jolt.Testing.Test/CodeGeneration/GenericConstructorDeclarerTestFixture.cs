@@ -14,7 +14,6 @@ using System.Reflection.Emit;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Testing.Test.CodeGeneration
 {
@@ -129,7 +128,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             Type[] constructorParameterTypes = Convert.ToParameterTypes(actualConstructor.GetParameters());
             Type[] expectedConstructorParameterTypes = Convert.ToParameterTypes(expectedConstructor.GetParameters());
-            Assert.That(constructorParameterTypes, Has.Length(expectedConstructorParameterTypes.Length));
+            Assert.That(constructorParameterTypes, Has.Length.EqualTo(expectedConstructorParameterTypes.Length));
 
             for (int i = 0; i < constructorParameterTypes.Length; ++i)
             {

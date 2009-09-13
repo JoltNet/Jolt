@@ -16,8 +16,8 @@ using System.Reflection;
 using System.Xml.Linq;
 
 using Jolt.GeneratedTypes.System.IO;
+using Jolt.Properties;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Test
@@ -37,9 +37,9 @@ namespace Jolt.Test
         {
             XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly);
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
             Assert.That(reader.FullPath, Is.EqualTo(MscorlibXml));
-            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+            Assert.That(reader.ReadPolicy, Is.InstanceOf<DefaultXDCReadPolicy>());
             Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
         }
 
@@ -48,10 +48,17 @@ namespace Jolt.Test
         /// assembly reference that has no XML doc comments in the search
         /// path and no configuration file is present.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void Construction_Assembly_DefaultSettings_FileNotFound()
         {
-            XmlDocCommentReader reader = new XmlDocCommentReader(GetType().Assembly);
+            Assembly assembly = GetType().Assembly;
+
+            Assert.That(
+                CreateXDCReaderDelegate(assembly),
+                Throws.InstanceOf<FileNotFoundException>()
+                    .With.Message.EqualTo(
+                        String.Format(Resources.Error_XmlDocComments_AssemblyNotResolved, assembly.GetName().Name))
+                    .And.Property("FileName").EqualTo(assembly.GetName().Name));
         }
 
         /// <summary>
@@ -65,12 +72,12 @@ namespace Jolt.Test
             {
                 XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly);
 
-                Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+                Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
                 Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
-                Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+                Assert.That(reader.ReadPolicy, Is.InstanceOf<DefaultXDCReadPolicy>());
                 Assert.That(
-                    reader.Settings.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(s => s.Name).ToArray(),
-                    Is.EquivalentTo(new string[] { "." }));
+                    reader.Settings.DirectoryNames.Cast<XmlDocCommentDirectoryElement>().Select(s => s.Name),
+                    Is.EqualTo(new[] { "." }));
             });
         }
 
@@ -79,12 +86,19 @@ namespace Jolt.Test
         /// assembly reference that has no XML doc comments in the search
         /// path and a configuration file is present.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void Construction_Assembly_ConfigFileSettings_FileNotFound()
         {
             WithConfigurationFile(delegate
             {
-                XmlDocCommentReader reader = new XmlDocCommentReader(GetType().Assembly);
+                Assembly assembly = GetType().Assembly;
+
+                Assert.That(
+                    CreateXDCReaderDelegate(assembly),
+                    Throws.InstanceOf<FileNotFoundException>()
+                        .With.Message.EqualTo(
+                            String.Format(Resources.Error_XmlDocComments_AssemblyNotResolved, assembly.GetName().Name))
+                        .And.Property("FileName").EqualTo(assembly.GetName().Name));
             });
         }
 
@@ -103,7 +117,7 @@ namespace Jolt.Test
             
             XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, createPolicy);
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
             Assert.That(reader.FullPath, Is.EqualTo(Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml")));
             Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
             Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
@@ -116,11 +130,18 @@ namespace Jolt.Test
         /// assembly reference that has no XML doc comments in the search
         /// path, and a read policy factory method.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void Construction_Assembly_ReadPolicy_FileNotFound()
         {
             CreateReadPolicyDelegate createPolicy = MockRepository.GenerateStub<CreateReadPolicyDelegate>();
-            new XmlDocCommentReader(GetType().Assembly, createPolicy);
+            Assembly assembly = GetType().Assembly;
+
+            Assert.That(
+                () => new XmlDocCommentReader(assembly, createPolicy),
+                Throws.InstanceOf<FileNotFoundException>()
+                    .With.Message.EqualTo(
+                        String.Format(Resources.Error_XmlDocComments_AssemblyNotResolved, assembly.GetName().Name))
+                    .And.Property("FileName").EqualTo(assembly.GetName().Name));
         }
 
         /// <summary>
@@ -142,7 +163,7 @@ namespace Jolt.Test
             XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
             XmlDocCommentReader reader = new XmlDocCommentReader(typeof(Mocker).Assembly, settings, createPolicy);
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
             Assert.That(reader.FullPath, Is.EqualTo(expectedDocCommentsFullPath));
             Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
             Assert.That(reader.Settings, Is.SameAs(settings));
@@ -156,13 +177,19 @@ namespace Jolt.Test
         /// path, and a configuration settings object and read policy
         /// factory method are provided.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void Construction_Assembly_ExplicitSettings_ReadPolicy_FileNotFound()
         {
             CreateReadPolicyDelegate createPolicy = MockRepository.GenerateStub<CreateReadPolicyDelegate>();
-
             XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(new string[] { Environment.CurrentDirectory });
-            new XmlDocCommentReader(typeof(int).Assembly, settings, createPolicy);
+            Assembly assembly = typeof(int).Assembly;
+
+            Assert.That(
+                () => new XmlDocCommentReader(assembly, settings, createPolicy),
+                Throws.InstanceOf<FileNotFoundException>()
+                    .With.Message.EqualTo(
+                        String.Format(Resources.Error_XmlDocComments_AssemblyNotResolved, assembly.GetName().Name))
+                    .And.Property("FileName").EqualTo(assembly.GetName().Name));
         }
 
         /// <summary>
@@ -205,7 +232,7 @@ namespace Jolt.Test
         /// an assembly reference that has no XML doc comments in the search
         /// path.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void InternalConstruction_Assembly_FileNotFound()
         {
             IFile fileSystem = MockRepository.GenerateMock<IFile>();
@@ -220,7 +247,14 @@ namespace Jolt.Test
             }
 
             XmlDocCommentReaderSettings settings = new XmlDocCommentReaderSettings(expectedDirectoryNames);
-            XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy);
+            Assembly assembly = typeof(int).Assembly;
+
+            Assert.That(
+                () => new XmlDocCommentReader(typeof(int).Assembly, settings, fileSystem, createPolicy),
+                Throws.InstanceOf<FileNotFoundException>()
+                    .With.Message.EqualTo(
+                        String.Format(Resources.Error_XmlDocComments_AssemblyNotResolved, assembly.GetName().Name))
+                    .And.Property("FileName").EqualTo(assembly.GetName().Name));
 
             fileSystem.VerifyAllExpectations();
         }
@@ -235,9 +269,9 @@ namespace Jolt.Test
             string expectedFullPath = Path.Combine(Environment.CurrentDirectory, "Rhino.Mocks.xml");
             XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath);
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
             Assert.That(reader.FullPath, Is.SameAs(expectedFullPath));
-            Assert.That(reader.ReadPolicy, Is.InstanceOfType(typeof(DefaultXDCReadPolicy)));
+            Assert.That(reader.ReadPolicy, Is.InstanceOf<DefaultXDCReadPolicy>());
             Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
         }
 
@@ -266,7 +300,7 @@ namespace Jolt.Test
 
             XmlDocCommentReader reader = new XmlDocCommentReader(expectedDocCommentsFullPath, createPolicy);
 
-            Assert.That(reader.FileProxy, Is.InstanceOfType(typeof(FileProxy)));
+            Assert.That(reader.FileProxy, Is.InstanceOf<FileProxy>());
             Assert.That(reader.FullPath, Is.SameAs(expectedDocCommentsFullPath));
             Assert.That(reader.ReadPolicy, Is.SameAs(readPolicy));
             Assert.That(reader.Settings, Is.SameAs(XmlDocCommentReaderSettings.Default));
@@ -301,7 +335,7 @@ namespace Jolt.Test
         /// Verifies the internal construction of the class when given the
         /// full path to a non-existent XML doc comments file.
         /// </summary>
-        [Test, ExpectedException(typeof(FileNotFoundException))]
+        [Test]
         public void InternalConstruction_FullPath_FileNotFound()
         {
             IFile fileProxy = MockRepository.GenerateMock<IFile>();
@@ -310,7 +344,12 @@ namespace Jolt.Test
             string expectedFullPath = Path.GetRandomFileName();
             fileProxy.Expect(fp => fp.Exists(expectedFullPath)).Return(false);
 
-            XmlDocCommentReader reader = new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy);
+            Assert.That(
+                () => new XmlDocCommentReader(expectedFullPath, fileProxy, readPolicy),
+                Throws.InstanceOf<FileNotFoundException>()
+                    .With.Message.EqualTo(
+                        String.Format(Resources.Error_XmlDocComments_FileNotFound, expectedFullPath))
+                    .And.Property("FileName").SameAs(expectedFullPath));
 
             fileProxy.VerifyAllExpectations();
         }
@@ -450,40 +489,51 @@ namespace Jolt.Test
         #region private class methods -------------------------------------------------------------
 
         /// <summary>
-        /// Initializes and loads the application configuration file
-        /// "Constrution_ConfigurationFileSettings.config", then executes a
-        /// given method prior to reverting the configuration changes.
+        /// Initializes the application configuration file for this test fixture,
+        /// then executes a given method prior to reverting the configuration changes.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to invoke while the configuration file is loaded and active.
+        /// The method to invoke while the configuration is loaded and active.
         /// </param>
         private static void WithConfigurationFile(Action method)
         {
-            // TODO: Share this code with ProxyAssemblyBuilderTextFixture.cs.
+            // Create the assembly configuration.
+            string settingsSection = "XmlDocCommentsReader";
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.Sections.Add(settingsSection, new XmlDocCommentReaderSettings(new[] { "." }));
+            config.Save();
+
             try
             {
-                // Load the assembly configuration.
-                File.Copy(ConfigFileName, AssemblyConfigFileName);
-                ConfigurationManager.RefreshSection(SettingsSection);
-
+                // Invoke the method with the new configuration.
+                ConfigurationManager.RefreshSection(settingsSection);
                 method();
             }
             finally
             {
                 // Revert the assembly configuration.
-                File.Delete(AssemblyConfigFileName);
-                ConfigurationManager.RefreshSection(SettingsSection);
+                File.Delete(config.FilePath);
+                ConfigurationManager.RefreshSection(settingsSection);
             }
+        }
+
+        /// <summary>
+        /// Creates a delegate that constructs an XML doc comment reader
+        /// for the given assembly.
+        /// </summary>
+        /// 
+        /// <param name="assembly">
+        /// The assembly used to initialize the XML doc comment reader.
+        /// </param>
+        private static TestDelegate CreateXDCReaderDelegate(Assembly assembly)
+        {
+            return () => new XmlDocCommentReader(assembly);
         }
 
         #endregion
 
         #region private data ----------------------------------------------------------------------
-
-        private static readonly string SettingsSection = "XmlDocCommentsReader";
-        private static readonly string AssemblyConfigFileName = Assembly.GetExecutingAssembly().GetName().Name + ".dll.config";
-        private static readonly string ConfigFileName = "Construction_ConfigFileSettings.config";
 
         // TODO: This needs to be resistant to changes in the location/version of mscorlib.
         private static readonly string MscorlibXml = Path.Combine(Path.Combine(

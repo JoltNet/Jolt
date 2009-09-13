@@ -13,8 +13,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 using Jolt.Testing.CodeGeneration;
+using Jolt.Testing.Properties;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.CodeGeneration
@@ -26,11 +26,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// accepting a Type to override the constructor's
         /// return type.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void Create_OverrideReturnType()
         {
-            AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = CreateConstructorDeclarer(null, null);
-            ConstructorBuilder constructorBuilder = declarer.Declare(GetType());
+            Assert.That(
+                () => CreateConstructorDeclarer(null, null).Declare(GetType()),
+                Throws.InvalidOperationException.With.Message.EqualTo(Resources.Error_OverrideCtorReturnType));
         }
 
         #region internal methods ------------------------------------------------------------------
@@ -81,6 +82,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             Assert.That(constructorBuilder.DeclaringType, Is.EqualTo(CurrentTypeBuilder));
             Assert.That(implementationArgs.TrueForAll(storedConstructorBuilder => constructorBuilder == storedConstructorBuilder));
+            
             ConstructorInfo constructor = CurrentTypeBuilder.GetConstructors()[0];
             Assert.That(constructor.CallingConvention, Is.EqualTo(CallingConventions.Standard | CallingConventions.HasThis));
             Assert.That(constructor.IsPublic);

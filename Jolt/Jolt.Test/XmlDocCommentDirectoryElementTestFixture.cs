@@ -7,12 +7,12 @@
 // File created: 2/2/2009 6:30:45 PM
 // ----------------------------------------------------------------------------
 
+using System.Configuration;
+
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Test
 {
-    // TODO: Static property tests; interrogate ElementInformation.
     [TestFixture]
     public sealed class XmlDocCommentDirectoryElementTestFixture
     {
@@ -36,6 +36,19 @@ namespace Jolt.Test
             XmlDocCommentDirectoryElement element = new XmlDocCommentDirectoryElement(expectedName);
 
             Assert.That(element.Name, Is.SameAs(expectedName));
+        }
+
+        /// <summary>
+        /// Verifies the static configuration of the Name property.
+        /// </summary>
+        [Test]
+        public void Name_Configuration()
+        {
+            Assert.That(
+                typeof(XmlDocCommentDirectoryElement).GetProperty("Name"),
+                Has.Attribute<ConfigurationPropertyAttribute>()
+                    .With.Property("Name").EqualTo("name")
+                    .And.Property("IsRequired").True);
         }
     }
 }

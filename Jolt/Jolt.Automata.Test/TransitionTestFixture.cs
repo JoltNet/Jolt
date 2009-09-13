@@ -11,7 +11,6 @@ using System;
 
 using Jolt.Functional;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace Jolt.Automata.Test
 {

@@ -15,7 +15,7 @@ using System.Xml;
 using System.Xml.Schema;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+using NUnit.Framework.Constraints;
 using Rhino.Mocks;
 
 namespace Jolt.Testing.Assertions.NUnit.Test
@@ -107,16 +107,20 @@ namespace Jolt.Testing.Assertions.NUnit.Test
         /// Verifies the behavior of the Matches() method,
         /// when an unexpected exception is raised.
         /// </summary>
-        [Test, ExpectedException(typeof(InvalidProgramException))]
+        [Test]
         public void Matches_UnexpectedException()
         {
             XmlValidityAssertion assertion = MockRepository.GenerateMock<XmlValidityAssertion>(new XmlSchemaSet());
             using (XmlReader expectedReader = XmlReader.Create(Stream.Null))
             {
-                assertion.Expect(a => a.Validate(expectedReader)).Throw(new InvalidProgramException());
+                Exception expectedException = new InvalidProgramException();
+                assertion.Expect(a => a.Validate(expectedReader)).Throw(expectedException);
 
                 XmlValidityConstraint constraint = new XmlValidityConstraint(assertion);
-                constraint.Matches(expectedReader);
+
+                Assert.That(
+                    () => constraint.Matches(expectedReader),
+                    Throws.Exception.SameAs(expectedException));
             }
 
             assertion.VerifyAllExpectations();
