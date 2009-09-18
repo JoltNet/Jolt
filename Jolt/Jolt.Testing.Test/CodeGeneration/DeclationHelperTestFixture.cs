@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -48,7 +49,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             DefineParameterDelegate defineParameter = MockRepository.GenerateMock<DefineParameterDelegate>();
 
-            ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) }).GetParameters();
+            ParameterInfo[] expectedParameters = __MethodTestType.InstanceMethod_1.GetParameters();
             defineParameter.Expect(d => d(1, expectedParameters[0].Attributes, expectedParameters[0].Name)).Return(null);
 
             DeclarationHelper.DefineParametersWith(defineParameter, expectedParameters);
@@ -65,7 +66,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             DefineParameterDelegate defineParameter = MockRepository.GenerateMock<DefineParameterDelegate>();
 
-            ParameterInfo[] expectedParameters = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod").GetParameters();
+            ParameterInfo[] expectedParameters = __MethodTestType.ManyArgumentsMethod.GetParameters();
             for (int i = 0; i < expectedParameters.Length; ++i)
             {
                 defineParameter.Expect(d => d(i + 1, expectedParameters[i].Attributes, expectedParameters[i].Name)).Return(null);
@@ -83,7 +84,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ContainsGenericParameters_None()
         {
-            Assert.That(!DeclarationHelper.ContainsGenericParameters(typeof(__MethodTestType).GetMethod("ManyArgumentsMethod").GetParameters()));
+            Assert.That(!DeclarationHelper.ContainsGenericParameters(__MethodTestType.ManyArgumentsMethod.GetParameters()));
         }
 
         /// <summary>
@@ -104,7 +105,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ContainsGenericParameters_TypeOnly()
         {
-            Assert.That(DeclarationHelper.ContainsGenericParameters(typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction").GetParameters()));
+            Assert.That(DeclarationHelper.ContainsGenericParameters(__GenericTestType<int, MemoryStream, Stream>.NonGenericFunction.GetParameters()));
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ContainsGenericParameters_MethodOnly()
         {
-            Assert.That(DeclarationHelper.ContainsGenericParameters(typeof(__GenericTestType<,,>).GetMethod("GenericFunction").GetParameters()));
+            Assert.That(DeclarationHelper.ContainsGenericParameters(__GenericTestType<int, MemoryStream, Stream>.GenericFunction.GetParameters()));
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void ContainsGenericParameters_Mixed()
         {
-            Assert.That(DeclarationHelper.ContainsGenericParameters(typeof(__GenericTestType<,,>).GetMethod("GenericFunction_MixedArgs").GetParameters()));
+            Assert.That(DeclarationHelper.ContainsGenericParameters(__GenericTestType<int, MemoryStream, Stream>.GenericFunction_MixedArgs.GetParameters()));
         }
 
         /// <summary>

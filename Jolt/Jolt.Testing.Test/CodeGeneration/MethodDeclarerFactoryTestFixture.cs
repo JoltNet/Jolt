@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -43,7 +44,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_InterfaceMethodDeclarer_NonGeneric()
         {
-            MethodInfo expectedMethod = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo expectedMethod = __MethodTestType.InstanceMethod;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
@@ -62,7 +63,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ProxyMethodDeclarer_NonGeneric()
         {
-            MethodInfo expectedMethod = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo expectedMethod = __MethodTestType.InstanceMethod;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
@@ -81,7 +82,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_InterfaceMethodDeclarer_Generic()
         {
-            MethodInfo expectedMethod = typeof(__MethodTestType).GetMethod("GenericMethod");
+            MethodInfo expectedMethod = __MethodTestType.GenericMethod;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
@@ -100,7 +101,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_InterfaceMethodDeclarer_Generic_FromType()
         {
-            MethodInfo expectedMethod = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction");
+            MethodInfo expectedMethod = __GenericTestType<int,MemoryStream,Stream>.NonGenericFunction;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Interface, expectedMethod);
@@ -119,7 +120,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ProxyMethodDeclarer_Generic()
         {
-            MethodInfo expectedMethod = typeof(__MethodTestType).GetMethod("GenericMethod");
+            MethodInfo expectedMethod = __MethodTestType.GenericMethod;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
@@ -138,7 +139,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ProxyMethodDeclarer_Generic_FromType()
         {
-            MethodInfo expectedMethod = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction");
+            MethodInfo expectedMethod = __GenericTestType<int, MemoryStream, Stream>.NonGenericFunction;
 
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<MethodBuilder, MethodInfo> declarer = factory.Create(MethodDeclarerTypes.Proxy, expectedMethod);
@@ -175,11 +176,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ConstructorDeclarer_Generic()
         {
-            Type realSubjectType = typeof(__ConstructorTestType<,>);
-            Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
-            Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1], typeof(int) };
-
-            ConstructorInfo expectedConstructor = realSubjectType.GetConstructor(constructorParameterTypes);
+            ConstructorInfo expectedConstructor = __ConstructorTestType<int, int>.Ctor_ThreeArgs;
             MethodDeclarerFactory factory = new MethodDeclarerFactory(m_interfaceBuilder, m_proxyBuilder);
             AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> declarer = factory.Create(expectedConstructor);
 

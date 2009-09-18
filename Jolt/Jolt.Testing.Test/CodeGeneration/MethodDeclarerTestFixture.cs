@@ -33,7 +33,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_InterfaceMethod()
         {
             AssertMethodDeclared(
-                typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes),
+                __MethodTestType.InstanceMethod,
                 InterfaceMethodAttributes, delegate(MethodBuilder method)
                 {
                     Assert.That(method.IsPublic);
@@ -54,7 +54,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_InterfaceMethod_ReturnTypeOverride()
         {
             AssertMethodDeclared(
-                typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"),
+                __MethodTestType.ManyArgumentsMethod,
                 typeof(object),
                 InterfaceMethodAttributes, delegate(MethodBuilder method)
                 {
@@ -75,7 +75,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_ProxyMethod()
         {
             AssertMethodDeclared(
-                typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes),
+                __MethodTestType.InstanceMethod,
                 ProxyMethodAttributes, delegate(MethodBuilder method)
                 {
                     Assert.That(method.IsPublic);
@@ -96,7 +96,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_ProxyMethod_ReturnTypeOverride()
         {
             AssertMethodDeclared(
-                typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"),
+                __MethodTestType.ManyArgumentsMethod,
                 typeof(object),
                 ProxyMethodAttributes, delegate(MethodBuilder method)
                 {

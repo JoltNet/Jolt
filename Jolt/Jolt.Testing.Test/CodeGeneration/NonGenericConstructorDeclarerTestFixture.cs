@@ -7,7 +7,6 @@
 // File created: 7/25/2008 19:12:33
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -31,7 +30,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_NoParameters()
         {
             AssertConstructorDeclaredFrom(
-                typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes),
+                __ConstructorTestType.Ctor_ZeroArgs,
                 Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 
@@ -43,7 +42,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_OneParameter()
         {
             AssertConstructorDeclaredFrom(
-                typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int) }),
+                __ConstructorTestType.Ctor_OneArg,
                 Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 
@@ -55,7 +54,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void Create_ManyParameter()
         {
             AssertConstructorDeclaredFrom(
-                typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int), typeof(int) }),
+                __ConstructorTestType.Ctor_TwoArgs,
                 Functor.NoOperation<ConstructorInfo, ConstructorInfo>());
         }
 

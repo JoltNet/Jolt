@@ -478,7 +478,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Instance()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo realSubjectTypeMethod = __MethodTestType.InstanceMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -495,7 +495,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Instance_GenericRealSubectType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "InstanceMethod" && !m.IsGenericMethod && m.GetParameters().Length == 0);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<DateTime,StringBuilder,MemoryStream>.InstanceMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -512,7 +512,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Instance_GenericMethod()
         {
-            MethodInfo realSubejctTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 0);
+            MethodInfo realSubejctTypeMethod = __MethodTestType<DateTime, StringBuilder, MemoryStream>.GenericInstanceMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubejctTypeMethod.DeclaringType);
             builder.AddMethod(realSubejctTypeMethod);
 
@@ -530,7 +530,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Static()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("StaticMethod");
+            MethodInfo realSubjectTypeMethod = __MethodTestType.StaticMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -547,7 +547,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Static_GenericRealSubjectType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "StaticMethod" && !m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<DateTime, StringBuilder, MemoryStream>.StaticMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -564,7 +564,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Static_GenericMethod()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "StaticMethod" && m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<DateTime, StringBuilder, MemoryStream>.GenericStaticMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -582,7 +582,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_VoidReturnValue()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("VoidReturnValueMethod");
+            MethodInfo realSubjectTypeMethod = __MethodTestType.VoidReturnValueMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -608,7 +608,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_VoidReturnValue_GenericRealSubjectType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "VoidReturnValueMethod" && !m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<DateTime, StringBuilder, MemoryStream>.VoidMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -633,7 +633,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_VoidReturnValue_GenericMethod()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "VoidReturnValueMethod" && m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<DateTime, StringBuilder, MemoryStream>.GenericVoidMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -659,7 +659,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ManyArguments()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod");
+            MethodInfo realSubjectTypeMethod = __MethodTestType.ManyArgumentsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -678,7 +678,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ManyArguments_GenericRealSubjectType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "ManyArgumentsMethod" && !m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, StringBuilder, MemoryStream>.ManyArgsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -696,7 +696,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ManyArguments_GenericMethod()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, StringBuilder, MemoryStream>.GenericManyArgsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -716,7 +716,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ParamsArrayArguments()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("ParamsArrayArgumentsMethod");
+            MethodInfo realSubjectTypeMethod = __MethodTestType.ParamsArrayArgumentsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -735,7 +735,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ParamsArrayArguments_GenericRealSubjecType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "ParamsArrayArgumentsMethod" && !m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, StringBuilder, MemoryStream>.ParamArrayArgsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -753,7 +753,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ParamsArrayArguments_GenericMethod()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "ParamsArrayArgumentsMethod" && m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, StringBuilder, MemoryStream>.GenericParamArrayArgsMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -772,12 +772,11 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Overload()
         {
-            Type realSubjectType = typeof(__MethodTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__MethodTestType));
 
             // Verify that the following operations do not throw.
-            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", Type.EmptyTypes));
-            builder.AddMethod(realSubjectType.GetMethod("InstanceMethod", new Type[] { typeof(int) }));
+            builder.AddMethod(__MethodTestType.InstanceMethod);
+            builder.AddMethod(__MethodTestType.InstanceMethod_1);
             builder.CreateInterface();
             builder.CreateProxy();
         }
@@ -789,14 +788,13 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Overload_Generics()
         {
-            Type realSubjectType = typeof(__MethodTestType<,,>);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__MethodTestType<,,>));
 
             // Verify that the following operations do not throw.
-            builder.AddMethod(realSubjectType.GetMethods().Single(m => m.Name == "InstanceMethod" && m.GetParameters().Length == 0 && !m.IsGenericMethod));
-            builder.AddMethod(realSubjectType.GetMethods().Single(m => m.Name == "InstanceMethod" && m.GetParameters().Length == 1 && !m.IsGenericMethod));
-            builder.AddMethod(realSubjectType.GetMethods().Single(m => m.Name == "InstanceMethod" && m.GetParameters().Length == 0 && m.IsGenericMethod));
-            builder.AddMethod(realSubjectType.GetMethods().Single(m => m.Name == "InstanceMethod" && m.GetParameters().Length == 1 && m.IsGenericMethod));
+            builder.AddMethod(__MethodTestType<int, object, Stream>.InstanceMethod);
+            builder.AddMethod(__MethodTestType<int, object, Stream>.InstanceMethod_1);
+            builder.AddMethod(__MethodTestType<int, object, Stream>.GenericInstanceMethod);
+            builder.AddMethod(__MethodTestType<int, object, Stream>.GenericInstanceMethod_1);
             builder.CreateInterface();
             builder.CreateProxy();
         }
@@ -808,7 +806,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_OutParameter()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType).GetMethod("OutParameterMethod");
+            MethodInfo realSubjectTypeMethod = __MethodTestType.OutParameterMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -826,7 +824,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_OutParameter_GenericRealSubjectType()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "OutParameterMethod" && !m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, Exception, MemoryStream>.OutParamMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -844,7 +842,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_OutParameter_GenericMethod()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__MethodTestType<,,>).GetMethods().Single(m => m.Name == "OutParameterMethod" && m.IsGenericMethod);
+            MethodInfo realSubjectTypeMethod = __MethodTestType<TimeSpan, Exception, MemoryStream>.GenericOutParamMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -869,7 +867,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_InvalidMethod()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo method = __MethodTestType.InstanceMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
 
             Assert.That(
@@ -901,11 +899,10 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_PrivateMethod()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("PrivateMethod", NonPublicInstance, null, Type.EmptyTypes, null);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__MethodTestType));
             
             Assert.That(
-                new TestDelegate(Bind.First(builder.AddMethod, method)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
+                new TestDelegate(Bind.First(builder.AddMethod, __MethodTestType.PrivateMethod)),    // TODO: Remove TestDelegate iff NUnit accepts Action instead of TestDelegate
                 Throws.InvalidOperationException.With.Message.EqualTo(Resources.Error_MemberNotPublic));
         }
 
@@ -927,7 +924,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Inherited()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__DerivedSubjectType).GetMethod("NonVirtualMethod");
+            MethodInfo realSubjectTypeMethod = __DerivedSubjectType.NonVirtualMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -944,7 +941,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_Override()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__DerivedSubjectType).GetMethod("VirtualMethod");
+            MethodInfo realSubjectTypeMethod = __DerivedSubjectType.VirtualMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod);
 
@@ -961,10 +958,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_DuplicateMethod()
         {
-            Type expectedType = typeof(__MethodTestType);
-            MethodInfo method = expectedType.GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo method = __MethodTestType.InstanceMethod;
 
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__MethodTestType));
             builder.AddMethod(method);
 
             Assert.That(
@@ -990,7 +986,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ReturnTypeOverride()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
+            MethodInfo realSubjectTypeMethod = __ReturnTypeOverrideType<FileNotFoundException, IOException>.InstanceMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod, typeof(IOException));
 
@@ -1010,7 +1006,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ReturnTypeOverride_GenericTypeParameter()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("GenericTypeParamMethod");
+            MethodInfo realSubjectTypeMethod = __ReturnTypeOverrideType<FileNotFoundException, IOException>.GenericTypeParamMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
 
@@ -1030,7 +1026,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ReturnTypeOverride_GenericMethodParameter()
         {
-            MethodInfo realSubjectTypeMethod = typeof(__ReturnTypeOverrideType<,>).GetMethod("GenericMethodParamMethod");
+            MethodInfo realSubjectTypeMethod = __ReturnTypeOverrideType<FileNotFoundException, IOException>.GenericMethodParamMethod;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeMethod.DeclaringType);
             builder.AddMethod(realSubjectTypeMethod, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
 
@@ -1050,7 +1046,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_ReturnTypeOverride_InvalidOverride()
         {
-            MethodInfo method = typeof(__ReturnTypeOverrideType<,>).GetMethod("InstanceMethod");
+            MethodInfo method = __ReturnTypeOverrideType<FileNotFoundException, IOException>.InstanceMethod;
             Type desiredReturnType = typeof(NotImplementedException);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, method.DeclaringType);
             
@@ -1067,7 +1063,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Instance()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("InstanceProperty"),
+            AssertAddPropertyBehavior(__PropertyTestType.InstanceProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 // Verify the behavior of the generated proxy.
@@ -1090,7 +1086,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Instance_GenericRealSubjectType()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>).GetProperty("InstanceProperty"),
+            AssertAddPropertyBehavior(__PropertyTestType<int,int,object>.InstanceProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
@@ -1116,7 +1112,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Static()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("StaticProperty"),
+            AssertAddPropertyBehavior(__PropertyTestType.StaticProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 typeof(__PropertyTestType).TypeInitializer.Invoke(null, null);
@@ -1142,7 +1138,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Static_GenericRealSubjectType()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>).GetProperty("StaticProperty"),
+            AssertAddPropertyBehavior(__PropertyTestType<DateTime, TimeSpan, StringBuilder>.StaticProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
@@ -1171,7 +1167,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Getter()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Getter"), Functor.NoOperation<Type, PropertyInfo>());
+            AssertAddPropertyBehavior(__PropertyTestType.GetterProperty, Functor.NoOperation<Type, PropertyInfo>());
         }
 
         /// <summary>
@@ -1181,7 +1177,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Setter()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Setter"), Functor.NoOperation<Type, PropertyInfo>());
+            AssertAddPropertyBehavior(__PropertyTestType.SetterProperty, Functor.NoOperation<Type, PropertyInfo>());
         }
 
         /// <summary>
@@ -1191,7 +1187,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_InvalidProperty()
         {
-            PropertyInfo property = typeof(__PropertyTestType).GetProperty("Getter");
+            PropertyInfo property = __PropertyTestType.GetterProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
 
             Assert.That(
@@ -1207,7 +1203,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_InvalidInstanceProperty()
         {
-            PropertyInfo property = typeof(__AbstractType).GetProperty("InstanceProperty");
+            PropertyInfo property = __AbstractType.InstanceProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__AbstractType));
 
             Assert.That(
@@ -1223,7 +1219,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_PrivateProperty()
         {
-            PropertyInfo property = typeof(__PropertyTestType).GetProperty("PrivateProperty", NonPublicInstance);
+            PropertyInfo property = __PropertyTestType.PrivateProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
 
             Assert.That(
@@ -1250,7 +1246,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Inherited()
         {
-            AssertAddPropertyBehavior(typeof(__DerivedSubjectType).GetProperty("NonVirtualProperty"),
+            AssertAddPropertyBehavior(__DerivedSubjectType.NonVirtualProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 // Verify the behavior of the generated proxy.
@@ -1273,7 +1269,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Override()
         {
-            AssertAddPropertyBehavior(typeof(__DerivedSubjectType).GetProperty("VirtualProperty"),
+            AssertAddPropertyBehavior(__DerivedSubjectType.VirtualProperty,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 // Verify the behavior of the generated proxy.
@@ -1296,12 +1292,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test, ExpectedException(typeof(ArgumentException))]
         public void AddProperty_DuplicateGetterProperty()
         {
-            Type expectedType = typeof(__PropertyTestType);
-            PropertyInfo property = expectedType.GetProperty("Getter");
-
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
-            builder.AddProperty(property);
-            builder.AddProperty(property);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
+            builder.AddProperty(__PropertyTestType.GetterProperty);
+            builder.AddProperty(__PropertyTestType.GetterProperty);
         }
 
         /// <summary>
@@ -1311,10 +1304,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_DuplicateSetterProperty()
         {
-            Type expectedType = typeof(__PropertyTestType);
-            PropertyInfo property = expectedType.GetProperty("Setter");
+            PropertyInfo property = __PropertyTestType.SetterProperty;
 
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, expectedType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
             builder.AddProperty(property);
 
             Assert.That(
@@ -1330,7 +1322,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_InaccessibleGetter()
         {
-            AssertInaccessiblePropertyBehavior(typeof(__PropertyTestType).GetProperty("InternalGetter"));
+            AssertInaccessiblePropertyBehavior(__PropertyTestType.InternalGetterProperty);
         }
 
         /// <summary>
@@ -1341,7 +1333,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_InaccessibleSetter()
         {
-            AssertInaccessiblePropertyBehavior(typeof(__PropertyTestType).GetProperty("PrivateSetter"));
+            AssertInaccessiblePropertyBehavior(__PropertyTestType.PrivateSetterProeprty);
         }
 
         /// <summary>
@@ -1351,7 +1343,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Indexer()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Item", new Type[] {typeof(int)}),
+            AssertAddPropertyBehavior(__PropertyTestType.Item_1,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 // Verify the behavior of the generated proxy.
@@ -1375,8 +1367,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Indexer_GenericRealSubjectType()
         {
-            Type[] genericArguments = typeof(__PropertyTestType<,,>).GetGenericArguments();
-            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>).GetProperty("Item", new Type[] { genericArguments[0] }),
+            AssertAddPropertyBehavior(__PropertyTestType<int,int,object>.Item_1,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(DateTime), typeof(TimeSpan), typeof(StringBuilder));
@@ -1403,7 +1394,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Indexer_ManyArguments()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType).GetProperty("Item", new Type[] {typeof(int), typeof(int), typeof(int)}),
+            AssertAddPropertyBehavior(__PropertyTestType.Item_3,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 // Verify the behavior of the generated proxy.
@@ -1427,7 +1418,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_Indexer_ManyArguments_GenericRealSubjectType()
         {
-            AssertAddPropertyBehavior(typeof(__PropertyTestType<,,>).GetProperty("Item", typeof(__PropertyTestType<,,>).GetGenericArguments()),
+            AssertAddPropertyBehavior(__PropertyTestType<int,int,object>.Item_3,
             delegate(Type proxy, PropertyInfo proxyProperty)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(Guid), typeof(TimeSpan), typeof(StringBuilder));
@@ -1482,7 +1473,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_ReturnTypeOverride()
         {
-            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
+            PropertyInfo realSubjectTypeProperty = __ReturnTypeOverrideType<FileNotFoundException, IOException>.InstanceProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
             builder.AddProperty(realSubjectTypeProperty, typeof(IOException));
 
@@ -1504,7 +1495,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_ReturnTypeOverride_GenericTypeParameter()
         {
-            PropertyInfo realSubjectTypeProperty = typeof(__ReturnTypeOverrideType<,>).GetProperty("GenericTypeParamProperty");
+            PropertyInfo realSubjectTypeProperty = __ReturnTypeOverrideType<FileNotFoundException, IOException>.GenericTypeParamProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectTypeProperty.DeclaringType);
             builder.AddProperty(realSubjectTypeProperty, typeof(__ReturnTypeOverrideType<,>).GetGenericArguments()[1]);
 
@@ -1525,7 +1516,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_ReturnTypeOverride_InvalidOverride()
         {
-            PropertyInfo property = typeof(__ReturnTypeOverrideType<,>).GetProperty("InstanceProperty");
+            PropertyInfo property = __ReturnTypeOverrideType<FileNotFoundException, IOException>.InstanceProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, property.DeclaringType);
             Type desiredReturnType = typeof(NotImplementedException);
 
@@ -1542,7 +1533,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_ReturnTypeOverride_InvalidProperty()
         {
-            PropertyInfo property = typeof(__ReturnTypeOverrideType<,>).GetProperty("InvalidProperty");
+            PropertyInfo property = __ReturnTypeOverrideType<FileNotFoundException, IOException>.InvalidProperty;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, property.DeclaringType);
             Type desiredReturnType = typeof(IOException);
 
@@ -1560,7 +1551,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Instance()
         {
-            AssertAddEventBehavior(typeof(__EventTestType).GetEvent("InstanceEvent"),
+            AssertAddEventBehavior(__EventTestType.InstanceEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 // Declare methods and data used in verifying event invocation.
@@ -1600,7 +1591,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Instance_GenericRealSubjectType()
         {
-            AssertAddEventBehavior(typeof(__EventTestType<>).GetEvent("InstanceEvent"),
+            AssertAddEventBehavior(__EventTestType<UnhandledExceptionEventArgs>.InstanceEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(UnhandledExceptionEventArgs));
@@ -1644,7 +1635,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Static()
         {
-            AssertAddEventBehavior(typeof(__EventTestType).GetEvent("StaticEvent"),
+            AssertAddEventBehavior(__EventTestType.StaticEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 typeof(__EventTestType).TypeInitializer.Invoke(null, null);
@@ -1692,7 +1683,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Static_GenericRealSubjectType()
         {
-            AssertAddEventBehavior(typeof(__EventTestType<>).GetEvent("StaticEvent"),
+            AssertAddEventBehavior(__EventTestType<ResolveEventArgs>.StaticEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 Type specializedProxy = proxy.MakeGenericType(typeof(ResolveEventArgs));
@@ -1744,7 +1735,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_InvalidEvent()
         {
-            EventInfo eventInfo = typeof(__EventTestType).GetEvent("InstanceEvent");
+            EventInfo eventInfo = __EventTestType.InstanceEvent;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(string));
 
             Assert.That(
@@ -1760,7 +1751,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_InvalidInstanceEvent()
         {
-            EventInfo eventInfo = typeof(__AbstractType).GetEvent("InstanceEvent");
+            EventInfo eventInfo = __AbstractType.InstanceEvent;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__AbstractType));
 
             Assert.That(
@@ -1776,7 +1767,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_PrivateEvent()
         {
-            EventInfo eventInfo = typeof(__EventTestType).GetEvent("PrivateEvent", NonPublicInstance);
+            EventInfo eventInfo = __EventTestType.PrivateEvent;
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__EventTestType));
 
             Assert.That(
@@ -1802,7 +1793,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Inherited()
         {
-            AssertAddEventBehavior(typeof(__DerivedSubjectType).GetEvent("NonVirtualEvent"),
+            AssertAddEventBehavior(__DerivedSubjectType.NonVirtualEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 // Declare methods and data used in verifying event invocation.
@@ -1841,7 +1832,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_Override()
         {
-            AssertAddEventBehavior(typeof(__DerivedSubjectType).GetEvent("VirtualEvent"),
+            AssertAddEventBehavior(__DerivedSubjectType.VirtualEvent,
             delegate(Type proxy, EventInfo proxyEvent, MethodInfo proxyRaiseEventMethod)
             {
                 // Declare methods and data used in verifying event invocation.
@@ -1875,10 +1866,9 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_DuplicateEvent()
         {
-            Type realSubjectType = typeof(__EventTestType);
-            EventInfo eventInfo = realSubjectType.GetEvent("InstanceEvent");
+            EventInfo eventInfo = __EventTestType.InstanceEvent;
 
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__EventTestType));
             builder.AddEvent(eventInfo);
 
             Assert.That(
@@ -1905,13 +1895,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddProperty_DuplicatesExistingMethod()
         {
-            Type realSubjectType = typeof(__PropertyTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
         
-            builder.AddMethod(realSubjectType.GetMethod("get_Getter"));
+            builder.AddMethod(__PropertyTestType.GetterProperty.GetGetMethod());
 
             Assert.That(
-                () => builder.AddProperty(realSubjectType.GetProperty("Getter")),
+                () => builder.AddProperty(__PropertyTestType.GetterProperty),
                 Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
@@ -1923,13 +1912,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_DuplicatesExistingProperty()
         {
-            Type realSubjectType = typeof(__PropertyTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__PropertyTestType));
 
-            builder.AddProperty(realSubjectType.GetProperty("Getter"));
+            builder.AddProperty(__PropertyTestType.GetterProperty);
 
             Assert.That(
-                () => builder.AddMethod(realSubjectType.GetMethod("get_Getter")),
+                () => builder.AddMethod(__PropertyTestType.GetterProperty.GetGetMethod()),
                 Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
@@ -1941,13 +1929,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddEvent_DuplicatesExistingMethod()
         {
-            Type realSubjectType = typeof(__EventTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__EventTestType));
 
-            builder.AddMethod(realSubjectType.GetMethod("add_InstanceEvent"));
+            builder.AddMethod(__EventTestType.InstanceEvent.GetAddMethod());
 
             Assert.That(
-                () => builder.AddEvent(realSubjectType.GetEvent("InstanceEvent")),
+                () => builder.AddEvent(__EventTestType.InstanceEvent),
                 Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 
@@ -1959,13 +1946,12 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void AddMethod_DuplicatesExistingEvent()
         {
-            Type realSubjectType = typeof(__EventTestType);
-            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, realSubjectType);
+            ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, typeof(__EventTestType));
 
-            builder.AddEvent(realSubjectType.GetEvent("InstanceEvent"));
+            builder.AddEvent(__EventTestType.InstanceEvent);
 
             Assert.That(
-                () => builder.AddMethod(realSubjectType.GetMethod("add_InstanceEvent")),
+                () => builder.AddMethod(__EventTestType.InstanceEvent.GetAddMethod()),
                 Throws.ArgumentException.With.Message.EqualTo(Resources.Error_DuplicateMember));
         }
 

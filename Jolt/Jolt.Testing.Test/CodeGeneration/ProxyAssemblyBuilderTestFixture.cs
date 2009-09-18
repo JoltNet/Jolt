@@ -38,7 +38,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         static ProxyAssemblyBuilderTestFixture()
         {
             WorkingDirectoryName = Path.Combine(Path.GetTempPath(), MethodBase.GetCurrentMethod().DeclaringType.Name);
-            PublicStaticBinding = BindingFlags.Public | BindingFlags.Static;
             PublicInstanceBinding = BindingFlags.Public | BindingFlags.Instance;
 
             ReaderSettings = new XmlReaderSettings();
@@ -228,22 +227,22 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -271,12 +270,12 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -304,8 +303,8 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2")));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -344,14 +343,14 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -379,18 +378,18 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -418,18 +417,18 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -603,22 +602,22 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { {typeof(int), typeof(double)} };
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -649,12 +648,12 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { { typeof(int), typeof(double) } };
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -685,8 +684,8 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { { typeof(int), typeof(double) } };
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"), typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2, typeof(double)));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -729,14 +728,14 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { { typeof(int), typeof(double) } };
 
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -767,18 +766,18 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { { typeof(int), typeof(double) } };
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_3", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_4", PublicStaticBinding)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_3));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_4));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -809,18 +808,18 @@ namespace Jolt.Testing.Test.CodeGeneration
 
             IDictionary<Type, Type> desiredReturnTypeOverrides = new Dictionary<Type, Type>() { { typeof(int), typeof(double) } };
 
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("PublicMethod_4", PublicStaticBinding)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetType")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("GetHashCode"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("ToString")));
-            proxyTypeBuilder.Expect(pb => pb.AddMethod(expectedSubjectType.GetMethod("Equals")));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_1"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_2"), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_3", PublicStaticBinding), typeof(double)));
-            proxyTypeBuilder.Expect(pb => pb.AddProperty(expectedSubjectType.GetProperty("PublicProperty_4", PublicStaticBinding), typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_1));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.PublicMethod_4));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetType));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.GetHashCode, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.ToString));
+            proxyTypeBuilder.Expect(pb => pb.AddMethod(__RealSubjectType.Equals));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_1, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_2, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_3, typeof(double)));
+            proxyTypeBuilder.Expect(pb => pb.AddProperty(__RealSubjectType.PublicProperty_4, typeof(double)));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -1139,8 +1138,8 @@ namespace Jolt.Testing.Test.CodeGeneration
             createProxyTypeBuilder.Expect(cb => cb(assemblyBuilder.RootNamespace, expectedSubjectType, assemblyBuilder.Settings.EmitXmlDocComments, assemblyBuilder.Module))
                 .Return(proxyTypeBuilder);
 
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_1")));
-            proxyTypeBuilder.Expect(pb => pb.AddEvent(expectedSubjectType.GetEvent("PublicEvent_2")));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_1));
+            proxyTypeBuilder.Expect(pb => pb.AddEvent(__RealSubjectType.PublicEvent_2));
 
             proxyTypeBuilder.Expect(pb => pb.CreateProxy()).Return(null);
 
@@ -1297,7 +1296,6 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private class data ----------------------------------------------------------------
 
         private static readonly string WorkingDirectoryName;
-        private static readonly BindingFlags PublicStaticBinding;
         private static readonly BindingFlags PublicInstanceBinding;
         private static readonly XmlReaderSettings ReaderSettings;
 

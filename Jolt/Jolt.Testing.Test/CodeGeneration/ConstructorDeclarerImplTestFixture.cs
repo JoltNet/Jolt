@@ -30,7 +30,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void DeclareMethod()
         {
             IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo> implementation = new ConstructorDeclarerImpl();
-            ConstructorInfo constructor = typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes);
+            ConstructorInfo constructor = __ConstructorTestType.Ctor_ZeroArgs;
             ConstructorBuilder builder = CreateConstructorBuilder(constructor);
 
             Assert.That(
@@ -47,7 +47,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_NoParameters()
         {
-            AssertDefineMethodParameters(typeof(__ConstructorTestType).GetConstructor(Type.EmptyTypes));
+            AssertDefineMethodParameters(__ConstructorTestType.Ctor_ZeroArgs);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_OneParameter()
         {
-            AssertDefineMethodParameters(typeof(__ConstructorTestType).GetConstructor(new Type[] { typeof(int) }));
+            AssertDefineMethodParameters(__ConstructorTestType.Ctor_OneArg);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_ManyParameters()
         {
-            AssertDefineMethodParameters(typeof(__ConstructorTestType).GetConstructor(new[] { typeof(int), typeof(int) }));
+            AssertDefineMethodParameters(__ConstructorTestType.Ctor_TwoArgs);
         }
 
         #endregion

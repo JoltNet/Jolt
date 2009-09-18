@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -40,7 +41,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_GenericType_NonGenericMethod()
         {
-            MethodInfo method = typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters");
+            MethodInfo method = __GenericTestType<int, MemoryStream, Stream>.NoGenericParameters;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -51,7 +52,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_NoParameters()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes);
+            MethodInfo method = __MethodTestType.InstanceMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -62,7 +63,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OneParameter()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) });
+            MethodInfo method = __MethodTestType.InstanceMethod_1;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -73,7 +74,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ManyParameters()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod");
+            MethodInfo method = __MethodTestType.ManyArgumentsMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -84,7 +85,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ParamsArray()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("ParamsArrayArgumentsMethod");
+            MethodInfo method = __MethodTestType.ParamsArrayArgumentsMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -95,7 +96,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OutParameter()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("OutParameterMethod");
+            MethodInfo method = __MethodTestType.OutParameterMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -106,7 +107,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_VoidReturnValue()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("VoidReturnValueMethod");
+            MethodInfo method = __MethodTestType.VoidReturnValueMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -117,7 +118,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ReturnTypeOverride()
         {
-            MethodInfo method = typeof(__MethodTestType).GetMethod("ManyArgumentsMethod");
+            MethodInfo method = __MethodTestType.ManyArgumentsMethod;
             AssertDeclareMethod(method, typeof(object));
         }
 
@@ -128,7 +129,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_GenericType_NonGenericMethod()
         {
-            AssertDefineMethodParameters(typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters"));
+            AssertDefineMethodParameters(__GenericTestType<int, MemoryStream, Stream>.NoGenericParameters);
         }
 
         /// <summary>
@@ -138,7 +139,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_NoParameters()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType).GetMethod("InstanceMethod", Type.EmptyTypes));
+            AssertDefineMethodParameters(__MethodTestType.InstanceMethod);
         }
 
         /// <summary>
@@ -148,7 +149,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_OneParameter()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType).GetMethod("InstanceMethod", new Type[] { typeof(int) }));
+            AssertDefineMethodParameters(__MethodTestType.InstanceMethod_1);
         }
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_ManyParameters()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType).GetMethod("ManyArgumentsMethod"));
+            AssertDefineMethodParameters(__MethodTestType.ManyArgumentsMethod);
         }
 
         #endregion

@@ -29,10 +29,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_NoParameters()
         {
-            Type realSubjectType = typeof(__ConstructorTestType<,>);
-            InitializeCurrentTypeBuilder(realSubjectType);
-
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(Type.EmptyTypes), AssertConstructorAttributes);
+            InitializeCurrentTypeBuilder(typeof(__ConstructorTestType<,>));
+            AssertConstructorDeclaredFrom(__ConstructorTestType.Ctor_ZeroArgs, AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -42,11 +40,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_OneParameter()
         {
-            Type realSubjectType = typeof(__ConstructorTestType<,>);
-            InitializeCurrentTypeBuilder(realSubjectType);
-
-            Type[] constructorParameterTypes = { realSubjectType.GetGenericArguments()[0] };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            InitializeCurrentTypeBuilder(typeof(__ConstructorTestType<,>));
+            AssertConstructorDeclaredFrom(__ConstructorTestType<int, int>.Ctor_OneArg, AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -56,12 +51,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ManyParameters()
         {
-            Type realSubjectType = typeof(__ConstructorTestType<,>);
-            InitializeCurrentTypeBuilder(realSubjectType);
-
-            Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
-            Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1] };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            InitializeCurrentTypeBuilder(typeof(__ConstructorTestType<,>));
+            AssertConstructorDeclaredFrom(__ConstructorTestType<int, int>.Ctor_TwoArgs, AssertConstructorAttributes);
         }
 
         /// <summary>
@@ -71,12 +62,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Create_ManyParameters_Mixed()
         {
-            Type realSubjectType = typeof(__ConstructorTestType<,>);
-            InitializeCurrentTypeBuilder(realSubjectType);
-
-            Type[] genericTypeParameters = realSubjectType.GetGenericArguments();
-            Type[] constructorParameterTypes = { genericTypeParameters[0], genericTypeParameters[1], typeof(int) };
-            AssertConstructorDeclaredFrom(realSubjectType.GetConstructor(constructorParameterTypes), AssertConstructorAttributes);
+            InitializeCurrentTypeBuilder(typeof(__ConstructorTestType<,>));
+            AssertConstructorDeclaredFrom(__ConstructorTestType<int, int>.Ctor_ThreeArgs, AssertConstructorAttributes);
         }
 
         #endregion

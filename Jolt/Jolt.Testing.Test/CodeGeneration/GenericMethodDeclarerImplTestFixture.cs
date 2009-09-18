@@ -8,6 +8,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -42,7 +43,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         public void DeclareMethod_GenericMethodConstraints()
         {
             CurrentTypeBuilder.DefineGenericParameters(Convert.ToTypeNames(typeof(__GenericTestType<,,>).GetGenericArguments()));
-            MethodInfo realSubjectTypeMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
+            MethodInfo realSubjectTypeMethod = __GenericTestType<int,MemoryStream,Stream>.GenericFunction;
             
             IMethodDeclarerImpl<MethodBuilder, MethodInfo> implementation = new GenericMethodDeclarerImpl();
             implementation.DeclareMethod(m_defaultMethodBuilder, realSubjectTypeMethod, realSubjectTypeMethod.ReturnType);
@@ -72,8 +73,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_NoParameters()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 0);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericInstanceMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -84,8 +84,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OneParameter()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 1);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericInstanceMethod_1;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -96,8 +95,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ManyParameters()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericManyArgsMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -108,8 +106,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ParamsArray()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ParamsArrayArgumentsMethod" && m.IsGenericMethod);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericParamArrayArgsMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -120,8 +117,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_OutParameter()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "OutParameterMethod" && m.IsGenericMethod);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericOutParamMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -132,8 +128,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_VoidReturnValue()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "VoidReturnValueMethod" && m.IsGenericMethod);
+            MethodInfo method = __MethodTestType<int, object, Stream>.GenericVoidMethod;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -144,9 +139,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DeclareMethod_ReturnTypeOverride()
         {
-            MethodInfo method = typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod);
-            AssertDeclareMethod(method, typeof(object));
+            AssertDeclareMethod(__MethodTestType<int, object, Stream>.GenericManyArgsMethod, typeof(object));
         }
 
         /// <summary>
@@ -156,8 +149,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_GenericType_GenericMethod()
         {
-            MethodInfo method = typeof(__GenericTestType<,,>).GetMethods().Single(
-                m => m.Name == "GenericFunction" && m.IsGenericMethod);
+            MethodInfo method = __GenericTestType<int, MemoryStream, Stream>.GenericFunction;
             AssertDeclareMethod(method, method.ReturnType);
         }
 
@@ -168,8 +160,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_NoParameters()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 0));
+            AssertDefineMethodParameters(__MethodTestType<int, object, Stream>.GenericInstanceMethod);
         }
 
         /// <summary>
@@ -179,8 +170,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_OneParameter()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "InstanceMethod" && m.IsGenericMethod && m.GetParameters().Length == 1));
+            AssertDefineMethodParameters(__MethodTestType<int, object, Stream>.GenericInstanceMethod_1);
         }
 
         /// <summary>
@@ -190,8 +180,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void DefineMethodParameters_ManyParameters()
         {
-            AssertDefineMethodParameters(typeof(__MethodTestType<,,>).GetMethods().Single(
-                m => m.Name == "ManyArgumentsMethod" && m.IsGenericMethod));
+            AssertDefineMethodParameters(__MethodTestType<int,object,Stream>.GenericManyArgsMethod);
         }
 
         #endregion
