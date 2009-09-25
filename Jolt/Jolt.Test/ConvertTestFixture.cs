@@ -11,7 +11,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-using Jolt.Functional;
 using Jolt.Test.Types;
 using NUnit.Framework;
 
@@ -64,8 +63,8 @@ namespace Jolt.Test
         public void ToXmlDocCommentMember_Event()
         {
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(__GenericTestType<int, char, byte>).GetEvent("InstanceEvent")),
-                Is.EqualTo("E:Jolt.Test.Types.__GenericTestType`3.InstanceEvent"));
+                Convert.ToXmlDocCommentMember(__GenericTestType<int, int, int>.InstanceEvent),
+                Is.EqualTo("E:Jolt.Test.Types.__GenericTestType`3._InstanceEvent"));
             
             Assert.That(
                 Convert.ToXmlDocCommentMember(typeof(System.Console).GetEvent("CancelKeyPress")),
@@ -84,8 +83,8 @@ namespace Jolt.Test
                 Is.EqualTo("F:System.Int32.MaxValue"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(FieldType<,>).GetField("Field", NonPublicInstance)),
-                Is.EqualTo("F:Jolt.Test.Types.FieldType`2.Field"));
+                Convert.ToXmlDocCommentMember(FieldType<int,int>.Field),
+                Is.EqualTo("F:Jolt.Test.Types.FieldType`2._Field"));
         }
 
         /// <summary>
@@ -120,19 +119,19 @@ namespace Jolt.Test
                 Is.EqualTo("P:System.Collections.Generic.List`1.Item(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(4))),
+                Convert.ToXmlDocCommentMember(IndexerType<int, int>.Indexer_4),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Int32,`0,`1,`0)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(1))),
+                Convert.ToXmlDocCommentMember(IndexerType<int, int>.Indexer_1),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(System.Action{System.Action{System.Action{`1}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(IndexerType<,>).GetProperties(NonPublicInstance).Single(CreateNumIndexParamsPredicate(3))),
+                Convert.ToXmlDocCommentMember(IndexerType<int, int>.Indexer_3),
                 Is.EqualTo("P:Jolt.Test.Types.IndexerType`2.Item(`0[],System.Action{System.Action{`1}[0:,0:][]}[][],`0[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetProperties(NonPublicInstance).Single()),
+                Convert.ToXmlDocCommentMember(PointerTestType<int>.Property),
                 Is.EqualTo("P:Jolt.Test.Types.PointerTestType`1.Item(System.Int32*[],System.Action{System.Action{`0[]}[][]}[],System.Int16***[0:,0:,0:][0:,0:][])"));
         }
 
@@ -160,19 +159,19 @@ namespace Jolt.Test
                 Is.EqualTo("M:System.Collections.Generic.List`1.#ctor(System.Int32)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(4))),
+                Convert.ToXmlDocCommentMember(ConstructorType<int, int>.Constructor_4),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Int32,`0,`1,`1)"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(1))),
+                Convert.ToXmlDocCommentMember(ConstructorType<int, int>.Constructor_1),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(System.Action{System.Action{System.Action{`0}}})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(ConstructorType<,>).GetConstructors(NonPublicInstance).Single(CreateNumCtorParamsPredicate(3))),
+                Convert.ToXmlDocCommentMember(ConstructorType<int, int>.Constructor_3),
                 Is.EqualTo("M:Jolt.Test.Types.ConstructorType`2.#ctor(`0[],System.Action{System.Action{System.Action{`1}[][]}[]}[][]@,`1[0:,0:,0:,0:][0:,0:,0:][0:,0:][])"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetConstructors(NonPublicInstance).Single()),
+                Convert.ToXmlDocCommentMember(PointerTestType<int>.Constructor),
                 Is.EqualTo("M:Jolt.Test.Types.PointerTestType`1.#ctor(System.Action{`0[]}[],System.String***[0:,0:,0:][0:,0:][]@)"));
         }
 
@@ -204,9 +203,62 @@ namespace Jolt.Test
                 Is.EqualTo("M:System.Linq.Enumerable.ToLookup(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Collections.Generic.IEqualityComparer{``1})"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(PointerTestType<>).GetMethod("method", NonPublicInstance)),
-                Is.EqualTo("M:Jolt.Test.Types.PointerTestType`1.method(System.Int32,`0[0:,0:]@,System.Action{``0[0:,0:][]}*[][0:,0:]@,System.Action{System.Int32**[0:,0:,0:][]})"));
+                Convert.ToXmlDocCommentMember(PointerTestType<int>.Method),
+                Is.EqualTo("M:Jolt.Test.Types.PointerTestType`1._method(System.Int32,`0[0:,0:]@,System.Action{``0[0:,0:][]}*[][0:,0:]@,System.Action{System.Int32**[0:,0:,0:][]})"));
         }
+
+        /// <summary>
+        /// Verifies the behavior of the ToXmlDocCommentMember() method
+        /// when the given parameter is a MethodInfo object that refers
+        /// to an operator.
+        /// </summary>
+        [Test]
+        public void ToXmlDocCommentMember_Operator()
+        {
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Subtraction),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Subtraction(Jolt.Test.Types.OperatorTestType{`0,`1},Jolt.Test.Types.OperatorTestType{`0,`1})"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Explcit_ToInt),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Explicit(Jolt.Test.Types.OperatorTestType{`0,`1})~System.Int32"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Explcit_FromInt),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Explicit(System.Int32)~Jolt.Test.Types.OperatorTestType{`0,`1}"));
+                            
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Implcit_ToLong),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Implicit(Jolt.Test.Types.OperatorTestType{`0,`1})~System.Int64"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Implcit_FromLong),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Implicit(System.Int64)~Jolt.Test.Types.OperatorTestType{`0,`1}"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Explicit_FromT),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Explicit(`0)~Jolt.Test.Types.OperatorTestType{`0,`1}"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Explicit_FromU),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Explicit(`1)~Jolt.Test.Types.OperatorTestType{`0,`1}"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Explicit_FromAction),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Explicit(System.Action{System.Action{System.Action{`1}}})~Jolt.Test.Types.OperatorTestType{`0,`1}"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Implicit_ToTArray),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Implicit(Jolt.Test.Types.OperatorTestType{`0,`1})~`0[]"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Implicit_ToUArray),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Implicit(Jolt.Test.Types.OperatorTestType{`0,`1})~`1[0:,0:,0:,0:][0:,0:,0:][0:,0:][]"));
+
+            Assert.That(
+                Convert.ToXmlDocCommentMember(OperatorTestType<int, int>.Op_Implicit_ToActionArray),
+                Is.EqualTo("M:Jolt.Test.Types.OperatorTestType`2.op_Implicit(Jolt.Test.Types.OperatorTestType{`0,`1})~System.Action{System.Action{`1}[0:,0:][]}[][]"));
+        }                   
 
         /// <summary>
         /// Verifies the behavior of the ToParamterTypes() method.
@@ -247,7 +299,7 @@ namespace Jolt.Test
         public void ToParameterTypes_GenericTypeArguments()
         {
             Type[] genericTypeArguments = typeof(__GenericTestType<,,>).GetGenericArguments();
-            ParameterInfo[] methodParams = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction_MixedArgs").GetParameters();
+            ParameterInfo[] methodParams = __GenericTestType<int, int, int>.NonGenericFunction_MixedArgs.GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams, genericTypeArguments);
 
             Assert.That(methodParamTypes, Has.Length.EqualTo(3));
@@ -265,7 +317,7 @@ namespace Jolt.Test
         [Test]
         public void ToParameterTypes_GenericTypeArguments_NoParams()
         {
-            MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethods().Single(m => m.Name == "NoParameters" && !m.IsGenericMethod);
+            MethodInfo genericMethod = __GenericTestType<int, int, int>.NoParameters;
 
             Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
             ParameterInfo[] methodParams = genericMethod.GetParameters();
@@ -283,7 +335,7 @@ namespace Jolt.Test
         [Test]
         public void ToParameterTypes_GenericTypeAndMethodArguments()
         {
-            MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction_MixedArgs");
+            MethodInfo genericMethod = __GenericTestType<int, int, int>.GenericFunction_MixedArgs;
             Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
             Type[] genericMethodArguments = genericMethod.GetGenericArguments();
 
@@ -308,7 +360,7 @@ namespace Jolt.Test
         [Test]
         public void ToParameterTypes_GenericTypeAndMethodArguments_NoParams()
         {
-            MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethods().Single(m => m.Name == "NoParameters" && m.IsGenericMethod);
+            MethodInfo genericMethod = __GenericTestType<int, int, int>.OneGenericParameter;
 
             Type[] genericTypeArguments = genericMethod.DeclaringType.GetGenericArguments();
             Type[] genericMethodArguments = genericMethod.GetGenericArguments();
@@ -328,7 +380,7 @@ namespace Jolt.Test
         public void ToMethodSignatureType()
         {
             Type type = Convert.ToMethodSignatureType(
-                typeof(__GenericTestType<,,>).GetMethod("NoGenericParameters").GetParameters()[0].ParameterType,
+                __GenericTestType<int,int,int>.NoGenericParameters.GetParameters()[0].ParameterType,
                 Type.EmptyTypes,
                 Type.EmptyTypes);
 
@@ -342,7 +394,7 @@ namespace Jolt.Test
         [Test]
         public void ToMethodSignatureType_GenericTypeArgument()
         {
-            MethodInfo nonGenericMethod = typeof(__GenericTestType<,,>).GetMethod("NonGenericFunction");
+            MethodInfo nonGenericMethod = __GenericTestType<int, int, int>.NonGenericFunction;
             Type[] genericTypeArguments = nonGenericMethod.DeclaringType.GetGenericArguments();
 
             Type type = Convert.ToMethodSignatureType(
@@ -360,7 +412,7 @@ namespace Jolt.Test
         [Test]
         public void ToMethodSignatureType_GenericMethodArgument()
         {
-            MethodInfo genericMethod = typeof(__GenericTestType<,,>).GetMethod("GenericFunction");
+            MethodInfo genericMethod = __GenericTestType<int, int, int>.GenericFunction;
             Type[] genericMethodArguments = genericMethod.GetGenericArguments();
 
             Type type = Convert.ToMethodSignatureType(
@@ -403,40 +455,12 @@ namespace Jolt.Test
         private void __f() { }
         private void __g(int x, int y, double z, byte b) { }
 
-        /// <summary>
-        /// Creates a predicate that determines if a constructor
-        /// has the given number of parameters.
-        /// </summary>
-        /// 
-        /// <param name="desiredNumParameters">
-        /// The desired number of parameters.
-        /// </param>
-        private Func<ConstructorInfo, bool> CreateNumCtorParamsPredicate(int desiredNumParameters)
-        {
-            return Bind.Second(HasNParameters, desiredNumParameters);
-        }
-
-        /// <summary>
-        /// Creates a predicate that determines if a property
-        /// has the given number of index parameters.
-        /// </summary>
-        /// 
-        /// <param name="desiredNumParameters">
-        /// The desired number of parameters.
-        /// </param>
-        private Func<PropertyInfo, bool> CreateNumIndexParamsPredicate(int desiredNumParameters)
-        {
-            return Bind.Second(HasNIndexParameters, desiredNumParameters);
-        }
-
         #endregion
 
         #region private class data ----------------------------------------------------------------
 
         private static readonly BindingFlags NonPublicInstance = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly BindingFlags NonPublicStatic = BindingFlags.Static | BindingFlags.NonPublic;
-        private static readonly Func<ConstructorInfo, int, bool> HasNParameters = (ctor, numParams) => ctor.GetParameters().Length == numParams;
-        private static readonly Func<PropertyInfo, int, bool> HasNIndexParameters = (property, numParams) => property.GetIndexParameters().Length == numParams;
 
         #endregion
     }

@@ -69,7 +69,7 @@ namespace Jolt
         /// </param>
         public static string ToXmlDocCommentMember(EventInfo eventInfo)
         {
-            return ToXmlDocCommentMember<EventInfo>(eventInfo.DeclaringType, eventInfo.Name, EmptyParameterList);
+            return ToXmlDocCommentMember(eventInfo, EmptyParameterList).ToString();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Jolt
         /// </param>
         public static string ToXmlDocCommentMember(FieldInfo field)
         {
-            return ToXmlDocCommentMember<FieldInfo>(field.DeclaringType, field.Name, EmptyParameterList);
+            return ToXmlDocCommentMember(field, EmptyParameterList).ToString();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Jolt
         /// </param>
         public static string ToXmlDocCommentMember(PropertyInfo property)
         {
-            return ToXmlDocCommentMember<PropertyInfo>(property.DeclaringType, property.Name, property.GetIndexParameters());
+            return ToXmlDocCommentMember(property, property.GetIndexParameters()).ToString();
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Jolt
         /// </param>
         public static string ToXmlDocCommentMember(ConstructorInfo constructor)
         {
-            return ToXmlDocCommentMember<ConstructorInfo>(constructor.DeclaringType, constructor.Name.Replace('.', '#'), constructor.GetParameters());
+            return ToXmlDocCommentMember(constructor, constructor.GetParameters()).ToString();
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Jolt
         /// </param>
         public static string ToXmlDocCommentMember(MethodInfo method)
         {
-            return ToXmlDocCommentMember<MethodInfo>(method.DeclaringType, method.Name, method.GetParameters());
+            return ToXmlDocCommentMember(method, method.GetParameters()).ToString();
         }
 
         /// <summary>
@@ -271,13 +271,40 @@ namespace Jolt
         /// <param name="memberParameters">
         /// The parameters to the member, if any.
         /// </param>
-        private static string ToXmlDocCommentMember<TMember>(Type memberDeclaringType, string memberName, ParameterInfo[] memberParameters)
+        private static StringBuilder ToXmlDocCommentMember<TMember>(TMember member, ParameterInfo[] memberParameters)
+            where TMember : MemberInfo
+        {
+            int dummy;
+            return ToXmlDocCommentMember(member, memberParameters, out dummy);
+        }
+
+        /// <summary>
+        /// Creates a string representing a given type member in an
+        /// XML doc comment member element.
+        /// </summary>
+        /// 
+        /// <param name="member">
+        /// The member from which the string is created.
+        /// </param>
+        /// 
+        /// <param name="memberParameters">
+        /// The parameters to the member, if any.
+        /// </param>
+        /// 
+        /// <param name="namePosition">
+        /// The position in the resulting string that indexes that starting
+        /// position of the member name.
+        /// </param>
+        private static StringBuilder ToXmlDocCommentMember<TMember>(TMember member, ParameterInfo[] memberParameters, out int namePosition)
+            where TMember : MemberInfo
         {
             StringBuilder builder = new StringBuilder();
-            AppendXDCFullTypeNameTo(builder, memberDeclaringType)
+            AppendXDCFullTypeNameTo(builder, member.DeclaringType)
                 .Insert(0, XDCMemberPrefixes[typeof(TMember)])
-                .Append('.')
-                .Append(memberName);
+                .Append('.');
+
+            namePosition = builder.Length;
+            builder.Append(member.Name);
 
             if (memberParameters.Length > 0)
             {
@@ -286,7 +313,53 @@ namespace Jolt
                     .Append(')');
             }
 
-            return builder.ToString();
+            return builder;
+        }
+
+        /// <summary>
+        /// Creates a string representing a given ConstructorInfo in an
+        /// XML doc comment member element.
+        /// </summary>
+        /// 
+        /// <param name="constructor">
+        /// The constructor from which the string is created.
+        /// </param>
+        /// 
+        /// <param name="memberParameters">
+        /// The parameters for the constructor, if any.
+        /// </param>
+        private static StringBuilder ToXmlDocCommentMember(ConstructorInfo constructor, ParameterInfo[] constructorParameters)
+        {
+            int namePosition;
+            StringBuilder builder = ToXmlDocCommentMember<ConstructorInfo>(constructor, constructorParameters, out namePosition);
+            builder[namePosition] = '#';   // Replaces . with # in ctor name.
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Creates a string representing a given MethodInfo in an
+        /// XML doc comment member element.
+        /// </summary>
+        /// 
+        /// <param name="constructor">
+        /// The constructor from which the string is created.
+        /// </param>
+        /// 
+        /// <param name="memberParameters">
+        /// The parameters for the constructor, if any.
+        /// </param>
+        private static StringBuilder ToXmlDocCommentMember(MethodInfo method, ParameterInfo[] methodParameters)
+        {
+            StringBuilder builder = ToXmlDocCommentMember<MethodInfo>(method, methodParameters);
+
+            if (Array.BinarySearch(ConversionOperatorNames, method.Name) >= 0)
+            {
+                builder.Append('~');
+                AppendXDCParameterTypesTo(builder, new[] { method.ReturnType });
+            }
+
+            return builder;
         }
 
         /// <summary>
@@ -458,6 +531,7 @@ namespace Jolt
         private static readonly string SZArrayTypeSuffix = "[]";
         private static readonly string ArrayElementTypeDimension = "0:";
         private static readonly string ArrayElementTypeDimension_Delimited = ArrayElementTypeDimension + ',';
+        private static readonly string[] ConversionOperatorNames = { "op_Explicit", "op_Implicit" };    // Keep this lexicographically sorted.
 
         private static readonly IDictionary<Type, string> XDCMemberPrefixes;
         private static readonly ParameterInfo[] EmptyParameterList;

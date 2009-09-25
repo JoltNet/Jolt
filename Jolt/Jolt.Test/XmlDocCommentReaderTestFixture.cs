@@ -91,7 +91,7 @@ namespace Jolt.Test
         {
             WithConfigurationFile(delegate
             {
-                Assembly assembly = GetType().Assembly;
+                Assembly assembly = typeof(MethodBase).Assembly;
 
                 Assert.That(
                     CreateXDCReaderDelegate(assembly),
