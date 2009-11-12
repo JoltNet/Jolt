@@ -20,6 +20,8 @@ namespace Jolt.Test
 {
     public abstract class AbstractXDCReadPolicyTestFixture
     {
+        #region protected methods -----------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the policy class when given
         /// only a path.
@@ -153,8 +155,7 @@ namespace Jolt.Test
             fileProxy.VerifyAllExpectations();
         }
 
-        #region protected class methods -----------------------------------------------------------
-
+        
         /// <summary>
         /// Retrieves a stream reader that reads the test fixutres sample
         /// doc comments XML.

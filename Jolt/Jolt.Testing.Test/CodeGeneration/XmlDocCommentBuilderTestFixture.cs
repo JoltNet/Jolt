@@ -22,6 +22,8 @@ namespace Jolt.Testing.Test.CodeGeneration
     [TestFixture]
     public sealed class XmlDocCommentBuilderTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the class.
         /// </summary>
@@ -151,6 +153,8 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             VerifyBehavior_AddMember_InvalidDeclaringType(typeof(Array).GetProperty(Length));
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 
@@ -362,7 +366,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly Func<ConstructorInfo, bool> HasFourParameters = constructor => constructor.GetParameters().Length == 4;
         

@@ -124,7 +124,7 @@ namespace Jolt.Testing.CodeGeneration.Xml
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly XmlReaderSettings ReaderSettings;
         private static readonly ILog Log;

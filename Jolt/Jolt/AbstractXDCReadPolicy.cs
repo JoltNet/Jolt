@@ -25,17 +25,6 @@ namespace Jolt
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initialize the instance with the given file path.
-        /// </summary>
-        /// 
-        /// <param name="xmlDocCommentsFullPath">
-        /// The full path to the XML doc comments that will be managed
-        /// by this instance.
-        /// </param>
-        protected AbstractXDCReadPolicy(string xmlDocCommentsFullPath)
-            : this(xmlDocCommentsFullPath, new FileProxy()) { }
-
-        /// <summary>
         /// Initialize the instance with the given file path and file proxy.
         /// </summary>
         /// 
@@ -52,6 +41,17 @@ namespace Jolt
             m_xmlDocCommentsFullPath = xmlDocCommentsFullPath;
             m_fileProxy = fileProxy;
         }
+
+        /// <summary>
+        /// Initialize the instance with the given file path.
+        /// </summary>
+        /// 
+        /// <param name="xmlDocCommentsFullPath">
+        /// The full path to the XML doc comments that will be managed
+        /// by this instance.
+        /// </param>
+        protected AbstractXDCReadPolicy(string xmlDocCommentsFullPath)
+            : this(xmlDocCommentsFullPath, new FileProxy()) { }
 
         /// <summary>
         /// Initializes the static state of the class.

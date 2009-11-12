@@ -73,7 +73,7 @@ namespace Jolt.Testing.Assertions
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly XmlEquivalencyAssertion m_assert;
 

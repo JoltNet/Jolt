@@ -21,6 +21,8 @@ namespace Jolt.Test.Functional
     [TestFixture]
     public sealed class FunctorTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the behavior of the ToAction() method, for functions
         /// that have zero arguments.
@@ -359,6 +361,8 @@ namespace Jolt.Test.Functional
                 Assert.That(!predicate(i));
             }
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

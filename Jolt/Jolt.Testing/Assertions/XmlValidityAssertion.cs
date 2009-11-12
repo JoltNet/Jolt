@@ -100,7 +100,7 @@ namespace Jolt.Testing.Assertions
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly XmlSchemaSet m_schemas;
         private readonly XmlSchemaValidationFlags m_validationFlags;

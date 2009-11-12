@@ -42,20 +42,28 @@ namespace Jolt
 
         #endregion
 
-        /// <summary>
-        /// Initializes a field to store an instance of the default configuration.
-        /// </summary>
-        public static XmlDocCommentReaderSettings Default = CreateDefaultSettings();
+        #region public properties -----------------------------------------------------------------
 
         /// <summary>
         /// Gets the collection of search paths.
         /// </summary>
-        [ConfigurationProperty("XmlDocCommentDirectories", IsRequired=true)]
+        [ConfigurationProperty("XmlDocCommentDirectories", IsRequired = true)]
         [ConfigurationCollection(typeof(XmlDocCommentDirectoryElementCollection), AddItemName = "Directory")]
         public XmlDocCommentDirectoryElementCollection DirectoryNames
         {
             get { return (XmlDocCommentDirectoryElementCollection)this["XmlDocCommentDirectories"]; }
         }
+
+        #endregion
+
+        #region public fields ---------------------------------------------------------------------
+
+        /// <summary>
+        /// Initializes a field to store an instance of the default configuration.
+        /// </summary>
+        public static XmlDocCommentReaderSettings Default = CreateDefaultSettings();
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

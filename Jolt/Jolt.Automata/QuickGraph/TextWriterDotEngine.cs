@@ -36,7 +36,7 @@ namespace Jolt.Automata.QuickGraph
 
         #endregion
 
-        #region IDotEngine implementation ---------------------------------------------------------
+        #region IDotEngine members ----------------------------------------------------------------
 
         /// <summary>
         /// Writes the given GraphViz data to the configured TextWriter.
@@ -50,7 +50,7 @@ namespace Jolt.Automata.QuickGraph
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly TextWriter m_writer;
 

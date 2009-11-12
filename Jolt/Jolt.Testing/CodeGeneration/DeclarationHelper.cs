@@ -23,8 +23,6 @@ namespace Jolt.Testing.CodeGeneration
     /// </summary>
     internal static class DeclarationHelper
     {
-        #region internal methods ------------------------------------------------------------------
-
         /// <summary>
         /// Defines a copy of the given parameters in the order supplied,
         /// using the given delegate.
@@ -93,7 +91,5 @@ namespace Jolt.Testing.CodeGeneration
                 }
             }
         }
-
-        #endregion
     }
 }

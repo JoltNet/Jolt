@@ -60,7 +60,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region internal methods -----------------------------------------------------------------=
+        #region internal methods ------------------------------------------------------------------
 
         /// <see cref="AbstractConstructorDeclarerTestFixture.CreateConstructorDeclarer"/>
         internal override AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> CreateConstructorDeclarer(

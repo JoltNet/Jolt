@@ -28,19 +28,6 @@ namespace Jolt.Testing.Assertions
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the static state of the class.
-        /// </summary>
-        static XmlEquivalencyAssertion()
-        {
-            ReaderSettings = new XmlReaderSettings();
-            ReaderSettings.IgnoreComments = true;
-            ReaderSettings.IgnoreProcessingInstructions = true;
-            ReaderSettings.IgnoreWhitespace = true;
-
-            SuccessfulComparisonResult = new XmlComparisonResult();
-        }
-
-        /// <summary>
         /// Initializes a new instance of the XmlEquivalencyAssertion class.
         /// </summary>
         /// 
@@ -73,6 +60,19 @@ namespace Jolt.Testing.Assertions
                 m_attributeKeySelector = a => a.Name.ToString();
                 m_validateAttributeNamespaceEquivalency = CompareAttributeNamespaces;
             }
+        }
+
+        /// <summary>
+        /// Initializes the static state of the class.
+        /// </summary>
+        static XmlEquivalencyAssertion()
+        {
+            ReaderSettings = new XmlReaderSettings();
+            ReaderSettings.IgnoreComments = true;
+            ReaderSettings.IgnoreProcessingInstructions = true;
+            ReaderSettings.IgnoreWhitespace = true;
+
+            SuccessfulComparisonResult = new XmlComparisonResult();
         }
 
         #endregion
@@ -290,7 +290,7 @@ namespace Jolt.Testing.Assertions
             return true;
         }
 
-
+        /// <summary>
         /// Exchanges the elements in the given collection, at the given indecies.
         /// </summary>
         /// 
@@ -587,7 +587,7 @@ namespace Jolt.Testing.Assertions
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly XmlComparisonFlags m_comparisonFlags;
         private readonly Func<XElement, XElement, XmlComparisonResult> m_validateAttributeEquivalency;

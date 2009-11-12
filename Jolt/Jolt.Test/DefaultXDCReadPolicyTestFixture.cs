@@ -21,6 +21,8 @@ namespace Jolt.Test
     [TestFixture]
     public sealed class DefaultXDCReadPolicyTestFixture : AbstractXDCReadPolicyTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the class.
         /// </summary>
@@ -71,7 +73,9 @@ namespace Jolt.Test
             base.ReadMember_DoesNotExist(CreatePolicy, NullAssert);
         }
 
-        #region private class data ----------------------------------------------------------------
+        #endregion
+
+        #region private fields --------------------------------------------------------------------
 
         private static readonly Action<DefaultXDCReadPolicy> NullAssert = delegate { };
         private static readonly Func<string, IFile, DefaultXDCReadPolicy> CreatePolicy =

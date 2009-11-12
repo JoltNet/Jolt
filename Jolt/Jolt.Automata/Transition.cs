@@ -76,7 +76,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region Object method overrides -----------------------------------------------------------
+        #region Object members --------------------------------------------------------------------
 
         /// <summary>
         /// Performs a value-based equality comparison for a given
@@ -117,7 +117,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region IEquatable<Transition<TAlphabet>> implementation ----------------------------------
+        #region IEquatable<Transition<TAlphabet>> members -----------------------------------------
 
         /// <summary>
         /// <see cref="Equals(Object)"/>
@@ -186,7 +186,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly Predicate<TAlphabet> m_transitionPredicate;
 

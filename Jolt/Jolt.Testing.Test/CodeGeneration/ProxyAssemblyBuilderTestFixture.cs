@@ -31,9 +31,7 @@ namespace Jolt.Testing.Test.CodeGeneration
     [TestFixture]
     public sealed class ProxyAssemblyBuilderTestFixture
     {
-        #region public methods --------------------------------------------------------------------
-
-        #region initialization --------------------------------------------------------------------
+        #region constructors ----------------------------------------------------------------------
 
         static ProxyAssemblyBuilderTestFixture()
         {
@@ -49,6 +47,10 @@ namespace Jolt.Testing.Test.CodeGeneration
                 ReaderSettings.Schemas.Add(XmlSchema.Read(schema, null));
             }
         }
+
+        #endregion
+
+        #region public methods --------------------------------------------------------------------
 
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -66,7 +68,6 @@ namespace Jolt.Testing.Test.CodeGeneration
             Directory.Delete(WorkingDirectoryName, true);
         }
 
-        #endregion
 
         /// <summary>
         /// Verifies the default construction of the class.
@@ -897,7 +898,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             builder.AddType(typeof(__FirstEmptySubjectType), desiredReturnTypeOverrides);
         }
 
-                /// <summary>
+        /// <summary>
         /// Verifies the behavior of the AddType() method when given a collection
         /// of return type overrides and the underlying type builder throws an
         /// exception on processing a method.
@@ -1048,7 +1049,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Verifies the behavior of the CreateAssembly() method.
@@ -1293,7 +1294,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly string WorkingDirectoryName;
         private static readonly BindingFlags PublicInstanceBinding;

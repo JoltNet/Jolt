@@ -66,7 +66,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region internal instance methods ---------------------------------------------------------
+        #region internal methods ------------------------------------------------------------------
 
         /// <summary>
         /// Declares a new method, modelling it after the associated method
@@ -83,7 +83,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region protected instance properties -----------------------------------------------------
+        #region protected properties --------------------------------------------------------------
 
         /// <summary>
         /// Gets the associated type builder .
@@ -119,7 +119,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance fields -----------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly TypeBuilder m_builder;
         private readonly MethodAttributes m_methodAttributes;

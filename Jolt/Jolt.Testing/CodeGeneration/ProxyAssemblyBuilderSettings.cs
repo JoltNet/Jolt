@@ -58,11 +58,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        /// <summary>
-        /// Initializes a field to store an instance of the default configuration.
-        /// </summary>
-        public static readonly ProxyAssemblyBuilderSettings Default = new ProxyAssemblyBuilderSettings();
-
+        #region public properties -----------------------------------------------------------------
 
         /// <summary>
         /// Gets the value that controls static function generation.
@@ -108,5 +104,16 @@ namespace Jolt.Testing.CodeGeneration
         {
             get { return (bool)this["emitXmlDocComments"]; }
         }
+
+        #endregion
+
+        #region public fields ---------------------------------------------------------------------
+
+        /// <summary>
+        /// Initializes a field to store an instance of the default configuration.
+        /// </summary>
+        public static readonly ProxyAssemblyBuilderSettings Default = new ProxyAssemblyBuilderSettings();
+
+        #endregion
     }
 }

@@ -73,7 +73,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region public instance methods -----------------------------------------------------------
+        #region public methods --------------------------------------------------------------------
 
         /// <summary>
         /// Adds a state with the given name to the finite state machine,
@@ -316,13 +316,13 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region internal data ---------------------------------------------------------------------
+        #region internal fields -------------------------------------------------------------------
         
         internal static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
         
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly IMutableBidirectionalGraph<string, Transition<TAlphabet>> m_graph;
         private HashSet<string> m_finalStates;

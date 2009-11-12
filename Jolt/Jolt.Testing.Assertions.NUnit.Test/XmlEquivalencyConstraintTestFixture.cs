@@ -24,6 +24,8 @@ namespace Jolt.Testing.Assertions.NUnit.Test
     [TestFixture]
     public sealed class XmlEquivalencyConstraintTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the public construction of the class.
         /// </summary>
@@ -250,7 +252,6 @@ namespace Jolt.Testing.Assertions.NUnit.Test
             Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.IgnoreAttributeNamespaces));
         }
 
-
         /// <summary>
         /// Verifies the behavior of the IgnoreAttributes property.
         /// </summary>
@@ -302,6 +303,8 @@ namespace Jolt.Testing.Assertions.NUnit.Test
             Assert.That(constraint, Is.SameAs(newConstraint));
             Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.IgnoreSequenceOrder));
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

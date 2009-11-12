@@ -140,6 +140,9 @@ namespace Jolt.Testing.Test.CodeGeneration
             DeclarationHelper.CopyTypeConstraints(Type.EmptyTypes, new GenericTypeParameterBuilder[5]);
         }
 
+        /// <summary>
+        /// Verifies the behavior of the CopyTypeConstraints() method.
+        /// </summary>
         [Test]
         public void CopyTypeConstraints()
         {
@@ -171,7 +174,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Asserts that each type in a given array contains the expected

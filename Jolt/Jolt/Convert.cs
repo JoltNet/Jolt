@@ -526,7 +526,7 @@ namespace Jolt
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly string SZArrayTypeSuffix = "[]";
         private static readonly string ArrayElementTypeDimension = "0:";

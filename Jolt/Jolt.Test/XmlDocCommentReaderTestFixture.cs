@@ -28,6 +28,8 @@ namespace Jolt.Test
     [TestFixture]
     public sealed class XmlDocCommentReaderTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the class when given an
         /// assembly reference and no configuration file is present.
@@ -486,7 +488,9 @@ namespace Jolt.Test
             readPolicy.VerifyAllExpectations();
         }
 
-        #region private class methods -------------------------------------------------------------
+        #endregion
+
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Initializes the application configuration file for this test fixture,
@@ -533,7 +537,7 @@ namespace Jolt.Test
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         // TODO: This needs to be resistant to changes in the location/version of mscorlib.
         private static readonly string MscorlibXml = Path.Combine(Path.Combine(

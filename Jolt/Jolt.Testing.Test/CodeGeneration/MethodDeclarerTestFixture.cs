@@ -111,7 +111,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private instance methods ----------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Asserts the expected behavior of the MethodBuilder.Declare() method.
@@ -238,7 +238,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly MethodAttributes InterfaceMethodAttributes =
             MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract;

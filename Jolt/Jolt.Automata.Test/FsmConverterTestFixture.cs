@@ -27,11 +27,14 @@ namespace Jolt.Automata.Test
     [TestFixture]
     public sealed class FsmConverterTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
             BasicConfigurator.Configure();
         }
+
         
         /// <summary>
         /// Verifies the behavior of the ToGraphML() method, for
@@ -333,6 +336,8 @@ namespace Jolt.Automata.Test
             }
         }
 
+        #endregion
+
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
@@ -411,7 +416,7 @@ namespace Jolt.Automata.Test
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly XNamespace GraphMLNamespace = "http://graphml.graphdrawing.org/xmlns";
         private static readonly string LengthMod3MachineResourceName = "Xml.LengthMod3Machine.xml";

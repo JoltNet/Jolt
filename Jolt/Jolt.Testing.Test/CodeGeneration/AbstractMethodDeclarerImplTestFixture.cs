@@ -37,19 +37,6 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region protected properties --------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the TypeBuilder that is created for use within the scope
-        /// of a single unit test.
-        /// </summary>
-        protected TypeBuilder CurrentTypeBuilder
-        {
-            get { return m_defaultTypeBuilder; }
-        }
-
-        #endregion
-
         #region protected methods -----------------------------------------------------------------
 
         /// <summary>
@@ -78,7 +65,20 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private instance fields -----------------------------------------------------------
+        #region protected properties --------------------------------------------------------------
+
+        /// <summary>
+        /// Gets the TypeBuilder that is created for use within the scope
+        /// of a single unit test.
+        /// </summary>
+        protected TypeBuilder CurrentTypeBuilder
+        {
+            get { return m_defaultTypeBuilder; }
+        }
+
+        #endregion
+
+        #region private fields --------------------------------------------------------------------
 
         private ModuleBuilder m_defaultModuleBuilder;
         private TypeBuilder m_defaultTypeBuilder;

@@ -21,6 +21,8 @@ namespace Jolt.Testing.Test.CodeGeneration
 {
     public abstract class AbstractConstructorDeclarerTestFixture : AbstractMethodDeclarerTestFixture<ConstructorBuilder, ConstructorInfo>
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the behavior of the Create() method,
         /// accepting a Type to override the constructor's
@@ -33,6 +35,8 @@ namespace Jolt.Testing.Test.CodeGeneration
                 () => CreateConstructorDeclarer(null, null).Declare(GetType()),
                 Throws.InvalidOperationException.With.Message.EqualTo(Resources.Error_OverrideCtorReturnType));
         }
+
+        #endregion
 
         #region internal methods ------------------------------------------------------------------
 
@@ -95,7 +99,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region protected data --------------------------------------------------------------------
+        #region protected fields ------------------------------------------------------------------
 
         protected static readonly MethodAttributes ConstructorAttributes =
             MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;

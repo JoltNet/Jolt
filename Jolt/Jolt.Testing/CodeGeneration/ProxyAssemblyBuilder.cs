@@ -139,34 +139,6 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region public properties -----------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the root namespace of the assembly.
-        /// </summary>
-        public string RootNamespace
-        {
-            get { return m_sRootNamespace; }
-        }
-
-        /// <summary>
-        /// Gets the full path of the proxy assembly.
-        /// </summary>
-        public string AssemblyFullPath
-        {
-            get { return m_sAssemblyFullPath; }
-        }
-
-        /// <summary>
-        /// Gets the configuration settings associated with this object.
-        /// </summary>
-        public ProxyAssemblyBuilderSettings Settings
-        {
-            get { return m_settings; }
-        }
-
-        #endregion
-
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
@@ -233,6 +205,34 @@ namespace Jolt.Testing.CodeGeneration
         public virtual XmlReader CreateXmlDocCommentReader()
         {
             return m_xmlDocComments.CreateReader();
+        }
+
+        #endregion
+
+        #region public properties -----------------------------------------------------------------
+
+        /// <summary>
+        /// Gets the root namespace of the assembly.
+        /// </summary>
+        public string RootNamespace
+        {
+            get { return m_sRootNamespace; }
+        }
+
+        /// <summary>
+        /// Gets the full path of the proxy assembly.
+        /// </summary>
+        public string AssemblyFullPath
+        {
+            get { return m_sAssemblyFullPath; }
+        }
+
+        /// <summary>
+        /// Gets the configuration settings associated with this object.
+        /// </summary>
+        public ProxyAssemblyBuilderSettings Settings
+        {
+            get { return m_settings; }
         }
 
         #endregion
@@ -327,9 +327,6 @@ namespace Jolt.Testing.CodeGeneration
             }
         }
 
-        #endregion
-
-        #region private class methods -------------------------------------------------------------
 
         /// <summary>
         /// Determines if a given method is defined as part of a property
@@ -449,10 +446,6 @@ namespace Jolt.Testing.CodeGeneration
         private readonly BindingFlags m_methodBindingFlags;
         private readonly BindingFlags m_propertyBindingFlags;
         private readonly BindingFlags m_eventBindingFlags;
-
-        #endregion
-
-        #region private class fields --------------------------------------------------------------
 
         private static readonly string DefaultNamespace = "Jolt.Testing.CodeGeneration";
         private static readonly string DefaultAssemblyFilename = DefaultNamespace + ".Proxies.dll";

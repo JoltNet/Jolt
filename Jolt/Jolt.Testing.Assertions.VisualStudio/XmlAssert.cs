@@ -143,7 +143,7 @@ namespace Jolt.Testing.Assertions.VisualStudio
 
         #endregion
 
-        #region internal data ---------------------------------------------------------------------
+        #region internal fields -------------------------------------------------------------------
 
         internal static IAssertionFactory Factory = new AssertionFactory();
 

@@ -18,6 +18,8 @@ namespace Jolt.Automata.Test
     /// </summary>
     internal static class FsmFactory
     {
+        #region internal methods ------------------------------------------------------------------
+
         /// <summary>
         /// Creates an FSM that accepts strings with a length divisible by three.
         /// </summary>
@@ -80,7 +82,12 @@ namespace Jolt.Automata.Test
             return fsm;
         }
 
+        #endregion
+
+        #region private fields --------------------------------------------------------------------
 
         private static readonly Predicate<char> TrueForAll = Functor.ToPredicate(Functor.TrueForAll<char>());
+
+        #endregion
     }
 }

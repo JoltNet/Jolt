@@ -13,7 +13,7 @@ namespace Jolt.Testing.Assertions
 {
     internal sealed class AssertionFactory : IAssertionFactory
     {
-        #region IAssertionFactory Members
+        #region IAssertionFactory members ---------------------------------------------------------
 
         /// <summary>
         /// <see cref="IAssertionFactory.CreateXmlValidityAssertion(XmlSchemaSet)"/>

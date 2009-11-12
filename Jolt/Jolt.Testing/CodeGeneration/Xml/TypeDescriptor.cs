@@ -59,7 +59,7 @@ namespace Jolt.Testing.CodeGeneration.Xml
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly Type m_realSubjectType;
         private readonly IDictionary<Type, Type> m_returnTypeOverrides;

@@ -22,6 +22,8 @@ namespace Jolt.Testing.Test.CodeGeneration
     [TestFixture]
     public sealed class XmlDocCommentBuilderBaseTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the class.
         /// </summary>
@@ -81,6 +83,8 @@ namespace Jolt.Testing.Test.CodeGeneration
                 }
             });
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

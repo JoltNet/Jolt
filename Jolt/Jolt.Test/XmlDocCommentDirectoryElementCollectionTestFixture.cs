@@ -110,7 +110,7 @@ namespace Jolt.Test
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly string ExpectedDirectoryName = @"\\server\name";
 

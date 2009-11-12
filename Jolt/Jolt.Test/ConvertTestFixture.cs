@@ -19,6 +19,8 @@ namespace Jolt.Test
     [TestFixture]
     public sealed class ConvertTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the behavior of the ToXmlDocCommentMember() method
         /// when the given parameter is a Type object.
@@ -450,6 +452,8 @@ namespace Jolt.Test
             Assert.That(Convert.ToTypeNames(Type.EmptyTypes), Is.Empty);
         }
 
+        #endregion
+
         #region private methods -------------------------------------------------------------------
 
         private void __f() { }
@@ -457,7 +461,7 @@ namespace Jolt.Test
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly BindingFlags NonPublicInstance = BindingFlags.Instance | BindingFlags.NonPublic;
         private static readonly BindingFlags NonPublicStatic = BindingFlags.Static | BindingFlags.NonPublic;

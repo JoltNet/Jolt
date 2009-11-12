@@ -23,6 +23,8 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
     [TestFixture]
     public sealed class XmlAssertTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the default static initialization of the class.
         /// </summary>
@@ -263,6 +265,8 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
             assertionFactory.VerifyAllExpectations();
             assertion.VerifyAllExpectations();
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

@@ -24,8 +24,6 @@ namespace Jolt.Testing.Test.CodeGeneration
     {
         #region public methods --------------------------------------------------------------------
 
-        #region initialization -------------------------------------------------------------------
-
         [SetUp]
         public override void Setup()
         {
@@ -33,7 +31,6 @@ namespace Jolt.Testing.Test.CodeGeneration
             m_defaultMethodBuilder = CurrentTypeBuilder.DefineMethod("__transientMethod", MethodAttributes.Public);
         }
 
-        #endregion
 
         /// <summary>
         /// Verifies the behavior of the DeclareMethod() method, specifically
@@ -185,7 +182,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private instance methods ----------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Asserts the expected behavior for the implementation's
@@ -258,9 +255,6 @@ namespace Jolt.Testing.Test.CodeGeneration
             CurrentTypeBuilder.CreateType();
         }
 
-        #endregion
-
-        #region private class methods -------------------------------------------------------------
 
         /// <summary>
         /// Asserts that the two given type arrays are equivalent (same parameters
@@ -311,7 +305,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private MethodBuilder m_defaultMethodBuilder;
 

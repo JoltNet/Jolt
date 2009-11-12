@@ -171,7 +171,7 @@ namespace Jolt.Automata.QuickGraph
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphMLTransition<>));
         private static BindingFlags PredicateBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;

@@ -160,7 +160,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Xml
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Retrieves a stream that references an embedded resource in

@@ -339,7 +339,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance methods ----------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Copies all public constructors from the real subject type to
@@ -645,9 +645,6 @@ namespace Jolt.Testing.CodeGeneration
             m_xmlDocCommentBuilder.AddProperty(property);
         }
 
-        #endregion
-
-        #region private class methods -------------------------------------------------------------
 
         /// <summary>
         /// Creates an XML doc comment builder from the given types,
@@ -814,8 +811,6 @@ namespace Jolt.Testing.CodeGeneration
 
         #region private fields --------------------------------------------------------------------
 
-        private static readonly ILog Log = LogManager.GetLogger(MethodInfo.GetCurrentMethod().DeclaringType);
-
         private readonly Type m_realSubjectType;
         private readonly FieldInfo m_realSubjectField;
         private readonly ModuleBuilder m_module;
@@ -824,6 +819,8 @@ namespace Jolt.Testing.CodeGeneration
         private readonly HashSet<MemberInfo> m_addedMembers;
         private readonly MethodDeclarerFactory m_methodDeclarerFactory;
         private readonly XmlDocCommentBuilderBase m_xmlDocCommentBuilder;
+
+        private static readonly ILog Log = LogManager.GetLogger(MethodInfo.GetCurrentMethod().DeclaringType);
 
         #endregion
     }

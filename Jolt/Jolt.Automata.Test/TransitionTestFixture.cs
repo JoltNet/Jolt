@@ -17,8 +17,6 @@ namespace Jolt.Automata.Test
     [TestFixture]
     public sealed class TransitionTestFixture
     {
-        #region public methods --------------------------------------------------------------------
-
         /// <summary>
         /// Verifies the construction of the transition class.
         /// </summary>
@@ -56,7 +54,6 @@ namespace Jolt.Automata.Test
             Assert.That(finalState, Is.SameAs(transition.Target));
             Assert.That(transitionPredicate, Is.SameAs(transition.TransitionPredicate));
         }
-
 
         /// <summary>
         /// Verifies the behavior of the Description property.
@@ -276,7 +273,5 @@ namespace Jolt.Automata.Test
 
             Assert.That(hashCode, Is.Not.EqualTo(trans_x.GetHashCode()));
         }
-
-        #endregion
     }
 }

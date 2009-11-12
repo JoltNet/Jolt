@@ -56,7 +56,7 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #endregion
 
-        #region AbstractXmlConstraint overrides ---------------------------------------------------
+        #region AbstractXmlConstraint members -----------------------------------------------------
 
         /// <summary>
         /// <see cref="AbstractXmlConstraint.Assert"/>
@@ -180,7 +180,7 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private XmlComparisonFlags m_comparisonFlags;
 

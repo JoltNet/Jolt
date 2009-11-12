@@ -1957,7 +1957,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Asserts that the given interface contains the expected
@@ -2283,7 +2283,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly string DefaultNamespace = "root";
         private static readonly BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;

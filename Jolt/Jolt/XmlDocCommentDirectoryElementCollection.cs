@@ -43,7 +43,7 @@ namespace Jolt
 
         #endregion
 
-        #region ConfigurationElementCollection implementation -------------------------------------
+        #region ConfigurationElementCollection members --------------------------------------------
 
         /// <summary>
         /// <see cref="ConfigurationElement.CreateNewElement()"/>

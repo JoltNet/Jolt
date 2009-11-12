@@ -28,8 +28,6 @@ namespace Jolt.Automata
     /// </summary>
     public static class FsmConverter
     {
-        #region public methods --------------------------------------------------------------------
-
         /// <summary>
         /// Serializes the given finite state machine to GraphML.
         /// </summary>
@@ -216,7 +214,5 @@ namespace Jolt.Automata
 
             algorithm.Generate(new TextWriterDotEngine(writer), String.Empty);
         }
-
-        #endregion
     }
 }

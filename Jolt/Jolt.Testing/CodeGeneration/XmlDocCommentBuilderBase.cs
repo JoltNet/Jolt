@@ -62,7 +62,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly XDocument m_docComments;
 

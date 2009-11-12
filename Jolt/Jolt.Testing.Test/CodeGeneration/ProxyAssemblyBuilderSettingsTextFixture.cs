@@ -151,7 +151,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class data ----------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly Random RandomNumbers = new Random();
 

@@ -21,12 +21,6 @@ namespace Jolt
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the object with the default configuration
-        /// settings.  Intended to be called from by the XML serializer.
-        /// </summary>
-        internal XmlDocCommentDirectoryElement() { }
-
-        /// <summary>
         /// Initializes the directory name for the configuration element.
         /// </summary>
         /// 
@@ -37,6 +31,12 @@ namespace Jolt
         {
             this["name"] = directoryName;
         }
+
+        /// <summary>
+        /// Initializes the object with the default configuration
+        /// settings.  Intended to be called from by the XML serializer.
+        /// </summary>
+        internal XmlDocCommentDirectoryElement() { }
 
         #endregion
 

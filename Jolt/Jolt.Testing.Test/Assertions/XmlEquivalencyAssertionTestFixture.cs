@@ -38,6 +38,8 @@ namespace Jolt.Testing.Test.Assertions
 
         #endregion
 
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the construction of the class; only the storage of a
         /// given XML comparison flags enumeration.
@@ -773,6 +775,8 @@ namespace Jolt.Testing.Test.Assertions
                 String.Format("/{0}:{1}/{0}:{1}", DefaultElementName.NamespaceName, DefaultElementName.LocalName)));
         }
 
+        #endregion
+
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
@@ -819,7 +823,7 @@ namespace Jolt.Testing.Test.Assertions
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly XName DefaultElementName;
         private static readonly XAttribute[] DefaultAttributes;

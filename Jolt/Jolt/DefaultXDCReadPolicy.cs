@@ -48,7 +48,7 @@ namespace Jolt
 
         #endregion
 
-        #region IXmlDocCommentReadPolicy implementation -------------------------------------------
+        #region IXmlDocCommentReadPolicy members --------------------------------------------------
 
         XElement IXmlDocCommentReadPolicy.ReadMember(string memberName)
         {

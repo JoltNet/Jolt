@@ -23,8 +23,6 @@ namespace Jolt.Testing.Test.CodeGeneration
     {
         #region public methods --------------------------------------------------------------------
 
-        #region intialization ---------------------------------------------------------------------
-
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
@@ -35,8 +33,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             m_proxyBuilder = module.DefineType("__transientType_proxy");
         }
 
-        #endregion
-
+        
         /// <summary>
         /// Verifies the behavior of the Create() method for constructing
         /// a non-generic interface method declarer.
@@ -189,7 +186,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Obtains the value of a given non-static, non-public property, from
@@ -214,7 +211,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private TypeBuilder m_interfaceBuilder;
         private TypeBuilder m_proxyBuilder;

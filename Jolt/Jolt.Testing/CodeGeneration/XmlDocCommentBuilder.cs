@@ -58,7 +58,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region XmlDocCommentBuilderBase method overrides -----------------------------------------
+        #region XmlDocCommentBuilderBase members --------------------------------------------------
 
         /// <summary>
         /// Adds the proxy and interface documentation for the given constructor to the builder.
@@ -145,6 +145,7 @@ namespace Jolt.Testing.CodeGeneration
             }
         }
 
+
         /// <summary>
         /// Replaces the XML doc comment encoded type name of a given type with the
         /// encoded type name of another given type within the given element.
@@ -184,7 +185,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly IXmlDocCommentReader m_reader;
         private readonly Type m_proxyType;

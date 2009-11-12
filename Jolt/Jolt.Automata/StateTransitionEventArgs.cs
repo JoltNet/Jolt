@@ -58,7 +58,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly string m_sourceState;
         private readonly TAlphabet m_inputSymbol;

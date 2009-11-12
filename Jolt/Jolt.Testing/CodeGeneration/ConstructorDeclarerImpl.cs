@@ -17,7 +17,7 @@ namespace Jolt.Testing.CodeGeneration
 {
     internal sealed class ConstructorDeclarerImpl : IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>
     {
-        #region IMethodDeclarerImpl implementation ------------------------------------------------
+        #region IMethodDeclarerImpl members -------------------------------------------------------
 
         /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(ConstructorBuilder, ConstructorInfo>"/>
         void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DeclareMethod(ConstructorBuilder builder, ConstructorInfo realSubjectTypeMethod, Type returnType)

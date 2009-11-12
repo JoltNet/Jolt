@@ -31,7 +31,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region AbstractMethodDeclarer implementation ---------------------------------------------
+        #region AbstractMethodDeclarer members ----------------------------------------------------
 
         /// <see cref="AbstractMethodDeclarer&lt;MethodBuilder, MethodInfo&gt;.Declare()"/>
         internal override MethodBuilder Declare()

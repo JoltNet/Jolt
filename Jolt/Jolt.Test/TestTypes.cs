@@ -127,7 +127,7 @@ namespace Jolt.Test.Types
         private static readonly Type ThisType = typeof(FieldType<,>);
     }
 
-    internal unsafe class PointerTestType<T>
+    internal unsafe abstract class PointerTestType<T>
     {
         public static ConstructorInfo Constructor { get { return ThisType.GetConstructors().Single(); } }
         public static PropertyInfo Property { get { return ThisType.GetProperties().Single(p => p.GetIndexParameters().Length == 3); } }
@@ -150,7 +150,7 @@ namespace Jolt.Test.Types
         private static readonly Type ThisType = typeof(PointerTestType<>);
     }
 
-    internal class __GenericTestType<R, S, T>
+    internal abstract class __GenericTestType<R, S, T>
     {
         public static MethodInfo NonGenericFunction { get { return ThisType.GetMethod("_NonGenericFunction"); } }
         public static MethodInfo NonGenericFunction_MixedArgs { get { return ThisType.GetMethod("_NonGenericFunction_MixedArgs"); } }
@@ -166,7 +166,7 @@ namespace Jolt.Test.Types
         public R _NonGenericFunction(S s, T t) { throw new ApplicationException("non-generic-function"); }
         public R _NonGenericFunction_MixedArgs(S s, T t, int i) { throw new ApplicationException("non-generic-function-mixed-args"); }
         public R _GenericFunction<A, B, C>(A a, B b, C c) { throw new ApplicationException("generic-function"); }
-        public R _GenericFunction_MixedArgs<A, B, C>(C c, A a, B b, T t, S s, int i) { throw new ApplicationException("generic-function"); }
+        public R _GenericFunction_MixedArgs<A, B, C>(C c, A a, B b, T t, S s, int i) { throw new ApplicationException("generic-function-mixed-args"); }
 
         public void _NoGenericParameters(int x) { throw new ApplicationException("non-generic-function-parameters"); }
         public void _NoParameters() { throw new ApplicationException("no-parameters"); }

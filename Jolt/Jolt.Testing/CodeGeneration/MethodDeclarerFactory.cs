@@ -106,15 +106,11 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly TypeBuilder m_interface;
         private readonly TypeBuilder m_proxy;
         private readonly IDictionary<MethodDeclarerTypes, CreateMethodDeclarerDelegate> m_methodDeclarerFactoryMethods;
-
-        #endregion
-
-        #region private class data ----------------------------------------------------------------
 
         private static readonly MethodAttributes InterfaceMethodAttributes =
             MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Abstract;

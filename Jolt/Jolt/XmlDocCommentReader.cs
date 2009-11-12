@@ -84,6 +84,33 @@ namespace Jolt
             : this(assembly, settings, DefaultFileProxy, createReadPolicy) { }
 
         /// <summary>
+        /// Initializes the reader with the given path of the doc comments.
+        /// </summary>
+        /// 
+        /// <param name="docCommentsFullPath">
+        /// The full path of the XML doc comments.
+        /// </param>
+        public XmlDocCommentReader(string docCommentsFullPath)
+            : this(docCommentsFullPath, CreateDefaultReadPolicy) { }
+
+        /// <summary>
+        /// Initializes the reader with the given path of the doc comments
+        /// and a user defined read-policy.
+        /// </summary>
+        /// 
+        /// <param name="docCommentsFullPath">
+        /// The full path of the XML doc comments.
+        /// </param>
+        /// 
+        /// <param name="createReadPolicy">
+        /// A factory method that accepts the full path to an XML doc comments file,
+        /// returning a user-defined read policy.
+        /// </param>
+        public XmlDocCommentReader(string docCommentsFullPath, CreateReadPolicyDelegate createReadPolicy)
+            : this(docCommentsFullPath, DefaultFileProxy, createReadPolicy(docCommentsFullPath)) { }
+
+
+        /// <summary>
         /// Initializes the reader by searching for a doc comments file
         /// that corresponds to the given assembly, from the given search paths.
         /// Configures the reader to use a user-defined read policy.
@@ -112,32 +139,6 @@ namespace Jolt
             m_fileProxy = fileProxy;
             m_docCommentsReadPolicy = createReadPolicy(m_docCommentsFullPath);
         }
-
-        /// <summary>
-        /// Initializes the reader with the given path of the doc comments.
-        /// </summary>
-        /// 
-        /// <param name="docCommentsFullPath">
-        /// The full path of the XML doc comments.
-        /// </param>
-        public XmlDocCommentReader(string docCommentsFullPath)
-            : this(docCommentsFullPath, CreateDefaultReadPolicy) { }
-
-        /// <summary>
-        /// Initializes the reader with the given path of the doc comments
-        /// and a user defined read-policy.
-        /// </summary>
-        /// 
-        /// <param name="docCommentsFullPath">
-        /// The full path of the XML doc comments.
-        /// </param>
-        /// 
-        /// <param name="createReadPolicy">
-        /// A factory method that accepts the full path to an XML doc comments file,
-        /// returning a user-defined read policy.
-        /// </param>
-        public XmlDocCommentReader(string docCommentsFullPath, CreateReadPolicyDelegate createReadPolicy)
-            : this(docCommentsFullPath, DefaultFileProxy, createReadPolicy(docCommentsFullPath)) { }
 
         /// <summary>
         /// Initializes the reader with the given path of the doc comments
@@ -172,26 +173,6 @@ namespace Jolt
 
         #endregion
 
-        #region public properties -----------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the full path to the XML doc comments file that is
-        /// read by the reader.
-        /// </summary>
-        public string FullPath
-        {
-            get { return m_docCommentsFullPath; }
-        }
-
-        /// <summary>
-        /// Gets the configuration settings associated with this object.
-        /// </summary>
-        public XmlDocCommentReaderSettings Settings
-        {
-            get { return m_settings; }
-        }
-
-        #endregion
 
         #region public methods --------------------------------------------------------------------
 
@@ -269,6 +250,27 @@ namespace Jolt
 
         #endregion
 
+        #region public properties -----------------------------------------------------------------
+
+        /// <summary>
+        /// Gets the full path to the XML doc comments file that is
+        /// read by the reader.
+        /// </summary>
+        public string FullPath
+        {
+            get { return m_docCommentsFullPath; }
+        }
+
+        /// <summary>
+        /// Gets the configuration settings associated with this object.
+        /// </summary>
+        public XmlDocCommentReaderSettings Settings
+        {
+            get { return m_settings; }
+        }
+
+        #endregion
+
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
@@ -328,7 +330,7 @@ namespace Jolt
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly IFile m_fileProxy;
         private readonly string m_docCommentsFullPath;

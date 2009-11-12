@@ -37,20 +37,7 @@ namespace Jolt.Testing.Test.CodeGeneration
 
         #endregion
 
-        #region protected properties --------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the TypeBuilder that is created for use within the scope
-        /// of a single unit test.
-        /// </summary>
-        protected TypeBuilder CurrentTypeBuilder
-        {
-            get { return m_defaultTypeBuilder; }
-        }
-
-        #endregion
-
-        #region protected class methods -----------------------------------------------------------
+        #region protected methods -----------------------------------------------------------------
 
         /// <summary>
         /// Creates a delegate that stores its method builder parameter in the given
@@ -92,6 +79,19 @@ namespace Jolt.Testing.Test.CodeGeneration
             // Required as a TypeBuilder created from a dynamic modules can not be queried prior
             // to being persisted or having its construction finalized.
             return (builder, method) => implementationArgs.Add(builder);
+        }
+
+        #endregion
+
+        #region protected properties --------------------------------------------------------------
+
+        /// <summary>
+        /// Gets the TypeBuilder that is created for use within the scope
+        /// of a single unit test.
+        /// </summary>
+        protected TypeBuilder CurrentTypeBuilder
+        {
+            get { return m_defaultTypeBuilder; }
         }
 
         #endregion

@@ -604,7 +604,7 @@ namespace Jolt.Automata.Test
 
         #endregion
 
-        #region private class methods -------------------------------------------------------------
+        #region private methods -------------------------------------------------------------------
 
         /// <summary>
         /// Asserts that a state is added to an FSM, if it does

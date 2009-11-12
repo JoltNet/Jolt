@@ -42,7 +42,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region IFsmEnumerator<TAlphabet> Members -------------------------------------------------
+        #region IFsmEnumerator<TAlphabet> members -------------------------------------------------
 
         /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.NextState"/>
         public bool NextState(TAlphabet inputSymbol)
@@ -81,7 +81,7 @@ namespace Jolt.Automata
 
         #endregion
 
-        #region private instance data -------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly IImplicitGraph<string, Transition<TAlphabet>> m_graph;
         private bool m_isInErrorState;

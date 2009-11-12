@@ -21,6 +21,8 @@ namespace Jolt.Testing.Assertions.NUnit.Test
     [TestFixture]
     public sealed class XmlEqualityConstraintTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the public construction of the class.
         /// </summary>
@@ -179,6 +181,8 @@ namespace Jolt.Testing.Assertions.NUnit.Test
             assertion.VerifyAllExpectations();
             writer.VerifyAllExpectations();
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

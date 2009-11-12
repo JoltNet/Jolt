@@ -19,6 +19,8 @@ namespace Jolt.Test.Functional
     [TestFixture]
     public sealed class CompositeTestFixture
     {
+        #region public methods --------------------------------------------------------------------
+
         /// <summary>
         /// Verifies the behavior of the First() method, for functors
         /// accepting one argument, when composing with an auxillary functor
@@ -2382,6 +2384,8 @@ namespace Jolt.Test.Functional
             innerFunction.VerifyAllExpectations();
         }
 
+        #endregion
+
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
@@ -2597,7 +2601,7 @@ namespace Jolt.Test.Functional
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private static readonly uint InnerFunctionResult = 0xdeadbeef;
 

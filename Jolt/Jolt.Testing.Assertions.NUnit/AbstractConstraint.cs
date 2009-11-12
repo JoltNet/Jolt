@@ -32,7 +32,7 @@ namespace Jolt.Testing.Assertions.NUnit
     /// </remarks>
     public abstract class AbstractConstraint<TActual, TAssertionResult> : Constraint
     {
-        #region Constraint overrides --------------------------------------------------------------
+        #region Constraint members ----------------------------------------------------------------
 
         /// <summary>
         /// Evaluates the constraint as per the concrete evaluation
@@ -109,13 +109,13 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #endregion
 
-        #region internal data ---------------------------------------------------------------------
+        #region internal fields -------------------------------------------------------------------
 
         internal static readonly IAssertionFactory Factory = new AssertionFactory();
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private string m_assertionErrorMessage;
  

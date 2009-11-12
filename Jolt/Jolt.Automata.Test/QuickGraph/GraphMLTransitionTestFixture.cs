@@ -23,7 +23,7 @@ namespace Jolt.Automata.Test.QuickGraph
     [TestFixture]
     public sealed class GraphMLTransitionTestFixture
     {
-        #region initialization --------------------------------------------------------------------
+        #region public methods --------------------------------------------------------------------
 
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -31,7 +31,6 @@ namespace Jolt.Automata.Test.QuickGraph
             BasicConfigurator.Configure();
         }
 
-        #endregion
 
         /// <summary>
         /// Verifies the construction of the class using
@@ -284,6 +283,8 @@ namespace Jolt.Automata.Test.QuickGraph
 
             AssertToTransition(graphMLtransition);
         }
+
+        #endregion
 
         #region private methods -------------------------------------------------------------------
 

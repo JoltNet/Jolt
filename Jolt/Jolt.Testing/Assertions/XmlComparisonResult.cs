@@ -104,7 +104,6 @@ namespace Jolt.Testing.Assertions
             get { return m_xPathHint; }
         }
 
-
         #endregion
 
         #region private methods -------------------------------------------------------------------
@@ -137,7 +136,7 @@ namespace Jolt.Testing.Assertions
 
         #endregion
 
-        #region private data ----------------------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly bool m_comparisonResult;
         private readonly string m_message;
