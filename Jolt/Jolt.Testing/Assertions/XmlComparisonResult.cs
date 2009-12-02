@@ -14,27 +14,30 @@ using System.Xml.Linq;
 namespace Jolt.Testing.Assertions
 {
     /// <summary>
-    /// Denotes an assertion failure during the execution of an
-    /// XML comparison assertion.
+    /// Contains metadata describing the result of executing an XML assertion.
     /// </summary>
     public sealed class XmlComparisonResult
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XmlComparisonResult"/>
-        /// class.
+        /// Creates a a new instance of the <see cref="XmlComparisonResult"/> class.
         /// </summary>
+        /// 
+        /// <remarks>
+        /// Initializes <see cref="Result"/> to true, <see cref="Message"/> to the empty string,
+        /// <see cref="ExpectedElement"/> to null, <see cref="ActualElement"/> to null,
+        /// and <see cref="XPathHint"/> to null.
+        /// </remarks>
         public XmlComparisonResult() : this (true, String.Empty, null, null) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XmlComparisonResult"/>
-        /// class.
+        /// Creates a new instance of the <see cref="XmlComparisonResult"/> class, initializing
+        /// the values of its attributes.
         /// </summary>
         /// 
         /// <param name="comparisonResult">
-        /// Denotes the result of the comparison of hte given elements, as prescribed
-        /// by the configuration of the assertion that created the comparison result.
+        /// The result of the comparison.
         /// </param>
         /// 
         /// <param name="message">
@@ -42,12 +45,16 @@ namespace Jolt.Testing.Assertions
         /// </param>
         /// 
         /// <param name="expected">
-        /// The expected <see cref="XElement"/> referred to by the comparison.
+        /// The expected <see cref="System.Xml.XLinq.XElement"/> operated upon by the comparison.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The actual <see cref="XElement"/> referred to by the comparison.
+        /// The actual <see cref="System.Xml.XLinq.XElement"/> operated upon by the comparison.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Initializes <see cref="XPathHint"/> to an XPath expression that locates <paramref name="actual"/>.
+        /// </remarks>
         public XmlComparisonResult(bool comparisonResult, string message, XElement expected, XElement actual)
         {
             m_comparisonResult = comparisonResult;
@@ -62,9 +69,7 @@ namespace Jolt.Testing.Assertions
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Gets the result of the comparison of the <seealso cref="ExpectedElement"/>
-        /// and <seealso cref="ActualElement"/>, as prescribed by the configuration of the
-        /// assertion that created the comparison result.
+        /// Gets the result of the comparison.
         /// </summary>
         public bool Result
         {
@@ -80,7 +85,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Gets the expected <see cref="XElement"/> operated upon by the comparison.
+        /// Gets the expected <see cref="System.Xml.XLinq.XElement"/> operated upon by the comparison.
         /// </summary>
         public XElement ExpectedElement
         {
@@ -88,7 +93,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Gets the actual <see cref="XElement"/> operated upon by the comparison.
+        /// Gets the actual <see cref="System.Xml.XLinq.XElement"/> operated upon by the comparison.
         /// </summary>
         public XElement ActualElement
         {
@@ -96,8 +101,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Gets an approximate XPath expression for <seealso cref="ActualElement"/>,
-        /// suggesting which element may have been operated upon by the comparison.
+        /// Gets an approximate XPath expression for locating <see cref="ActualElement"/>,
         /// </summary>
         public string XPathHint
         {
@@ -109,12 +113,16 @@ namespace Jolt.Testing.Assertions
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Derives an XPath expression for the given element.
+        /// Derives an XPath expression for a given <see cref="System.Xml.XLinq.XElement"/>.
         /// </summary>
         /// 
         /// <param name="element">
-        /// The element for which an XPath expression is computed.
+        /// The <see cref="System.Xml.XLinq.XElement"/> for which an XPath expression is computed.
         /// </param>
+        /// 
+        /// <returns>
+        /// An approximate XPath expression for locating <paramref name="element"/>.
+        /// </returns>
         private static string CreateXPathExpressionFor(XElement element)
         {
             StringBuilder xPathExpression = new StringBuilder();

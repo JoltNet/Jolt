@@ -173,9 +173,9 @@ namespace Jolt.Functional
     /// of the type specified by the <paramref name="TResult" /> parameter.
     /// </summary>
     /// 
-    /// <returns>
-    /// The return value of the method that this delegate encapsulates.
-    /// </returns>
+    /// <typeparam name="TResult">
+    /// The type of the return value encapsulated by this delegate..
+    /// </typeparam>
     /// 
     /// <typeparam name="T1">
     /// The type of the first parameter of the method that this delegate encapsulates.
@@ -223,9 +223,9 @@ namespace Jolt.Functional
     /// of the type specified by the <paramref name="TResult" /> parameter.
     /// </summary>
     /// 
-    /// <returns>
-    /// The return value of the method that this delegate encapsulates.
-    /// </returns>
+    /// <typeparam name="TResult">
+    /// The type of the return value encapsulated by this delegate..
+    /// </typeparam>
     /// 
     /// <typeparam name="T1">
     /// The type of the first parameter of the method that this delegate encapsulates.
@@ -281,9 +281,9 @@ namespace Jolt.Functional
     /// of the type specified by the <paramref name="TResult" /> parameter.
     /// </summary>
     /// 
-    /// <returns>
-    /// The return value of the method that this delegate encapsulates.
-    /// </returns>
+    /// <typeparam name="TResult">
+    /// The type of the return value encapsulated by this delegate..
+    /// </typeparam>
     /// 
     /// <typeparam name="T1">
     /// The type of the first parameter of the method that this delegate encapsulates.

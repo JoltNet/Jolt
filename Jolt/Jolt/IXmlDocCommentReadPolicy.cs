@@ -12,19 +12,23 @@ using System.Xml.Linq;
 namespace Jolt
 {
     /// <summary>
-    /// Defines an interface for retrieving XML data from any
+    /// Defines a contract for retrieving XML data from any
     /// XML doc comment data store.
     /// </summary>
     public interface IXmlDocCommentReadPolicy
     {
         /// <summary>
-        /// Creates an XML element containing the member element
-        /// with the given name from an XML doc comment data store.
+        /// Reads the XML indexed by the member of the given name from the
+        /// underlying store.
         /// </summary>
         /// 
         /// <param name="memberName">
-        /// The name of the member element to retrieve.
+        /// The name of the member for which the XML doc comments are read.
         /// </param>
+        /// 
+        /// <returns>
+        /// An <see cref="XElement"/> containing the requested XML doc comments.
+        /// </returns>
         XElement ReadMember(string memberName);
     }
 }

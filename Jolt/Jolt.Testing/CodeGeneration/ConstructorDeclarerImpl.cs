@@ -15,15 +15,24 @@ using Jolt.Testing.Properties;
 
 namespace Jolt.Testing.CodeGeneration
 {
+    /// <summary>
+    /// Implements the <see cref="IMethodDeclarerImpl"/> contract for
+    /// <see cref="System.Reflection.ConstructorInfo"/> types.
+    /// </summary>
     internal sealed class ConstructorDeclarerImpl : IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>
     {
         #region IMethodDeclarerImpl members -------------------------------------------------------
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(ConstructorBuilder, ConstructorInfo>"/>
+        /// <summary>
+        /// Not supported since declaration and definition of a <see cref="System.Reflection.ConstructorInfo"/>
+        /// occur when a <see cref="System.Reflection.Emit.ConstructorBuilder"/> is created.
+        /// </summary>
+        ///
+        /// <exception cref="System.NotSupportedException">
+        /// Any invocation.
+        /// </exception>
         void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DeclareMethod(ConstructorBuilder builder, ConstructorInfo realSubjectTypeMethod, Type returnType)
         {
-            // The requested method is already declared as part of the
-            // constructor of the given constructor builder.
             throw new NotSupportedException(String.Format(Resources.Error_DelayedConstructorDeclaration, builder.DeclaringType.Name));
         }
 

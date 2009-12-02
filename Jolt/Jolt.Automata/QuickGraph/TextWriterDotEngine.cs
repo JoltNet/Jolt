@@ -16,14 +16,15 @@ namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
     /// Implements the IDotEngine interface and provides a GraphViz
-    /// dot engine capable of writing data to a TextWriter.
+    /// dot engine capable of writing data to a <see cref="System.IO.TextWriter"/>.
     /// </summary>
     internal sealed class TextWriterDotEngine : IDotEngine
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the dot engine with the given TextWriter.
+        /// Creates a new instance of the <see cref="TextWriterDotEngine"/> class,
+        /// intializing the object with the given <see cref="System.IO.TextWriter"/>.
         /// </summary>
         /// 
         /// <param name="writer">
@@ -39,9 +40,10 @@ namespace Jolt.Automata.QuickGraph
         #region IDotEngine members ----------------------------------------------------------------
 
         /// <summary>
-        /// Writes the given GraphViz data to the configured TextWriter.
-        /// <seealso cref="IDotEngine.Run"/>
+        /// Writes the given GraphViz data to the configured <see cref="System.IO.TextWriter"/>.
         /// </summary>
+        /// 
+        /// <seealso cref="IDotEngine.Run"/>
         string IDotEngine.Run(GraphvizImageType imageType, string dot, string outputFileName)
         {
             m_writer.Write(dot);

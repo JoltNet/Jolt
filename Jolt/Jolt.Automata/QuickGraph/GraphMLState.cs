@@ -13,21 +13,21 @@ using System.Xml.Serialization;
 namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
-    /// Represents the state object used by the FiniteStateMachine for
-    /// [de]serialization to/from GraphML.
+    /// Implements a type to enable the [de]serialization of a state object to/from GraphML.
     /// </summary>
     internal sealed class GraphMLState
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Default constructor.  Intializes all attributes
-        /// to their default values.
+        /// Creates a new instance of the <see cref="GraphMLState"/> class, initializing all
+        /// attributes to their default values.
         /// </summary>
         internal GraphMLState() { }
 
         /// <summary>
-        /// Initializes the attributes of the class.
+        /// Creates a new instance of the <see cref="GraphMLState"/> class,
+        /// initializing its attributes to the given values.
         /// </summary>
         /// 
         /// <param name="name">

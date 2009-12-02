@@ -20,8 +20,7 @@ namespace Jolt.Testing.CodeGeneration
 
 
     /// <summary>
-    /// Enumerates the AbstractMethodDeclarer types specialized
-    /// for creating methods.
+    /// Enumerates the concrete <see cref="AbstractMethodDeclarer"/> types.
     /// </summary>
     internal enum MethodDeclarerTypes
     {
@@ -31,24 +30,25 @@ namespace Jolt.Testing.CodeGeneration
 
 
     /// <summary>
-    /// The MethodDeclarerFactory class provides methods for constructing
-    /// concrete instances of the AbstractMethodDeclarer family of types.
+    /// Defines a factory class for constructing concrete instances of
+    /// the <see cref="AbstractMethodDeclarer"/> family of types.
     /// </summary>
     internal sealed class MethodDeclarerFactory
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the factory with the TypeBuilder instances required for
-        /// creating AbstractMethodDeclarer types.
+        /// Creates a new instance of the <see cref="MethodDeclarerFactory"/> class,
+        /// intializing the factory with the factory-method required
+        /// <see cref="System.Reflection.Emit.TypeBuilder"/> instances.
         /// </summary>
         /// 
         /// <param name="interfaceBuilder">
-        /// The type builder that represents the proxy's interface.
+        /// The <see cref="System.Reflection.Emit.TypeBuilder"/> that represents the proxy interface type.
         /// </param>
         /// 
         /// <param name="proxyBuilder">
-        /// The type builder that represents the interface to the proxy.
+        /// The <see cref="System.Reflection.Emit.TypeBuilder"/> that represents the the proxy type.
         /// </param>
         internal MethodDeclarerFactory(TypeBuilder interfaceBuilder, TypeBuilder proxyBuilder)
         {
@@ -72,28 +72,40 @@ namespace Jolt.Testing.CodeGeneration
         #region internal methods ------------------------------------------------------------------
 
         /// <summary>
-        /// Creates a method declarer for a given type
+        /// Creates new instance of an <see cref="AbstractMethodDeclarer"/> class,
+        /// corresponding to a given <see cref="MethodDeclarerTypes"/> value.
         /// </summary>
         /// 
         /// <param name="typeId">
-        /// The type of method declarer to create.
+        /// The <see cref="MethodDeclarerTypes"/> value denoting the concrete type to create.
         /// </param>
         /// 
         /// <param name="realSubjectTypeMethod">
-        /// The method used by the created method declarer.
+        /// The <see cref="System.Reflection.MethodInfo"/> object used to initialize
+        /// the method declarer.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new <see cref="AbstractMethodDeclarer"/>, specialized to create methods.
+        /// </returns>
         internal AbstractMethodDeclarer<MethodBuilder, MethodInfo> Create(MethodDeclarerTypes typeId, MethodInfo realSubjectTypeMethod)
         {
             return m_methodDeclarerFactoryMethods[typeId](realSubjectTypeMethod);
         }
 
         /// <summary>
-        /// Creates a constructor declarer for the proxy type.
+        /// Creates a new instance of an <see cref="AbstractMethodDeclarer"/> class,
+        /// specialized to create constructors for a proxy type.
         /// </summary>
         /// 
         /// <param name="realSubjectTypeConstructor">
-        /// The constructor used by the created constructor declarer.
+        /// The <see cref="System.Reflection.ConstructorInfo"/> object used to initialize
+        /// the constructor declarer.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new <see cref="AbstractMethodDeclarer"/>, specialized to create constructors.
+        /// </returns>
         internal AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo> Create(ConstructorInfo realSubjectTypeConstructor)
         {
             if (DeclarationHelper.ContainsGenericParameters(realSubjectTypeConstructor.GetParameters()))

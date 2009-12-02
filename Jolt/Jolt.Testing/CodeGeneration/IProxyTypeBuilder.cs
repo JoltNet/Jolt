@@ -15,7 +15,7 @@ namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
     /// Internal interface to support testing of objects that
-    /// have/use a ProxyTypeBuilder.
+    /// have/use a <see cref="ProxyTypeBuilder"/>.
     /// </summary>
     internal interface IProxyTypeBuilder
     {

@@ -14,12 +14,12 @@ using QuickGraph.Glee;
 namespace Jolt.Automata.Glee
 {
     /// <summary>
-    /// Converts a FiniteStateMachine class to a Microsoft GLEE representation.
+    /// Provides methods for converting a <see cref="FiniteStateMachine"/> to a Microsoft GLEE representation.
     /// </summary>
     public static class FsmConverter
     {
         /// <summary>
-        /// Converts the given finite state machine to a Microsoft GLEE representation.
+        /// Converts the given <see cref="FiniteStateMachine"/> to a Microsoft GLEE representation.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -28,8 +28,12 @@ namespace Jolt.Automata.Glee
         /// </typeparam>
         ///
         /// <param name="fsm">
-        /// The finite state machine to convert.
+        /// The <see cref="FiniteStateMachine"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A GLEE graph containing the vertices and edges from <paramref name="fsm"/>.
+        /// </returns>
         public static Graph ToGleeGraph<TAlphabet>(FiniteStateMachine<TAlphabet> fsm)
         {
             GleeGraphPopulator<string, Transition<TAlphabet>> populator = fsm.AsGraph.CreateGleePopulator();

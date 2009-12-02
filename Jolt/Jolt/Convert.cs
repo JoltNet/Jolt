@@ -15,28 +15,29 @@ using System.Text;
 namespace Jolt
 {
     /// <summary>
-    /// Provides methods to convert one type to another.
+    /// Provides methods to convert between representations of a type.
     /// </summary>
     public static class Convert
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the class' static state.
+        /// Initializes the static state of the <see cref="Convert"/> class.
         /// </summary>
         static Convert()
         {
             EmptyParameterList = new ParameterInfo[0];
 
-            XDCMemberPrefixes = new Dictionary<Type, string>();
-            XDCMemberPrefixes.Add(typeof(Type), "T:");
-            XDCMemberPrefixes.Add(typeof(EventInfo), "E:");
-            XDCMemberPrefixes.Add(typeof(PropertyInfo), "P:");
-            XDCMemberPrefixes.Add(typeof(FieldInfo), "F:");
-
             string methodPrefix = "M:";
-            XDCMemberPrefixes.Add(typeof(MethodInfo), methodPrefix);
-            XDCMemberPrefixes.Add(typeof(ConstructorInfo), methodPrefix);
+            XDCMemberPrefixes = new Dictionary<Type, string>
+            {
+                { typeof(Type), "T:" },
+                { typeof(EventInfo), "E:" },
+                { typeof(PropertyInfo), "P:" },
+                { typeof(FieldInfo), "F:" },
+                { typeof(MethodInfo), methodPrefix },
+                { typeof(ConstructorInfo), methodPrefix }
+            };
         }
 
         #endregion
@@ -44,13 +45,17 @@ namespace Jolt
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Creates a string representing a given type in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Type"/>.
         /// </summary>
         /// 
         /// <param name="type">
-        /// The type from which the string is created.
+        /// The <see cref="System.Type"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(Type type)
         {
             StringBuilder builder = new StringBuilder();
@@ -60,91 +65,131 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates a string representing a given event in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Reflection.EventInfo"/>.
         /// </summary>
         /// 
-        /// <param name="eventInfo">
-        /// The event from which the string is created.
+        /// <param name="type">
+        /// The <see cref="System.Reflection.EventInfo"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(EventInfo eventInfo)
         {
             return ToXmlDocCommentMember(eventInfo, EmptyParameterList).ToString();
         }
 
         /// <summary>
-        /// Creates a string representing a given field in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Reflection.FieldInfo"/>.
         /// </summary>
         /// 
-        /// <param name="field">
-        /// The field from which the string is created.
+        /// <param name="type">
+        /// The <see cref="System.Reflection.FieldInfo"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(FieldInfo field)
         {
             return ToXmlDocCommentMember(field, EmptyParameterList).ToString();
         }
 
         /// <summary>
-        /// Creates a string representing a given property in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Reflection.PropertyInfo"/>.
         /// </summary>
         /// 
-        /// <param name="property">
-        /// The property from which the string is created.
+        /// <param name="type">
+        /// The <see cref="System.Reflection.PropertyInfo"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(PropertyInfo property)
         {
             return ToXmlDocCommentMember(property, property.GetIndexParameters()).ToString();
         }
 
         /// <summary>
-        /// Creates a string representing a given constructor in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Reflection.ConstructorInfo"/>.
         /// </summary>
         /// 
-        /// <param name="constructor">
-        /// The constructor from which the string is created.
+        /// <param name="type">
+        /// The <see cref="System.Reflection.ConstructorInfo"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(ConstructorInfo constructor)
         {
-            return ToXmlDocCommentMember(constructor, constructor.GetParameters()).ToString();
+            int namePosition;
+            StringBuilder builder = ToXmlDocCommentMember<ConstructorInfo>(constructor, constructor.GetParameters(), out namePosition);
+            builder[namePosition] = '#';   // Replaces . with # in ctor name.
+
+            return builder.ToString();
         }
 
         /// <summary>
-        /// Creates a string representing a given method in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given <see cref="System.Reflection.MethodInfo"/>.
         /// </summary>
         /// 
-        /// <param name="method">
-        /// The method from which the string is created.
+        /// <param name="type">
+        /// The <see cref="System.Reflection.MethodInfo"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         public static string ToXmlDocCommentMember(MethodInfo method)
         {
-            return ToXmlDocCommentMember(method, method.GetParameters()).ToString();
+            StringBuilder builder = ToXmlDocCommentMember<MethodInfo>(method, method.GetParameters());
+
+            if (Array.BinarySearch(ConversionOperatorNames, method.Name) >= 0)
+            {
+                builder.Append('~');
+                AppendXDCParameterTypesTo(builder, new[] { method.ReturnType });
+            }
+
+            return builder.ToString();
         }
 
         /// <summary>
-        /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each parameter.
+        /// Retrieves the type of each <see cref="System.Reflection.ParameterInfo"/> object
+        /// from the given array.
         /// </summary>
         /// 
         /// <param name="parameters">
         /// The parameters to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// An array of <see cref="System.Type"/> objects representing the
+        /// corresponding parameter types.
+        /// </returns>
         public static Type[] ToParameterTypes(ParameterInfo[] parameters)
         {
             return ToParameterTypes(parameters, Type.EmptyTypes, Type.EmptyTypes);
         }
 
         /// <summary>
-        /// Converts an array of Type types to an array of
-        /// strings repesenting the names of each parameter.
+        /// Retrieves the name of each <see cref="System.Type"/> object from the given array.
         /// </summary>
         /// 
         /// <param name="types">
         /// The types to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// An array of strings representing the corresponding type names.
+        /// </returns>
         public static string[] ToTypeNames(Type[] types)
         {
             return Array.ConvertAll(types, type => type.Name);
@@ -155,10 +200,8 @@ namespace Jolt
         #region internal methods ------------------------------------------------------------------
 
         /// <summary>
-        /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each parameter.  Refers to
-        /// the type from a generic type argument collection when a
-        /// parameter is deemed to be generic.
+        /// Retrieves the type of each <see cref="System.Reflection.ParameterInfo"/> object
+        /// from the given array.
         /// </summary>
         /// 
         /// <param name="parameters">
@@ -168,16 +211,24 @@ namespace Jolt
         /// <param name="genericTypeArguments">
         /// The generic arguments from the declaring type of the parameter's method.
         /// </param>
+        /// 
+        /// <returns>
+        /// An array of <see cref="System.Type"/> objects representing the
+        /// corresponding parameter types.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Substitutes the corresponding type from the given generic type argument array when a
+        /// parameter type is deemed to be a generic type argument.
+        /// </remarks>
         internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments)
         {
             return ToParameterTypes(parameters, genericTypeArguments, Type.EmptyTypes);
         }
 
         /// <summary>
-        /// Converts an array of ParameterInfo types to an array of
-        /// types repesenting the type of each parameter.  Refers to
-        /// the type from a generic type parameter collection when a
-        /// parameter is deemed to be generic.
+        /// Retrieves the type of each <see cref="System.Reflection.ParameterInfo"/> object
+        /// from the given array.
         /// </summary>
         /// 
         /// <param name="parameters">
@@ -191,9 +242,19 @@ namespace Jolt
         /// <param name="genericMethodArguments">
         /// The generic arguments from the parameter's method.
         /// </param>
+        /// 
+        /// <returns>
+        /// An array of <see cref="System.Type"/> objects representing the
+        /// corresponding parameter types.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Substitutes the corresponding type from the given generic argument arrays when a
+        /// parameter type is deemed to be a generic type/method argument.
+        /// </remarks>
         internal static Type[] ToParameterTypes(ParameterInfo[] parameters, Type[] genericTypeArguments, Type[] genericMethodArguments)
         {
-            return Array.ConvertAll(parameters, methodParam => ToParameterType(methodParam, genericTypeArguments, genericMethodArguments));
+            return Array.ConvertAll(parameters, methodParam => ToMethodSignatureType(methodParam.ParameterType, genericTypeArguments, genericMethodArguments));
         }
 
         /// <summary>
@@ -237,32 +298,13 @@ namespace Jolt
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Converts a ParameterInfo to the type that repesents the
-        /// type of the parameter.  Refers to the type from a generic
-        /// type parameter collection when a parameter is deemed to be
-        /// generic.
+        /// Creates the XML doc comment member reference string
+        /// for a given type.
         /// </summary>
         /// 
-        /// <param name="parameter">
-        /// The parameter to convert.
-        /// </param>
-        /// 
-        /// <param name="genericTypeArguments">
-        /// The generic arguments from the declaring type of the parameter's method.
-        /// </param>
-        /// 
-        /// <param name="genericMethodArguments">
-        /// The generic arguments from the parameter's method.
-        /// </param>
-        private static Type ToParameterType(ParameterInfo parameter, Type[] genericTypeArguments, Type[] genericMethodArguments)
-        {
-            return ToMethodSignatureType(parameter.ParameterType, genericTypeArguments, genericMethodArguments);
-        }
-
-        /// <summary>
-        /// Creates a string representing a given type member in an
-        /// XML doc comment member element.
-        /// </summary>
+        /// <typeparam name="TMember">
+        /// The type of the member to convert.
+        /// </typeparam>
         /// 
         /// <param name="member">
         /// The member from which the string is created.
@@ -271,6 +313,10 @@ namespace Jolt
         /// <param name="memberParameters">
         /// The parameters to the member, if any.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         private static StringBuilder ToXmlDocCommentMember<TMember>(TMember member, ParameterInfo[] memberParameters)
             where TMember : MemberInfo
         {
@@ -279,9 +325,14 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates a string representing a given type member in an
-        /// XML doc comment member element.
+        /// Creates the XML doc comment member reference string
+        /// for a given type, indexing the starting position of the
+        /// converted member name.
         /// </summary>
+        /// 
+        /// <typeparam name="TMember">
+        /// The type of the member to convert.
+        /// </typeparam>
         /// 
         /// <param name="member">
         /// The member from which the string is created.
@@ -295,6 +346,10 @@ namespace Jolt
         /// The position in the resulting string that indexes that starting
         /// position of the member name.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing the requested member reference.
+        /// </returns>
         private static StringBuilder ToXmlDocCommentMember<TMember>(TMember member, ParameterInfo[] memberParameters, out int namePosition)
             where TMember : MemberInfo
         {
@@ -317,63 +372,25 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates a string representing a given ConstructorInfo in an
-        /// XML doc comment member element.
-        /// </summary>
-        /// 
-        /// <param name="constructor">
-        /// The constructor from which the string is created.
-        /// </param>
-        /// 
-        /// <param name="memberParameters">
-        /// The parameters for the constructor, if any.
-        /// </param>
-        private static StringBuilder ToXmlDocCommentMember(ConstructorInfo constructor, ParameterInfo[] constructorParameters)
-        {
-            int namePosition;
-            StringBuilder builder = ToXmlDocCommentMember<ConstructorInfo>(constructor, constructorParameters, out namePosition);
-            builder[namePosition] = '#';   // Replaces . with # in ctor name.
-
-            return builder;
-        }
-
-        /// <summary>
-        /// Creates a string representing a given MethodInfo in an
-        /// XML doc comment member element.
-        /// </summary>
-        /// 
-        /// <param name="constructor">
-        /// The constructor from which the string is created.
-        /// </param>
-        /// 
-        /// <param name="memberParameters">
-        /// The parameters for the constructor, if any.
-        /// </param>
-        private static StringBuilder ToXmlDocCommentMember(MethodInfo method, ParameterInfo[] methodParameters)
-        {
-            StringBuilder builder = ToXmlDocCommentMember<MethodInfo>(method, methodParameters);
-
-            if (Array.BinarySearch(ConversionOperatorNames, method.Name) >= 0)
-            {
-                builder.Append('~');
-                AppendXDCParameterTypesTo(builder, new[] { method.ReturnType });
-            }
-
-            return builder;
-        }
-
-        /// <summary>
-        /// Creates the XML doc comment representation of a type name
-        /// including a quantifier symbol for generic arguments.
+        /// Appends the XML doc comment representation of the full name of the given
+        /// <see cref="System.Type"/> to a given <see cref="System.Text.StringBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The StringBuilder to which the type name is appended.
+        /// The <see cref="System.Text.StringBuilder"/> to which the type name is appended.
         /// </param>
         /// 
         /// <param name="type">
-        /// The type whose name is created.
+        /// The type whose name is appended.
         /// </param>
+        /// 
+        /// <returns>
+        /// The <see cref="System.Text.StringBuilder"/> parameter, modified by the appended name.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Includes the appropriate symbol when the given type is generic.
+        /// </remarks>
         private static StringBuilder AppendXDCFullTypeNameTo(StringBuilder builder, Type type)
         {
             if (type.IsGenericType) { type = type.GetGenericTypeDefinition(); }
@@ -381,17 +398,25 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates the XML doc comment representation of a type name,
-        /// excluding a quantifier symbol for generic arguments.
+        /// Appends the XML doc comment representation of the abbreviated name of the given
+        /// <see cref="System.Type"/> to a given <see cref="System.Text.StringBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The StringBuilder to which the type name is appended.
+        /// The <see cref="System.Text.StringBuilder"/> to which the type name is appended.
         /// </param>
         /// 
         /// <param name="type">
-        /// The type whose name is created.
+        /// The type whose name is appended.
         /// </param>
+        /// 
+        /// <returns>
+        /// The <see cref="System.Text.StringBuilder"/> parameter, modified by the appended name.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Does not include the appropriate symbol when the given type is generic.
+        /// </remarks>
         private static StringBuilder AppendXDCTypeNameTo(StringBuilder builder, Type type)
         {
             StringBuilder typeNameBuilder = new StringBuilder();
@@ -406,18 +431,25 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates a string representation of the given type's
-        /// full name, replacing all nested type qualifier symbols
-        /// (+) with a scope resolution symbol (.).
+        /// Appends the XML doc comment representation of the normalized name of the given
+        /// <see cref="System.Type"/> to a given <see cref="System.Text.StringBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The StringBuilder to which the type name is appended.
+        /// The <see cref="System.Text.StringBuilder"/> to which the type name is appended.
         /// </param>
         /// 
         /// <param name="type">
-        /// The type whose name is normalized.
+        /// The type whose name is normalized and appended.
         /// </param>
+        /// 
+        /// <returns>
+        /// The <see cref="System.Text.StringBuilder"/> parameter, modified by the appended name.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Handles appending of both top-level and nested type types.
+        /// </remarks>
         private static StringBuilder AppendNormalizedXDCTypeNameTo(StringBuilder builder, Type type)
         {
             return type.IsNested ?
@@ -426,17 +458,21 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Appends the XML doc comment representation of a list of
-        /// given parameters to the given string builder.
+        /// Appends the XML doc comment representation of the name of each given
+        /// <see cref="System.Type"/> to a given <see cref="System.Text.StringBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The builder to append to.
+        /// The <see cref="System.Text.StringBuilder"/> to which the type names are appended.
         /// </param>
         /// 
-        /// <param name="parameters">
-        /// The parameter types to convert and append.
+        /// <param name="parameterTypes">
+        /// The types whose names are appended.
         /// </param>
+        /// 
+        /// <returns>
+        /// The <see cref="System.Text.StringBuilder"/> parameter, modified by the appended names.
+        /// </returns>
         private static StringBuilder AppendXDCParameterTypesTo(StringBuilder builder, Type[] parameterTypes)
         {
             for (int i = 0; i < parameterTypes.Length; ++i)
@@ -470,15 +506,18 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Creates a string builder containing XML doc comment
-        /// representation of the given type's modifier (i.e. array
-        /// type, pointer, etc...), and reduces the given type to
-        /// its element type, if any modifiers are detected.
+        /// Modifies the given <see cref="System.Type"/> by reducing it to
+        /// its inner-most element type (removes any array or pointer decorations),
+        /// and creates the type's XML doc comment reprentation.
         /// </summary>
         /// 
         /// <param name="type">
-        /// The type to reduce.
+        /// The <see cref="System.Type"/> to reduce.
         /// </param>
+        /// 
+        /// <returns>
+        /// The XML doc comment representation of the given type's name.
+        /// </returns>
         /// 
         /// <remarks>
         /// The element type is the type of the given type, excluding

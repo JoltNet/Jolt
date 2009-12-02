@@ -18,16 +18,15 @@ namespace Jolt
     /// <summary>
     /// Implements the <see cref="IXmlDocCommentReadPolicy"/> interface
     /// providing a policy that retrieves the requested elements from
-    /// a memory-stored doc comment file.
+    /// an in-memory XML doc comment DOM.
     /// </summary>
     internal sealed class DefaultXDCReadPolicy : AbstractXDCReadPolicy, IXmlDocCommentReadPolicy
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the new instance, loading the contents of
-        /// the given doc comments file using the given file system
-        /// proxy.
+        /// Creates a new instance of the <see cref="DefaultXDCReadPolicy"/> class
+        /// with a given path to an XML the doc comments file.
         /// </summary>
         /// 
         /// <param name="xmlDocCommentsFullPath">
@@ -50,6 +49,9 @@ namespace Jolt
 
         #region IXmlDocCommentReadPolicy members --------------------------------------------------
 
+        /// <summary>
+        /// <see cref="IXmlDocCommentReadPolicy.ReadMember"/>
+        /// </summary>
         XElement IXmlDocCommentReadPolicy.ReadMember(string memberName)
         {
             XElement member = m_docComments

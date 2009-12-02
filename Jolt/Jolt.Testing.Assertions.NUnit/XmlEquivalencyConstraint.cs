@@ -16,37 +16,41 @@ namespace Jolt.Testing.Assertions.NUnit
 
 
     /// <summary>
-    /// Implements a constraint to verify if two XML readers contain XML
-    /// that is equivalent in terms of a given user-definition.
+    /// Defines an NUnit constraint to verify if two <see cref="System.Xml.XmlReader"/>
+    /// objects contain XML that is equivalent in terms of a given user-definition.
     /// </summary>
     public sealed class XmlEquivalencyConstraint : AbstractConstraint<XmlReader, XmlComparisonResult>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the constraint with the expected XML, settings
-        /// the equivalency stricness level to the strictest level (i.e.
-        /// strict equality).
+        /// Creates a new instance of the <see cref="XmlEquivalencyConstraint"/> class,
+        /// with the strictest level of equivalency (i.e. strict equality).
         /// </summary>
         /// 
         /// <param name="expectedXml">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> object containing the expected XML.
         /// </param>
         public XmlEquivalencyConstraint(XmlReader expectedXml)
             : this(expectedXml, Factory.CreateXmlEquivalencyAssertion) { }
 
         /// <summary>
-        /// Initializes the constraint with the expected XML
-        /// and the assertion that the constraint delegates to.
+        /// Creates a new instance of the <see cref="XmlEquivalencyConstraint"/> class,
+        /// with the strictest level of equivalency (i.e. strict equality), and
+        /// encapsulating an <see cref="XmlEquivalencyAssertion"/>.
         /// </summary>
         /// 
         /// <param name="expectedXml">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> object containing the expected XML.
         /// </param>
         ///
-        /// <param name="assertion">
-        /// The assertion delegated to by the constraint.
+        /// <param name="createAssertion">
+        /// A factory method for creating the <see cref="XmlEquivalencyAssertion"/> that performs the assertion.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Used internally by test code to override assertion operations.
+        /// </remarks>
         internal XmlEquivalencyConstraint(XmlReader expectedXml, CreateXmlEquivalencyAssertionDelegate createAssertion)
         {
             m_comparisonFlags = XmlComparisonFlags.Strict;
@@ -114,7 +118,7 @@ namespace Jolt.Testing.Assertions.NUnit
             get { return ApplyComparisonFlag(XmlComparisonFlags.IgnoreElementNamespaces); }
         }
 
-        /// <summar y>
+        /// <summary>
         /// Directs the constraint to ignore element values during evaluation.
         /// </summary>
         public XmlEquivalencyConstraint IgnoreElementValues
@@ -135,8 +139,8 @@ namespace Jolt.Testing.Assertions.NUnit
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the factory method that creates the XmlEquivalencyAssertion
-        /// that is used by the class.
+        /// Gets the factory method that creates the <see cref="XmlEquivalencyAssertion"/>
+        /// that is used by the instance.
         /// </summary>
         internal Delegate CreateAssertion
         {
@@ -144,8 +148,8 @@ namespace Jolt.Testing.Assertions.NUnit
         }
 
         /// <summary>
-        /// Gets the comparison flags value that is used to initialize an
-        /// XmlEquivalencyAssertion.
+        /// Gets the <see cref="XmlComparisonFlags"/> value that is used to initialize an
+        /// the <see cref="XmlEquivalencyAssertion"/>.
         /// </summary>
         internal XmlComparisonFlags ComparisonFlags
         {
@@ -153,7 +157,7 @@ namespace Jolt.Testing.Assertions.NUnit
         }
 
         /// <summary>
-        /// Gets the XmlReader associated with the class.
+        /// Gets the <see cref="System.Xml.XmlReader"/> associated with the instance.
         /// </summary>
         internal XmlReader ExpectedXml
         {
@@ -165,13 +169,16 @@ namespace Jolt.Testing.Assertions.NUnit
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Adds the given comparison flag to the stored flag and returns an
-        /// instance of the modified object.
+        /// Accumulates a <see cref="XmlComparisonFlags"/> value to the value stored by the instance.
         /// </summary>
         /// 
         /// <param name="flag">
-        /// The flag to add to the stored flag instance.
+        /// The <see cref="XmlComparisonFlags"/> to accumulate.
         /// </param>
+        /// 
+        /// <returns>
+        /// A reference to the modified <see cref="XmlEquivalencyConstraint"/> instance.
+        /// </returns>
         private XmlEquivalencyConstraint ApplyComparisonFlag(XmlComparisonFlags flag)
         {
             m_comparisonFlags |= flag;

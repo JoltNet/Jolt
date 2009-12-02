@@ -14,7 +14,7 @@ using System.Xml.Schema;
 namespace Jolt.Testing.Assertions.NUnit
 {
     /// <summary>
-    /// Implements a constraint to validate XML against a given
+    /// Defines an NUnit constraint for validating XML against a given
     /// set of XML schemas.
     /// </summary>
     public sealed class XmlValidityConstraint : AbstractConstraint<XmlReader, IList<ValidationEventArgs>>
@@ -22,21 +22,19 @@ namespace Jolt.Testing.Assertions.NUnit
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the constraint with the schemas
-        /// required to perform the validation.  Treats validation
-        /// warnings as errors.
+        /// Creates a new instance of the <see cref="XmlValidityConstraint"/>,
+        /// treating all validation warnings as errors.
         /// </summary>
         /// 
         /// <param name="schemas">
-        /// The schemas defining the valid XML structure.
+        /// The schemas defining the desired valid XML structure.
         /// </param>
         public XmlValidityConstraint(XmlSchemaSet schemas)
             : this(Factory.CreateXmlValidityAssertion(schemas)) { }
 
         /// <summary>
-        /// Initializes the constraint with the schemas
-        /// required to perform the validation and the validator
-        /// configuration.
+        /// Creates a new instance of the <see cref="XmlValidityConstraint"/> class,
+        /// and configures the validator with a given set of rules.
         /// </summary>
         /// 
         /// <param name="schemas">
@@ -44,19 +42,23 @@ namespace Jolt.Testing.Assertions.NUnit
         /// </param>
         /// 
         /// <param name="validationFlags">
-        /// The configuration of the XML validator.
+        /// An <see cref="XmlSchemaValidationFlags"/> enumeration that configures the XML validator.
         /// </param>
         public XmlValidityConstraint(XmlSchemaSet schemas, XmlSchemaValidationFlags validationFlags)
             : this(Factory.CreateXmlValidityAssertion(schemas, validationFlags)) { }
 
         /// <summary>
-        /// Initializes the constraint with the assertion
-        /// used to perform the validation.
+        /// Creates a new instance of the <see cref="XmlValidityConstraint"/> class,
+        /// encapsulating an <see cref="XmlValidityAssertion"/>.
         /// </summary>
         /// 
         /// <param name="assertion">
-        /// The assertion that performs the validation.
+        /// The <see cref="XmlValidityAssertion"/> that performs the validation.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Used internally by test code to override assertion operations.
+        /// </remarks>
         internal XmlValidityConstraint(XmlValidityAssertion assertion)
         {
             m_assertion = assertion;
@@ -96,7 +98,7 @@ namespace Jolt.Testing.Assertions.NUnit
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the XmlValidityAssertion associated with the class.
+        /// Gets the <see cref="XmlValidityAssertion"/> that is associated with the instance.
         /// </summary>
         internal XmlValidityAssertion Assertion
         {

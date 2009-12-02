@@ -24,16 +24,21 @@ namespace Jolt.Testing.Assertions.VisualStudio
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Asserts that the two given XML elements contain the same contents and structure.
+        /// Asserts that the XML referenced by two given <see cref="System.Xml.XmlReader"/> objects
+        /// are equal in terms of contents and structure.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> referencing the expected XML, 
         /// </param>
         /// 
         /// <param name="actual">
-        /// The actual XML.
+        /// An <see cref="System.Xml.XmlReader"/>, referencing the XML to validate.
         /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// The assertion failed.
+        /// </exception>
         public static void AreEqual(XmlReader expected, XmlReader actual)
         {
             ProcessXmlComparisonResult(
@@ -41,21 +46,25 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Asserts that the two given XML elements are equivalent according to the
-        /// given definition of equivalency strictness.
+        /// Asserts that the XML referenced by two given <see cref="System.Xml.XmlReader"/> objects
+        /// are equivalent according to the given equivalency configuration.
         /// </summary>
         /// 
         /// <param name="flags">
-        /// A set of flags denoting the definition of equivalency.
+        /// A <see cref="XmlComparisonFlags"/> value denoting the definition of equivalency.
         /// </param>
         /// 
         /// <param name="expected">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> referencing the expected XML, 
         /// </param>
         /// 
         /// <param name="actual">
-        /// The actual XML.
+        /// An <see cref="System.Xml.XmlReader"/>, referencing the XML to validate.
         /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// The assertion failed.
+        /// </exception>
         public static void AreEquivalent(XmlComparisonFlags flags, XmlReader expected, XmlReader actual)
         {
             ProcessXmlComparisonResult(
@@ -63,7 +72,8 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Asserts that the given XML document is valid with the given schemas.
+        /// Asserts that the XML referenced by the given <see cref="System.Xml.XmlReader"/> object
+        /// is valid with the given schemas.
         /// </summary>
         /// 
         /// <param name="schemas">
@@ -71,8 +81,12 @@ namespace Jolt.Testing.Assertions.VisualStudio
         /// </param>
         /// 
         /// <param name="actual">
-        /// The XML to validate.
+        /// An <see cref="System.Xml.XmlReader"/>, referencing the XML to validate.
         /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// The assertion failed.
+        /// </exception>
         public static void IsValid(XmlSchemaSet schemas, XmlReader actual)
         {
             ProcessValidationResult(
@@ -80,21 +94,25 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Asserts that the given XML document is valid with the given schemas and
-        /// validator configuration.
+        /// Asserts that the XML referenced by the given <see cref="System.Xml.XmlReader"/> object
+        /// is valid with the given schemas and validator configuration.
         /// </summary>
-        /// 
-        /// <param name="flags">
-        /// The configuration of the XML validator.
-        /// </param>
         /// 
         /// <param name="schemas">
         /// The schemas used to validate.
         /// </param>
         /// 
-        /// <param name="actual">
-        /// The XML to validate.
+        /// <param name="flags">
+        /// An <see cref="XmlSchemaValidationFlags"/> value that configures the XML validator.
         /// </param>
+        ///
+        /// <param name="actual">
+        /// An <see cref="System.Xml.XmlReader"/>, referencing the XML to validate.
+        /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// The assertion failed.
+        /// </exception>
         public static void IsValid(XmlSchemaSet schemas, XmlSchemaValidationFlags flags, XmlReader actual)
         {
             ProcessValidationResult(
@@ -106,13 +124,16 @@ namespace Jolt.Testing.Assertions.VisualStudio
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Verifies an <seealso cref="XmlComparisonResult"/> for assertion validity, raising
-        /// an <seealso cref="AssertionFailedException"/> if the assertion failed.
+        /// Verifies an <see cref="XmlComparisonResult"/> for assertion validity
         /// </summary>
         /// 
         /// <param name="assertionResult">
-        /// The result to verify.
+        /// The <see cref="XmlComparisonResult"/> to verify.
         /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// <paramref name="assertionResult"/> describes a failed assertion.
+        /// </exception>
         private static void ProcessXmlComparisonResult(XmlComparisonResult assertionResult)
         {
             if (!assertionResult.Result)
@@ -126,13 +147,17 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Verifies an <code>IList&lt;ValidationEventArgs&gt</code> for assertion validity, raising
-        /// an <seealso cref="AssertionFailedException"/> if the assertion failed.
+        /// Verifies a <see cref="System.Collections.Generic.IList"/> of <see cref="ValidationEventArgs"/>
+        /// for assertion validity.
         /// </summary>
         /// 
         /// <param name="assertionResult">
-        /// The result to verify.
+        /// The list of <see cref="ValidationEventArgs"/> to verify.
         /// </param>
+        /// 
+        /// <exception cref="Microsoft.VisualStudio.TestTools.UnitTesting.AssertFailedException">
+        /// <paramref name="assertionResult"/> describes a failed assertion.
+        /// </exception>
         private static void ProcessValidationResult(IList<ValidationEventArgs> assertionResult)
         {
             if (assertionResult.Count > 0)

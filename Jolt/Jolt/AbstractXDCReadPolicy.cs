@@ -25,12 +25,12 @@ namespace Jolt
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initialize the instance with the given file path and file proxy.
+        /// Creates a new instance of the <see cref="AbstractXDCReadPolicy"/> class
+        /// with a given path to an XML the doc comments file.
         /// </summary>
         /// 
         /// <param name="xmlDocCommentsFullPath">
-        /// The full path to the XML doc comments that will be managed
-        /// by this instance.
+        /// The full path of the XML doc comments file, managed by this instance.
         /// </param>
         /// 
         /// <param name="fileProxy">
@@ -43,18 +43,18 @@ namespace Jolt
         }
 
         /// <summary>
-        /// Initialize the instance with the given file path.
+        /// Creates a new instance of the <see cref="AbstractXDCReadPolicy"/> class
+        /// with a given path to an XML the doc comments file.
         /// </summary>
         /// 
         /// <param name="xmlDocCommentsFullPath">
-        /// The full path to the XML doc comments that will be managed
-        /// by this instance.
+        /// The full path of the XML doc comments file, managed by this instance.
         /// </param>
         protected AbstractXDCReadPolicy(string xmlDocCommentsFullPath)
             : this(xmlDocCommentsFullPath, new FileProxy()) { }
 
         /// <summary>
-        /// Initializes the static state of the class.
+        /// Initializes the static state of the <see cref="AbstractXDCReadPolicy"/> class.
         /// </summary>
         static AbstractXDCReadPolicy()
         {
@@ -81,7 +81,7 @@ namespace Jolt
         }
 
         /// <param name="fileProxy">
-        /// The proxy to the file system.
+        /// Gets the proxy to the file system.
         /// </param>
         internal IFile FileProxy
         {
@@ -93,9 +93,13 @@ namespace Jolt
         #region protected methods -----------------------------------------------------------------
 
         /// <summary>
-        /// Creates a validating XML reader that can read the XML doc
-        /// comments associated with the instance.
+        /// Creates an <see cref="System.Xml.XmlReader"/> for reading the associated XML doc comments.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A new, validating, <see cref="System.Xml.XmlReader"/>initialized to read from the
+        /// configured path of the XML doc comments file.
+        /// </returns>
         protected XmlReader CreateReader()
         {
             return XmlReader.Create(m_fileProxy.OpenText(m_xmlDocCommentsFullPath), ReaderSettings);

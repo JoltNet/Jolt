@@ -16,20 +16,22 @@ namespace Jolt.Automata
     /// <summary>
     /// Represents a transition between two vertices in a finite
     /// state machine (FSM).
-    /// <seealso cref="FiniteStateMachine"/>
     /// </summary>
     /// 
     /// <typeparam name="TAlphabet">
     /// The type that represents the alphabet operated upon by the FSM.
     /// </typeparam>
+    /// 
+    /// <seealso cref="FiniteStateMachine"/>
     [Serializable]
     public sealed class Transition<TAlphabet> : EquatableEdge<string>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the state of the transition, setting the transition's
-        /// description to the name of the method stored in the transition predicate.
+        /// Creates a new instance of the <see cref="Transition"/> class,
+        /// initializing its description to the name of the method stored
+        /// in the given transition predicate.
         /// </summary>
         /// 
         /// <param name="sourceState">
@@ -41,14 +43,15 @@ namespace Jolt.Automata
         /// </param>
         /// 
         /// <param name="transitionPredicate">
-        /// A predicate that determines if the state transition is valid,
+        /// A <see cref="System.Predicate"/> that determines if the state transition is valid,
         /// given an input value from the FSM alphabet.
         /// </param>
         public Transition(string sourceState, string targetState, Predicate<TAlphabet> transitionPredicate)
             : this(sourceState, targetState, transitionPredicate, transitionPredicate.Method.Name) { }
 
         /// <summary>
-        /// Initializes the state of the transition.
+        /// Creates a new instance of the <see cref="Transition"/> class,
+        /// explicitly initializing all attributes of the object.
         /// </summary>
         /// 
         /// <param name="sourceState">
@@ -88,13 +91,17 @@ namespace Jolt.Automata
         /// </param>
         /// 
         /// <remarks>
-        /// The properties that participate in the quality expression
+        /// The properties that participate in the equality expression
         /// are: <see cref="Source"/>, <see cref="Target"/>, <see cref="TransitionPredicate"/>
         /// <see cref="Description"/>, and <see cref="OnTranstion"/>.
         /// 
         /// Results may vary for types TAlphabet that do not implement
         /// value-based equality semantics.
         /// </remarks>
+        /// 
+        /// <returns>
+        /// A Boolean value denoting the equality of the two compared objects.
+        /// </returns>
         public override bool Equals(object obj)
         {
             Transition<TAlphabet> transition = obj as Transition<TAlphabet>;
@@ -145,7 +152,7 @@ namespace Jolt.Automata
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Gets the predicate associate with the transition.
+        /// Gets the <see cref="System.Predicate"/> associate with the transition.
         /// </summary>
         public Predicate<TAlphabet> TransitionPredicate
         {
@@ -162,9 +169,8 @@ namespace Jolt.Automata
         #region public events ---------------------------------------------------------------------
 
         /// <summary>
-        /// The OnTransition event is raised each time the transition's
-        /// TransitionPredicate evaluates to TRUE, as a result of input
-        /// symbol consumption.
+        /// The OnTransition event is raised each time the <see cref="TransitionPredicate"/>
+        /// evaluates to TRUE, as a result of input symbol consumption.
         /// </summary>
         public event EventHandler<StateTransitionEventArgs<TAlphabet>> OnTransition;
 

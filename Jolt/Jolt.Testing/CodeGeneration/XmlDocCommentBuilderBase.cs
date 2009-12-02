@@ -14,7 +14,7 @@ using System.Xml.Linq;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Provides a base class for incrementally constructing an XML doc
+    /// Defines a base class for incrementally constructing an XML doc
     /// comments file pertaining to the members of a proxy and interface type.
     /// </summary>
     /// 
@@ -27,7 +27,8 @@ namespace Jolt.Testing.CodeGeneration
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the builder with an empty XML doc comment store.
+        /// Creates a new instance of the <see cref="XmlDocCommentBuilderBase"/> class, with an 
+        /// empty XML doc comments document.
         /// </summary>
         internal XmlDocCommentBuilderBase()
         {
@@ -38,13 +39,29 @@ namespace Jolt.Testing.CodeGeneration
 
         #region internal methods ------------------------------------------------------------------
 
+        /// <summary>
+        /// Default implementation -- no operation.
+        /// </summary>
         internal virtual void AddConstuctor(ConstructorInfo constructor) { }
+
+        /// <summary>
+        /// Default implementation -- no operation.
+        /// </summary>
         internal virtual void AddEvent(EventInfo eventInfo) { }
+
+        /// <summary>
+        /// Default implementation -- no operation.
+        /// </summary>
         internal virtual void AddMethod(MethodInfo method) { }
+
+        /// <summary>
+        /// Default implementation -- no operation.
+        /// </summary>
         internal virtual void AddProperty(PropertyInfo property) { }
 
         /// <summary>
-        /// Creates a reader for accessing the current XML doc comment state.
+        /// Creates a new instance of an <see cref="System.Xml.XmlReader"/> for accessing the current
+        /// state of the XML doc comment document.
         /// </summary>
         internal virtual XmlReader CreateReader() { return m_docComments.CreateReader(); }
 
@@ -53,7 +70,8 @@ namespace Jolt.Testing.CodeGeneration
         #region protected properties --------------------------------------------------------------
 
         /// <summary>
-        /// Gets the document to which the buider appends XML doc comments.
+        /// Gets the <see cref="System.Xml.XLinq.XDocument"/> document in which the
+        /// buider is incrementally populating.
         /// </summary>
         protected XDocument XmlDocComments
         {

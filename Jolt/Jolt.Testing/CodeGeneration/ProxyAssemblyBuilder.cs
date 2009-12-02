@@ -28,99 +28,118 @@ namespace Jolt.Testing.CodeGeneration
 
 
     /// <summary>
-    /// Provides methods to create an assembly and reverse engineer proxy types
-    /// in a given namespace.
+    /// Provides methods to create an <see cref="System.Reflection.Assembly"/>
+    /// and reverse engineer proxy types.
+    /// </summary>
     /// 
+    /// <remarks>
     /// The default root namespace is "Jolt.Testing.Generated".
+    /// </remarks>
     /// 
     /// <seealso cref="ProxyTypeBuilder"/>
-    /// </summary>
     public class ProxyAssemblyBuilder
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilder"/> class.
+        /// </summary>
+        /// 
+        /// <remarks>
         /// Initializes the assembly builder, using the working directory as the
         /// assembly location and a default assembly namespace and filename.
-        /// </summary>
+        /// </remarks>
         public ProxyAssemblyBuilder() : this(DefaultNamespace) { }
 
         /// <summary>
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilder"/> class,
+        /// allowing specification of the assembly namespace.
+        /// </summary>
+        /// 
+        /// <param name="rootNamespace">
+        /// The assembly's root namespace.
+        /// </param>
+        ///
+        /// <remarks>
         /// Initializes the assembly builder, using the working directory as the
         /// assembly location, and a default assembly filename.
-        /// </summary>
-        /// 
-        /// <param name="sRootNamespace">
-        /// The assembly's root namespace.
-        /// </param>
-        public ProxyAssemblyBuilder(string sRootNamespace)
-            : this(sRootNamespace, Path.Combine(Environment.CurrentDirectory, DefaultAssemblyFilename)) { }
+        /// </remarks>
+        public ProxyAssemblyBuilder(string rootNamespace)
+            : this(rootNamespace, Path.Combine(Environment.CurrentDirectory, DefaultAssemblyFilename)) { }
 
         /// <summary>
-        /// Initializes the assembly builder.
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilder"/> class,
+        /// allowing specification of the assembly namespace and path.
         /// </summary>
         /// 
-        /// <param name="sRootNamespace">
+        /// <param name="rootNamespace">
         /// The assembly's root namespace.
         /// </param>
         /// 
-        /// <param name="sAssemblyFullPath">
+        /// <param name="assemblyFullPath">
         /// The full path of the proxy assembly.
         /// </param>
-        public ProxyAssemblyBuilder(string sRootNamespace, string sAssemblyFullPath)
-            : this (sRootNamespace, sAssemblyFullPath, ConfigurationManager.GetSection("proxyBuilderSettings") as ProxyAssemblyBuilderSettings) { }
+        public ProxyAssemblyBuilder(string rootNamespace, string assemblyFullPath)
+            : this (rootNamespace, assemblyFullPath, ConfigurationManager.GetSection("proxyBuilderSettings") as ProxyAssemblyBuilderSettings) { }
 
         /// <summary>
-        /// Initializes the assembly builder.
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilder"/> class,
+        /// allowing specification of the assembly namespace, path, and configuration.
         /// </summary>
         /// 
-        /// <param name="sRootNamespace">
+        /// <param name="rootNamespace">
         /// The assembly's root namespace.
         /// </param>
         /// 
-        /// <param name="sAssemblyFullPath">
-        /// The full path of the proxy assembly.
-        /// </param>
-        /// 
-        /// <param name="settings">
-        /// The configuration settings for the class.
-        /// </param>
-        public ProxyAssemblyBuilder(string sRootNamespace, string sAssemblyFullPath, ProxyAssemblyBuilderSettings settings)
-            : this(sRootNamespace, sAssemblyFullPath, settings, (ns, t, xml, mb) => new ProxyTypeBuilder(ns, t, xml, mb)) { }
-
-        /// <summary>
-        /// Initializes the assembly builder, overriding the default ProxyTypeBuilder
-        /// factory method.
-        /// </summary>
-        /// 
-        /// <param name="sRootNamespace">
-        /// The assembly's root namespace.
-        /// </param>
-        /// 
-        /// <param name="sAssemblyFullPath">
+        /// <param name="assemblyFullPath">
         /// The full path of the proxy assembly.
         /// </param>
         /// 
         /// <param name="settings">
-        /// The configuration settings for the class.
+        /// A <see cref="ProxyAssemblyBuilderSettings"/> object containing configuration settings.
+        /// </param>
+        public ProxyAssemblyBuilder(string rootNamespace, string assemblyFullPath, ProxyAssemblyBuilderSettings settings)
+            : this(rootNamespace, assemblyFullPath, settings, (ns, t, xml, mb) => new ProxyTypeBuilder(ns, t, xml, mb)) { }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilder"/> class,
+        /// allowing specification of the assembly namespace, path, and configuration.
+        /// </summary>
+        /// 
+        /// <param name="rootNamespace">
+        /// The assembly's root namespace.
+        /// </param>
+        /// 
+        /// <param name="assemblyFullPath">
+        /// The full path of the proxy assembly.
+        /// </param>
+        /// 
+        /// <param name="settings">
+        /// A <see cref="ProxyAssemblyBuilderSettings"/> object containing configuration settings.
         /// </param>
         /// 
         /// <param name="createTypeBuilder">
-        /// The factory method to use for creating a ProxyTypeBuilder object.
+        /// The factory method to use for creating a <see cref="ProxyTypeBuilder"/> object.
         /// </param>
-        internal ProxyAssemblyBuilder(string sRootNamespace, string sAssemblyFullPath,
+        /// 
+        /// <remarks>
+        /// Initializes the assembly builder, overriding the default <see cref="ProxyTypeBuilder"/>
+        /// factory method.  Used internally by test code to override <see cref="ProxyTypeBuilder"/>
+        /// operations.
+        /// </remarks>
+        internal ProxyAssemblyBuilder(string rootNamespace, string assemblyFullPath,
             ProxyAssemblyBuilderSettings settings, CreateProxyTypeBuilderDelegate createTypeBuilder)
         {
-            m_sRootNamespace = sRootNamespace;
-            m_sAssemblyFullPath = sAssemblyFullPath;
+            m_rootNamespace = rootNamespace;
+            m_assemblyFullPath = assemblyFullPath;
             m_createProxyTypeBuilder = createTypeBuilder;
             m_settings = settings ?? ProxyAssemblyBuilderSettings.Default;
 
-            AssemblyName assemblyName = new AssemblyName(Path.GetFileNameWithoutExtension(sAssemblyFullPath));
+            AssemblyName assemblyName = new AssemblyName(Path.GetFileNameWithoutExtension(assemblyFullPath));
             assemblyName.Version = new Version(1, 0);
             m_assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave,
-                Path.GetDirectoryName(m_sAssemblyFullPath));
-            m_module = m_assembly.DefineDynamicModule(DefaultAssemblyFilename, Path.GetFileName(sAssemblyFullPath), true);
+                Path.GetDirectoryName(m_assemblyFullPath));
+            m_module = m_assembly.DefineDynamicModule(DefaultAssemblyFilename, Path.GetFileName(assemblyFullPath), true);
 
             m_methodBindingFlags = ComputeMemberBindingFlags(m_settings.EmitMethods, m_settings.EmitStatics);
             m_propertyBindingFlags = ComputeMemberBindingFlags(m_settings.EmitProperties, m_settings.EmitStatics);
@@ -142,34 +161,42 @@ namespace Jolt.Testing.CodeGeneration
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Adds a type to the assembly builder, generating an interface and proxy
-        /// containing all of its methods, properties and events.
+        /// Adds a <see cref="System.Type"/> to the assembly builder.
         /// </summary>
         /// 
         /// <param name="realSubjectType">
-        /// The type for which a proxy and interface are created.
+        /// The <see cref="System.Type"/> to which a proxy and interface are created.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Generates an interface and proxy type containing all of the methods,
+        /// properties and events of <paramref name="realSubjectType"/>.
+        /// </remarks>
         public virtual void AddType(Type realSubjectType)
         {
             AddType(realSubjectType, EmptyDictionary);
         }
 
         /// <summary>
-        /// Adds a type to the assembly builder, generating an interface and proxy
-        /// containing all of its methods, properties and events.
+        /// Adds a <see cref="System.Type"/> to the assembly builder, allowing
+        /// the option to override the return types of the given type's methods.
         /// </summary>
         /// 
         /// <param name="realSubjectType">
-        /// The type for which a proxy and interface are created.
+        /// The <see cref="System.Type"/> to which a proxy and interface are created.
         /// </param>
         /// 
         /// <param name="desiredReturnTypeOverrides">
-        /// A collection of desired return type overrides for the given
-        /// real subject type.
+        /// A collection of desired return type overrides for <paramref name="realSubjectType"/>.
         /// </param>
+        ///
+        /// <remarks>
+        /// Generates an interface and proxy type containing all of the methods,
+        /// properties and events of <paramref name="realSubjectType"/>.
+        /// </remarks>
         public virtual void AddType(Type realSubjectType, IDictionary<Type, Type> desiredReturnTypeOverrides)
         {
-            IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_sRootNamespace, realSubjectType, m_settings.EmitXmlDocComments, m_module);
+            IProxyTypeBuilder builder = m_createProxyTypeBuilder(m_rootNamespace, realSubjectType, m_settings.EmitXmlDocComments, m_module);
             Array.ForEach(realSubjectType.GetProperties(m_propertyBindingFlags), property => HandleExceptionsIn(() => AddProperty(property, desiredReturnTypeOverrides, builder)));
             Array.ForEach(realSubjectType.GetEvents(m_eventBindingFlags), evt => HandleExceptionsIn(() => builder.AddEvent(evt)));
             Array.ForEach(realSubjectType.GetMethods(m_methodBindingFlags), method => AddMethod(method, desiredReturnTypeOverrides, builder));
@@ -183,25 +210,39 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Saves the state of the assembly builder to disk in the form
-        /// of an assembly.
+        /// Writes the state of the <see cref="ProxyAssemblyBuilder"/> to disk
+        /// in the form of an <see cref="System.Reflection.Assembly"/>.
         /// </summary>
+        /// 
+        /// <returns>
+        /// Returns a reference to the created <see cref="System.Reflection.Assembly"/> .
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// The <see cref="Assembly"/> is written to <see cref="AssemblyFullPath"/>.
+        /// </remarks>
         public virtual Assembly CreateAssembly()
         {
-            m_assembly.Save(Path.GetFileName(m_sAssemblyFullPath));
+            m_assembly.Save(Path.GetFileName(m_assemblyFullPath));
 
             if (m_xmlDocComments.Root != null &&
                 !m_xmlDocComments.Root.Element(XmlDocCommentNames.MembersElement).IsEmpty)
             {
-                m_xmlDocComments.Save(Path.ChangeExtension(m_sAssemblyFullPath, "xml"));
+                m_xmlDocComments.Save(Path.ChangeExtension(m_assemblyFullPath, "xml"));
             }
 
             return m_assembly;
         }
 
         /// <summary>
-        /// Creates an XmlReader capable of reading any produced XML doc comments.
+        /// Creates an <see cref="System.Xml.XmlReader"/> to read the XML doc comments of
+        /// created <see cref="System.Reflection.Assembly"/>.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A new <see cref="System.Xml.XmlReader"/> capable of reading any
+        /// produced XML doc comments.
+        /// </returns>
         public virtual XmlReader CreateXmlDocCommentReader()
         {
             return m_xmlDocComments.CreateReader();
@@ -216,7 +257,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </summary>
         public string RootNamespace
         {
-            get { return m_sRootNamespace; }
+            get { return m_rootNamespace; }
         }
 
         /// <summary>
@@ -224,11 +265,11 @@ namespace Jolt.Testing.CodeGeneration
         /// </summary>
         public string AssemblyFullPath
         {
-            get { return m_sAssemblyFullPath; }
+            get { return m_assemblyFullPath; }
         }
 
         /// <summary>
-        /// Gets the configuration settings associated with this object.
+        /// Gets the <see cref="ProxyAssemblyBuilderSettings"/> object associated with this object.
         /// </summary>
         public ProxyAssemblyBuilderSettings Settings
         {
@@ -240,7 +281,7 @@ namespace Jolt.Testing.CodeGeneration
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the current state of the assembly builder.
+        /// Gets a reference to the encapsulated <see cref="System.Reflection.Emit.AssemblyBuilder"/>.
         /// </summary>
         internal AssemblyBuilder Assembly
         {
@@ -248,7 +289,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the current state of the module builder.
+        /// Gets a reference to the encapsulated <see cref="System.Reflection.Emit.ModuleBuilder"/>.
         /// </summary>
         internal ModuleBuilder Module
         {
@@ -260,12 +301,11 @@ namespace Jolt.Testing.CodeGeneration
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Reads the XML doc comments from the given reader, appending
-        /// them to the XML doc comments stored by the class.
+        /// Appends the given XML doc comments to the internally stored XML doc comments.
         /// </summary>
         /// 
         /// <param name="reader">
-        /// The XmlReader containing the XML doc comments to append.
+        /// The <see cref="System.Xml.XmlReader"/> containing the XML doc comments to append.
         /// </param>
         private void AppendXmlDocComments(XmlReader reader)
         {
@@ -280,17 +320,25 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds the given method to the given builder, only if it isn't already part of
-        /// another member (property, event) on the proxy class.
+        /// Adds the given method to a given <see cref="IProxyTypeBuilder"/>
         /// </summary>
         /// 
         /// <param name="method">
-        /// The member to add to the builder.
+        /// The <see cref="MethodInfo"/> representing the member to add to the builder.
+        /// </param>
+        /// 
+        /// <param name="desiredReturnTypeOverrides">
+        /// A collection of desired return type overrides for <paramref name="method"/>.
         /// </param>
         /// 
         /// <param name="builder">
-        /// The builder that accepts the method.
+        /// The <see cref="IProxyTypeBuilder"/> instance that accepts the method.
         /// </param>
+        /// 
+        /// <remarks>
+        /// <paramref name="method"/> is added to <paramref name="builder"/> if
+        /// it isn't already part of another member (property, event) on the proxy type.
+        /// </remarks>
         private void AddMethod(MethodInfo method, IDictionary<Type, Type> desiredReturnTypeOverrides, IProxyTypeBuilder builder)
         {
             if (IsSpecialMethod(method, PropertyMethodPrefixes, m_propertyBindingFlags))
@@ -329,12 +377,12 @@ namespace Jolt.Testing.CodeGeneration
 
 
         /// <summary>
-        /// Determines if a given method is defined as part of a property
-        /// or event on its declaring type.
+        /// Determines if a given <see cref="System.Reflection.MethodInfo"/> is
+        /// defined as part of a property or event on its declaring type.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to validate.
+        /// The <see cref="System.Reflection.MethodInfo"/> to validate.
         /// </param>
         /// 
         /// <param name="methodPrefixes">
@@ -342,8 +390,14 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="bindings">
-        /// The property or event method bindings to use during validation.
+        /// The <see cref="System.Reflection.BindingFlags"/> to use when searching for
+        /// a special method.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if the <paramref name="method"/> belongs to a property or event,
+        /// false otherwise.
+        /// </returns>
         private static bool IsSpecialMethod(MethodInfo method, string[] methodPrefixes, BindingFlags bindings)
         {
             foreach (string sPrefix in methodPrefixes)
@@ -359,8 +413,8 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Determines the binding flags for a particular member given a Boolean
-        /// representation of the flag values.
+        /// Creates a <see cref="System.Reflection.BindingFlags"/> enumeration representing
+        /// the given configuration
         /// </summary>
         /// 
         /// <param name="emitMember">
@@ -370,6 +424,11 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="emitStatics">
         /// Denotes if static types are remitted.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="System.Reflection.BindingFlags"/> enumeration,
+        /// representing the requested configuration.
+        /// </returns>
         private static BindingFlags ComputeMemberBindingFlags(bool emitMember, bool emitStatics)
         {
             BindingFlags result = BindingFlags.Default;
@@ -386,7 +445,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Invokes a given delegate logging any caught InvalidOperationException.
+        /// Invokes a given delegate logging any caught <see cref="System.InvalidOperationException"/>.
         /// </summary>
         /// 
         /// <param name="action">
@@ -405,21 +464,25 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds the given property to the given builder, overriding the property return
-        /// type when it is located in the given collection of return type overrides.
+        /// Adds a given <see cref="System.Reflection.PropertyInfo"/> to the given <see cref="IProxyTypeBuilder"/>.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property to add to the builder.
+        /// The <see cref="System.Reflection.PropertyInfo"/> to add to the builder.
         /// </param>
         /// 
         /// <param name="desiredReturnTypeOverrides">
-        /// A collection of return type overrides for the real subject type.
+        /// A collection of return type overrides for <paramref name="property"/>.
         /// </param>
         /// 
         /// <param name="builder">
-        /// The builder that accepts the property.
+        /// The <see cref="IProxyTypeBuilder"/> that accepts the property.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Overrides the property return type when it is located in
+        /// <paramref name="desiredReturnTypeOverrides"/>.
+        /// </remarks>
         private static void AddProperty(PropertyInfo property, IDictionary<Type, Type> desiredReturnTypeOverrides, IProxyTypeBuilder builder)
         {
             if (desiredReturnTypeOverrides.ContainsKey(property.PropertyType))
@@ -436,10 +499,10 @@ namespace Jolt.Testing.CodeGeneration
 
         #region private instance fields -----------------------------------------------------------
 
-        private readonly string m_sRootNamespace;
+        private readonly string m_rootNamespace;
         private readonly AssemblyBuilder m_assembly;
         private readonly ModuleBuilder m_module;
-        private readonly string m_sAssemblyFullPath;
+        private readonly string m_assemblyFullPath;
         private readonly XDocument m_xmlDocComments;
         private readonly CreateProxyTypeBuilderDelegate m_createProxyTypeBuilder;
         private readonly ProxyAssemblyBuilderSettings m_settings;

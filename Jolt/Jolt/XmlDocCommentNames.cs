@@ -10,8 +10,8 @@
 namespace Jolt
 {
     /// <summary>
-    /// Contains the definition of the string literals pertaining
-    /// to element/attribute names in an XML doc comment data stream.
+    /// Contains string literals pertaining to element/attribute names found in an
+    /// XML doc comment document.
     /// </summary>
     internal sealed class XmlDocCommentNames
     {

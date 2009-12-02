@@ -24,12 +24,12 @@ using QuickGraph.Serialization;
 namespace Jolt.Automata
 {
     /// <summary>
-    /// Converts a FiniteStateMachine class to various external representations.
+    /// Converts a <see cref="FiniteStateMachine"/> to various external representations.
     /// </summary>
     public static class FsmConverter
     {
         /// <summary>
-        /// Serializes the given finite state machine to GraphML.
+        /// Serializes the given <see cref="FiniteStateMachine"/> to GraphML.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -38,20 +38,20 @@ namespace Jolt.Automata
         /// </typeparam>
         ///
         /// <param name="fsm">
-        /// The finite state machine to convert.
+        /// The <see cref="FiniteStateMachine"/> to convert.
         /// </param>
         /// 
         /// <param name="graphMLWriter">
-        /// The target of the serialization operation.
+        /// The <see cref="System.Xml.XmlWriter"/> that receives the serialized data.
         /// </param>
         /// 
         /// <remarks>
-        /// The given XmlWriter is not closed by this method.
+        /// <paramref name="graphMLWriter"/> is not closed by this method.
         /// </remarks>
         public static void ToGraphML<TAlphabet>(FiniteStateMachine<TAlphabet> fsm, XmlWriter graphMLWriter)
         {
             // The GraphML serializer requires that all serializable properties
-            // exist on the vertex, edge, and graph objects.  Since the FSM object
+            // exist on explictly on the vertex, edge, and graph objects.  Since the FSM object
             // model contains non-XML-serializable objects (delegates), and that
             // some attributes of verties are owned by the FSM object (start/final
             // states), an intermim representation is required.
@@ -80,8 +80,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Deserializes the given GraphML data stream to a FiniteStateMachine
-        /// object.
+        /// Deserializes the given GraphML data stream to a new <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -93,8 +92,12 @@ namespace Jolt.Automata
         /// The GraphML data stream to convert.
         /// </param>
         ///
+        /// <returns>
+        /// A new <see cref="FiniteStateMachine"/> equivalent to the given GraphML.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// The given TextReader is not closed by this method.
+        /// <paramref name="graphMLReader"/> is not closed by this method.
         /// </remarks>
         public static FiniteStateMachine<TAlphabet> FromGraphML<TAlphabet>(TextReader graphMLReader)
         {
@@ -105,7 +108,7 @@ namespace Jolt.Automata
             BidirectionalGraph<GraphMLState, GraphMLTransition<TAlphabet>> graph = new BidirectionalGraph<GraphMLState, GraphMLTransition<TAlphabet>>();
 
             // Convert vertices to states as they become available.
-            graph.VertexAdded += delegate(GraphMLState vertex)
+            graph.VertexAdded += vertex =>
             {
                 fsm.AddState(vertex.Name);
                 if (vertex.IsFinalState) { fsm.SetFinalState(vertex.Name); }
@@ -125,7 +128,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Serializes the given finite state machine to binary.
+        /// Serializes the given <see cref="FiniteStateMachine"/> to a binary stream.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -134,15 +137,15 @@ namespace Jolt.Automata
         /// </typeparam>
         ///
         /// <param name="fsm">
-        /// The finite state machine to convert.
+        /// The <see cref="FiniteStateMachine"/> to convert.
         /// </param>
         ///
-        /// <param name="stream">
-        /// The target of the serialization operation.
+        /// <param name="targetStream">
+        /// The <see cref="System.IO.Stream"/> that receives the serailized data.
         /// </param>
         /// 
         /// <remarks>
-        /// The given Stream is not closed by this method.
+        /// <paramref name="targetStream"/> is not closed by this method.
         /// </remarks>
         public static void ToBinary<TAlphabet>(FiniteStateMachine<TAlphabet> fsm, Stream targetStream)
         {
@@ -150,7 +153,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Deserializes the given data stream to a FiniteStateMachine object.
+        /// Deserializes the given data stream to a <see cref="FiniteStateMachine"/> object.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -158,12 +161,16 @@ namespace Jolt.Automata
         /// finite state machine.
         /// </typeparam>
         ///
-        /// <param name="stream">
+        /// <param name="binaryStream">
         /// The binary stream to convert.
         /// </param>
         /// 
+        /// <returns>
+        /// A new <see cref="FiniteStateMachine"/> equivalent to the given binary data.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// The given Stream is not closed by this method.
+        /// <paramref name="binaryStream"/> is not closed by this method.
         /// </remarks>
         public static FiniteStateMachine<TAlphabet> FromBinary<TAlphabet>(Stream binaryStream)
         {
@@ -171,7 +178,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Serializes the given finite state machine to a GraphViz representation.
+        /// Serializes the given <see cref="FiniteStateMachine"/> to a GraphViz representation.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -180,22 +187,22 @@ namespace Jolt.Automata
         /// </typeparam>
         ///
         /// <param name="fsm">
-        /// The finite state machine to convert.
+        /// The <see cref="FiniteStateMachine"/> to convert.
         /// </param>
         ///
         /// <param name="writer">
-        /// The target of the serialization operation.
+        /// The <see cref="System.IO.TextWriter"/> that receives the serialized data.
         /// </param>
         /// 
         /// <remarks>
-        /// The given TextWriter is not closed by this method.
+        /// <paramref name="writer"/> is not closed by this method.
         /// </remarks>
         public static void ToGraphViz<TAlphabet>(FiniteStateMachine<TAlphabet> fsm, TextWriter writer)
         {
             GraphvizAlgorithm<string, Transition<TAlphabet>> algorithm = new GraphvizAlgorithm<string, Transition<TAlphabet>>(fsm.AsGraph);
 
             algorithm.FormatEdge += (s, args) => args.EdgeFormatter.Label.Value = args.Edge.Description;
-            algorithm.FormatVertex += delegate(object sender, FormatVertexEventArgs<string> args)
+            algorithm.FormatVertex += (s, args) =>
             {
                 if (fsm.IsFinalState(args.Vertex))
                 {

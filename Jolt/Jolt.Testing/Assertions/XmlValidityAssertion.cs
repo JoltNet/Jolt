@@ -14,28 +14,26 @@ using System.Xml.Schema;
 namespace Jolt.Testing.Assertions
 {
     /// <summary>
-    /// Provides methods to validate XML against a given schema set.
+    /// Provides assertion methods that validate XML against a schema set.
     /// </summary>
     public class XmlValidityAssertion
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the assertion class with the schemas
-        /// required to perform the validation.  Treats validation
-        /// warnings as errors.
+        /// Creates a new instance of the <see cref="XmlValidityAssertion"/> class,
+        /// treating all validation warnings as errors.
         /// </summary>
         /// 
         /// <param name="schemas">
-        /// The schemas defining the valid XML structure.
+        /// The schemas defining the desired valid XML structure.
         /// </param>
         public XmlValidityAssertion(XmlSchemaSet schemas)
             : this(schemas, XmlSchemaValidationFlags.ReportValidationWarnings) { }
 
         /// <summary>
-        /// Initializes the assertion class with the schemas
-        /// required to perform the validation and the validator
-        /// configuration.
+        /// Creates a new instance of the <see cref="XmlValidityAssertion"/> class,
+        /// and configures the validator with a given set of rules.
         /// </summary>
         /// 
         /// <param name="schemas">
@@ -43,7 +41,7 @@ namespace Jolt.Testing.Assertions
         /// </param>
         /// 
         /// <param name="validationFlags">
-        /// The configuration of the XML validator.
+        /// An <see cref="XmlSchemaValidationFlags"/> enumeration that configures the XML validator.
         /// </param>
         public XmlValidityAssertion(XmlSchemaSet schemas, XmlSchemaValidationFlags validationFlags)
         {
@@ -61,8 +59,13 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <param name="reader">
-        /// The reader to validate.
+        /// The <see cref="System.Xml.XmlReader"/> to validate.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns a new <see cref="System.Collections.Generic.IList"/> containing each
+        /// validation error raised during the validation process.
+        /// </returns>
         public virtual IList<ValidationEventArgs> Validate(XmlReader reader)
         {
             List<ValidationEventArgs> result = new List<ValidationEventArgs>();
@@ -79,15 +82,20 @@ namespace Jolt.Testing.Assertions
         #region internal methods ------------------------------------------------------------------
 
         /// <summary>
-        /// Creates the XmlReaderSettings required to perform the validation
-        /// as prescribed by the configuration of the class.  Accepts a
-        /// validation event handler to receive XML validation errors.
+        /// Creates the <see cref="XmlReaderSettings"/> required to perform the validation
+        /// as prescribed by the configuration of the class.
         /// </summary>
         /// 
         /// <param name="validationEventHandler">
-        /// The validaition event handler that is associated with the created
+        /// The <see cref="ValidationEventHandler"/> that is associated with the created
         /// reader settings.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlReaderSetting"/> class, intialized with
+        /// <paramref name="validationEventHandler"/>, and the configured schemas and validation
+        /// flags.
+        /// </returns>
         internal XmlReaderSettings CreateReaderSettings(ValidationEventHandler validationEventHandler)
         {
             XmlReaderSettings settings = new XmlReaderSettings();

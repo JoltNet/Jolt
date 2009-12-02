@@ -16,8 +16,9 @@ using Jolt.Testing.Properties;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Creates and defines the ConstructorBuilder used by the
-    /// ProxyTypeBuilder for non-generic constructors on the proxy type.
+    /// Defines a concrete <see cref="AbstractMethodDeclarer"/> class that creates
+    /// <see cref="System.Reflection.Emit.ConstructorBuilder"/> objects for non-generic
+    /// constructors on the proxy type.
     /// </summary>
     internal sealed class NonGenericConstructorDeclarer : AbstractMethodDeclarer<ConstructorBuilder, ConstructorInfo>
     {
@@ -47,7 +48,13 @@ namespace Jolt.Testing.CodeGeneration
             return builder;
         }
 
-        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.Declare(Type)"/>
+        /// <summary>
+        /// Not supported since a constructor does not have a return type.
+        /// </summary>
+        ///
+        /// <exception cref="System.InvalidOperationException">
+        /// Any invocation.
+        /// </exception>
         internal override ConstructorBuilder Declare(Type desiredReturnType)
         {
             throw new InvalidOperationException(Resources.Error_OverrideCtorReturnType);

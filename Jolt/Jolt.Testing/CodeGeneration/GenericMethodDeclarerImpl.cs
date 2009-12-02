@@ -14,8 +14,8 @@ using System.Reflection.Emit;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Implements the IMethodDeclarerImpl contract and provides methods
-    /// that declare a generic method.
+    /// Implements the <see cref="IMethodDeclarerImpl"/> contract and provides methods
+    /// that declare a generic <see cref="System.Reflection.MethodInfo"/>.
     /// </summary>
     internal sealed class GenericMethodDeclarerImpl : IMethodDeclarerImpl<MethodBuilder, MethodInfo>
     {

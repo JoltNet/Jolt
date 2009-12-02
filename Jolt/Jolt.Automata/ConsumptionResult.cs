@@ -10,15 +10,19 @@
 namespace Jolt.Automata
 {
     /// <summary>
-    /// Contains metadata describing the result of an FSM consuming a sequence
-    /// of input symbols.
+    /// Contains metadata describing the result of a <see cref="FiniteStateMachine"/>
+    /// consuming a sequence of input symbols.
     /// </summary>
+    /// 
+    /// <typeparam name="TAlphabet">
+    /// The type that represents the alphabet operated upon by the FSM.
+    /// </typeparam>
     public sealed class ConsumptionResult<TAlphabet>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the fields of the class.
+        /// Creates a new instance of the <see cref="ConsumptionResult"/> class.
         /// </summary>
         /// 
         /// <param name="isAccepted"><see cref="ConsumptionResult.IsAccepted"/></param>
@@ -38,7 +42,8 @@ namespace Jolt.Automata
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Determines if the FSM accepted the sequence of input symbols.
+        /// Gets a Boolean value denoting if the <see cref="FiniteStateMachine"/> accepted the
+        /// sequence of input symbols.
         /// </summary>
         public bool IsAccepted
         {
@@ -46,7 +51,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Retrieves the last symbol processed by the FSM.
+        /// Gets the last symbol processed by the <see cref="FiniteStateMachine"/>.
         /// </summary>
         public TAlphabet LastSymbol
         {
@@ -54,7 +59,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Retrieves the number of symbols consumed by the FSM.
+        /// Gets the number of symbols consumed by the <see cref="FiniteStateMachine"/>.
         /// </summary>
         public ulong NumberOfConsumedSymbols
         {
@@ -62,7 +67,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Retrieves the last state visited by the FSM.
+        /// Gets the last state visited by the <see cref="FiniteStateMachine"/>.
         /// </summary>
         public string LastState
         {

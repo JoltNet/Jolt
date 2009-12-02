@@ -15,12 +15,13 @@ using NUnit.Framework.Constraints;
 namespace Jolt.Testing.Assertions.NUnit
 {
     /// <summary>
-    /// Contains functionaly that is common to all XML constraints.
+    /// Defines an abstract base class that contains functionaly
+    /// common to all NUnit XML constraints.
     /// </summary>
     /// 
     /// <typeparam name="TActual">
     /// The type of the "actual" parameter given to the
-    /// <seealso cref="Constraint.Matches"/> method.
+    /// <see cref="Constraint.Matches"/> method.
     /// </typeparam>
     /// 
     /// <typeparam name="TAssertionResult">
@@ -35,13 +36,15 @@ namespace Jolt.Testing.Assertions.NUnit
         #region Constraint members ----------------------------------------------------------------
 
         /// <summary>
-        /// Evaluates the constraint as per the concrete evaluation
-        /// method, returning true if the evalualtion is successful.
+        /// Evaluates the constraint as per the concrete evaluation method, <see cref="Assert"/>.
         /// </summary>
         /// 
         /// <param name="actual">
-        /// The value given to the evaluation method for validation.
+        /// The value given to <see cref="Assert"/> for validation.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if the evalualtion is successful, false otherwise</returns>
         public override bool Matches(object actual)
         {
             base.actual = actual;
@@ -80,31 +83,43 @@ namespace Jolt.Testing.Assertions.NUnit
         #region protected methods -----------------------------------------------------------------
 
         /// <summary>
-        /// Perfoms the evaluation/assertion of the constraint.
+        /// Performs the evaluation/assertion of the constraint.
         /// </summary>
         /// 
         /// <param name="actual">
         /// The data value to validate.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of <typeparamref name="TAssertionResult"/>, denoting
+        /// the success or failure of the assertion.
+        /// </returns>
         protected abstract TAssertionResult Assert(TActual actual);
 
         /// <summary>
-        /// Converts a given assertion result to a Boolean value indicating
-        /// success or failure.
+        /// Converts a <typeparamref name="TAssertionResult"/> to a Boolean value.
         /// </summary>
         /// 
         /// <param name="assertionResult">
-        /// The result to convert.
+        /// The <typeparamref name="TAssertionResult"/> to convert.
         /// </param>
+        /// 
+        /// <returns>
+        /// The Boolean representation of <paramref name="assertionResult"/>.
+        /// </returns>
         protected abstract bool ToBoolean(TAssertionResult assertionResult);
 
         /// <summary>
-        /// Creates an assertion error message for a given assertion result.
+        /// Creates an assertion error message for a given <typeparamref name="TAssertionResult"/>.
         /// </summary>
         /// 
         /// <param name="assertionResult">
-        /// The result from which the error message is derived.
+        /// The <typeparamref name="TAssertionResult"/> from which the error message is derived.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string containing an error message pertaining to <paramref name="assertionResult"/>.
+        /// </returns>
         protected abstract string CreateAssertionErrorMessage(TAssertionResult assertionResult);
 
         #endregion

@@ -20,20 +20,21 @@ using Jolt.Testing.Properties;
 namespace Jolt.Testing.Assertions
 {
     /// <summary>
-    /// Compares two XML structures for user-defined equivalency, for
-    /// both XML structure and element/attribute values.
+    /// Provides assertion methods for performing user-defined equivalency
+    /// assertions against two XML structures.
     /// </summary>
     public class XmlEquivalencyAssertion
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the XmlEquivalencyAssertion class.
+        /// Creates a new instance of the <see cref="XmlEquivalencyAssertion"/> class,
+        /// accepting the equivalency strictness.
         /// </summary>
         /// 
         /// <param name="strictness">
-        /// A set of flags denoting the definition of equivalency,
-        /// for this instance.
+        /// An <see cref="XmlComparisonFlags"/> enumeration denoting the definition of
+        /// equivalency for this instance.
         /// </param>
         public XmlEquivalencyAssertion(XmlComparisonFlags strictness)
         {
@@ -63,7 +64,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Initializes the static state of the class.
+        /// Initializes the static state of the <see cref="XmlEquivalencyAssertion"/> class.
         /// </summary>
         static XmlEquivalencyAssertion()
         {
@@ -80,18 +81,26 @@ namespace Jolt.Testing.Assertions
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Compares two given XmlReaders for element/document equivalency
-        /// in terms of structure and contents, according to the configuration
-        /// of the class.
+        /// Compares two <see cref="System.Xml.XmlReader"/> objects for equivalency.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected element/document.
+        /// The expected XML, referenced by an <see cref="System.Xml.XmlReader"/>.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element/document being validated for equivalency.
+        /// The XML to validate, referenced by an <see cref="System.Xml.XmlReader"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the assertion.
+        /// </returns>
+        ///
+        /// <remarks>
+        /// Equivalency is defined as per the configuration of the <see cref="XmlEquivalencyAssertion"/>
+        /// instance.
+        /// </remarks>
         public virtual XmlComparisonResult AreEquivalent(XmlReader expected, XmlReader actual)
         {
             using (XmlReader expectedXml = XmlReader.Create(expected, ReaderSettings),
@@ -106,7 +115,8 @@ namespace Jolt.Testing.Assertions
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the comparison flags used to initialize the instance.
+        /// Gets the <see cref="XmlComparisonFlags"/> associated with <see cref="XmlEquivalencyAssertion"/>
+        /// instance.
         /// </summary>
         internal XmlComparisonFlags ComparisonFlags
         {
@@ -118,18 +128,11 @@ namespace Jolt.Testing.Assertions
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Verifies the equivalency of the two given elements according to the 
-        /// configuration of the class, assuming that the child elements of two given
-        /// elements are ordered.
+        /// Compares two <see cref="System.Xml.XLinq.XElement"/> objects for equivalency,
+        /// and verifying that the order of child elements are the same in both XML
+        /// trees.
         /// </summary>
         /// 
-        /// <param name="expected">
-        /// The element containing the expected set of child elements.
-        /// </param>
-        /// 
-        /// <param name="actual">
-        /// The element containing the child element set to validate.
-        /// </param>
         private XmlComparisonResult AreEquivalentAndOrdered(XElement expected, XElement actual)
         {
             XmlComparisonResult areEquivalent = AreElementsEquivalent(expected, actual);
@@ -169,18 +172,27 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Verifies the equivalency of the two given elements according to the 
-        /// configuration of the class, assuming that the child elements of two given
-        /// elements are unordered.
+        /// Compares two <see cref="System.Xml.XLinq.XElement"/> objects for equivalency,
+        /// disregarding the order of child elements both XML trees.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The element containing the expected set of child elements.
+        /// The expected XML, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element containing the child element set to validate.
+        /// The XML to validate, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Orders the elements in the <paramref name="actual"/> XML tree so that the "ordered"
+        /// version of this algorithm may detect missing elements.
+        /// </remarks>
         private XmlComparisonResult AreEquivalentAndUnordered(XElement expected, XElement actual)
         {
             NormalizeElementOrder_FirstPass(expected, actual);
@@ -189,19 +201,26 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Orders the child elementselements contained in <paramref name="actualChildren"/>
-        /// such that they match the element order of those in <paramref name="expectedChildren"/>.
-        /// An element is moved if it is considered equivalent to the reference element as per
-        /// the configuration of the class (<see cref="AreElementsEquivalent"/>).
+        /// Orders the child elements of the XML referenced by <paramref name="actual"/>
+        /// such that their order matches that of the XML referenced by <paramref name="expected"/>.
+        /// Does not consider a child element's children when searching for a matching reference
+        /// element.
         /// </summary>
         /// 
-        /// <param name="expectedChildren">
-        /// The collection of reference elements, defining the desired element order.
+        /// <param name="expected">
+        /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements define the desired element order.
         /// </param>
         /// 
-        /// <param name="actualChildren">
-        /// The collection containing the elements to reorder.
+        /// <param name="expected">
+        /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements are to be reordered.
         /// </param>
+        /// 
+        /// <remarks>
+        /// An element is moved if it is considered equivalent to the reference element as per
+        /// the configuration of the <see cref="XmlEquivalencyAssertion"/> instance.  Furthermore,
+        /// the function returns immediately when an element can not be paired against an existing
+        /// reference element.
+        /// </remarks>
         private void NormalizeElementOrder_FirstPass(XElement expected, XElement actual)
         {
             if (!AreEquivalent(expected, actual)) { return; }
@@ -244,19 +263,25 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Orders the child elementselements contained in <paramref name="actualChildren"/>
-        /// such that they match the element order of those in <paramref name="expectedChildren"/>.
-        /// An element is moved if it is considered equivalent to the reference element as per
-        /// the configuration of the class (<see cref="AreElementsEquivalent"/>).
+        /// Orders the child elements of the XML referenced by <paramref name="actual"/>
+        /// such that their order matches that of the XML referenced by <paramref name="expected"/>.
+        /// Consider a child element's children when searching for a matching reference element.
         /// </summary>
         /// 
-        /// <param name="expectedChildren">
-        /// The collection of reference elements, defining the desired element order.
+        /// <param name="expected">
+        /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements define the desired element order.
         /// </param>
         /// 
-        /// <param name="actualChildren">
-        /// The collection containing the elements to reorder.
+        /// <param name="expected">
+        /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements are to be reordered.
         /// </param>
+        /// 
+        /// <remarks>
+        /// An element is moved if it is considered equivalent to the reference element as per
+        /// the configuration of the <see cref="XmlEquivalencyAssertion"/> instance.  Furthermore,
+        /// the function returns immediately when an element can not be paired against an existing
+        /// reference element.
+        /// </remarks>
         private bool NormalizeElementOrder_SecondPass(XElement expected, XElement actual)
         {
             if (!AreEquivalent(expected, actual)) { return false; }
@@ -291,15 +316,15 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Exchanges the elements in the given collection, at the given indecies.
+        /// Exchanges the position of two elemens in a given collection.
         /// </summary>
         /// 
-        /// <typeparam name="T">
-        /// The the of element contained in the given collection.
+        /// <typeparam name="TElement">
+        /// The type of element contained in the given collection.
         /// </typeparam>
         /// 
         /// <param name="collection">
-        /// The collection containing the elements to exchange.
+        /// An <see cref="System.Collections.Generic.IList"/> containing the elements to exchange.
         /// </param>
         /// 
         /// <param name="firstIndex">
@@ -309,26 +334,31 @@ namespace Jolt.Testing.Assertions
         /// <param name="secondIndex">
         /// The index of the second element to exchange.
         /// </param>
-        private void SwapElement<T>(IList<T> collection, int firstIndex, int secondIndex)
+        private void SwapElement<TElement>(IList<TElement> collection, int firstIndex, int secondIndex)
         {
             // TODO: Share this code.
-            T element = collection[firstIndex];
+            TElement element = collection[firstIndex];
             collection[firstIndex] = collection[secondIndex];
             collection[secondIndex] = element;
         }
 
         /// <summary>
-        /// Compares two given elements for equivalency in terms of contents,
-        /// excluding child element analysis, according to the configuration of the class.
+        /// Compares two <see cref="System.Xml.XLinq.XElement"/> objects for equivalency,
+        /// disregarding the analysis child elements either XML tree.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected element.
+        /// The expected XML, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element being validated for equivalency.
+        /// The XML to validate, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
         private XmlComparisonResult AreElementsEquivalent(XElement expected, XElement actual)
         {
             XmlComparisonResult areEquivalent = m_validateElementNamespaceEquivalency(expected, actual);
@@ -350,34 +380,42 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Invokes the <see cref="AreElementsEquivalent"/> method, returning
-        /// a Boolean value denoting the success of the method execution.
+        /// Adapts <see cref="AreElementsEquivalent"/> method, returning
+        /// a Boolean instead of an <see cref="XmlComparisonResult"/>.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected element argument for the method.
+        /// The expected XML, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The acutal element argument for the method.
+        /// The XML to validate, referenced by an <see cref="System.Xml.XLinq.XElement"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if the given elements are equivalent, false otherwise.
+        /// </returns>
         private bool AreEquivalent(XElement expected, XElement actual)
         {
             return AreElementsEquivalent(expected, actual).Result;
         }
 
         /// <summary>
-        /// Determines the equivalency of the attributes of two given elements,
-        /// by comparing attribute names and their values.
+        /// Compares the attributes two <see cref="System.Xml.XLinq.XElement"/> objects for equivalency.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The element containing the expected set of attributes.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing the expected set of attributes.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element containing the attribute set to validate.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing the attributes to validate.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
         private XmlComparisonResult CompareAttributes(XElement expected, XElement actual)
         {
             using (IEnumerator<XAttribute> expectedAttributes = CreateAttributeEnumerator(expected),
@@ -441,13 +479,22 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Creates an enumerator to enumerate the given element's attributes,
-        /// according to the configuration of the class.
+        /// Creates a new instance of an <see cref="System.Collections.Generic.IEnumerator"/> for
+        /// enumerating the attributes of a given <see cref="System.Xml.XLinq.XElement"/>.
         /// </summary>
         /// 
         /// <param name="element">
-        /// The element whose attributes are enumerated.
+        /// The <see cref="System.Xml.XLinq.XElement"/> whose attributes are enumerated.
         /// </param>
+        /// 
+        /// <returns>
+        /// The requested enumerator, which enumerates the attributes of <paramref name="element"/>.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// The returned enumerator ignores namespace declarations and enumerates attributes
+        /// by name-sorted order.
+        /// </remarks>
         private IEnumerator<XAttribute> CreateAttributeEnumerator(XElement element)
         {
             return element.Attributes()
@@ -458,15 +505,16 @@ namespace Jolt.Testing.Assertions
 
 
         /// <summary>
-        /// Determines if a value is contained in an XmlComparisonFlags enumeration.
+        /// Determines if an enumeration value is contained in an
+        /// <see cref="XmlComparisonFlags"/> enumeration.
         /// </summary>
         /// 
         /// <param name="flag">
-        /// The flag to search for.
+        /// The <see cref="XmlComparisonFlags"/> value to search for.
         /// </param>
         /// 
         /// <param name="value">
-        /// The value that is queried.
+        /// The <see cref="XmlComparisonFlags"/> that is queried.
         /// </param>
         private static bool ContainsFlag(XmlComparisonFlags flag, XmlComparisonFlags value)
         {
@@ -475,24 +523,29 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Compares the namespaces of two given attributes for equality.
+        /// Compares the namespaces of two <see cref="System.Xml.XLinq.XAttribute"/> objects for equality.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The attribute containing the expected namespace value.
+        /// The <see cref="System.Xml.XLinq.XAttribute"/>  containing the expected namespace value.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The attribute containing the namespace to validate.
+        /// The <see cref="System.Xml.XLinq.XAttribute"/> containing the namespace value to validate.
         /// </param>
         /// 
         /// <param name="expectedElement">
-        /// The element containing <paramref name="expected"/>.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing <paramref name="expected"/>.
         /// </param>
         /// 
         /// <param name="actualElement">
-        /// The element containing <paramref name="actual"/>.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing <paramref name="actual"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
         private static XmlComparisonResult CompareAttributeNamespaces(XAttribute expected, XAttribute actual, XElement expectedElement, XElement actualElement)
         {
             if (expected.Name.Namespace == actual.Name.Namespace) { return SuccessfulComparisonResult; }
@@ -509,16 +562,21 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Compares the namespaces of two given elements for equality.
+        /// Compares the namespaces of two <see cref="System.Xml.XLinq.XElement"/> objects for equality.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The element containing the expected namespace value.
+        /// The <see cref="System.Xml.XLinq.XElement"/>  containing the expected namespace value.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element containing the namespace to validate.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing the namespace value to validate.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
         private static XmlComparisonResult CompareElementNamespaces(XElement expected, XElement actual)
         {
             if (expected.Name.Namespace == actual.Name.Namespace) { return SuccessfulComparisonResult; }
@@ -534,20 +592,24 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Compares the values of two given elements for equality.
+        /// Compares the element-values of two <see cref="System.Xml.XLinq.XElement"/> objects for equality.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The element containing the expected value.
+        /// The <see cref="System.Xml.XLinq.XElement"/>  containing the expected value.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element containing the value to validate.
+        /// The <see cref="System.Xml.XLinq.XElement"/> containing the value to validate.
         /// </param>
         /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the comparison.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// The value of an element is defined as the concatenation of an
-        /// element's child text nodes.
+        /// The value of an element is defined as the concatenation of an element's child text nodes.
         /// </remarks>
         private static XmlComparisonResult CompareElementValues(XElement expected, XElement actual)
         {
@@ -567,13 +629,17 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// Gets the value of an element by concatenating only its
-        /// child text nodes.
+        /// Gets the element-value of an <see cref="System.Xml.XLinq.XElement"/>.
         /// </summary>
         /// 
         /// <param name="element">
-        /// The element whose value is retrieved.
+        /// The <see cref="System.Xml.XLinq.XElement"/> whose value is retrieved.
         /// </param>
+        /// 
+        /// <returns>
+        /// A string representing the element value - a concatenation of the the child text nodes
+        /// of <paramref name="element"/>.
+        /// </returns>
         private static string GetElementValue(XElement element)
         {
             StringBuilder valueBuilder = new StringBuilder();

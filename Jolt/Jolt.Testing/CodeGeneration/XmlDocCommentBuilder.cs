@@ -15,26 +15,27 @@ using System.Xml.Linq;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Provides a class for incrementally constructing an XML doc
-    /// comments file pertaining to the members of a proxy and interface type.
+    /// Defines a concrete implementation of the <see cref="XmlDocCommentBuilderBase"/> class,
+    /// incrementally constructing an XML doc comments file pertaining to the members of a proxy
+    /// and interface type.  Transforms a given set of XML doc comments for a real subject type,
+    /// to XML doc comments suitable for a corresponding proxy and interface type.
     /// </summary>
     internal sealed class XmlDocCommentBuilder : XmlDocCommentBuilderBase
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the builder with a XML doc comment file that refers to
-        /// the assembly of the given proxy types, and contains documentation for
-        /// the given proxy types.
+        /// Creates a new instance of the <see cref="XmlDocCommentBuilder"/> class
         /// </summary>
         /// 
         /// <param name="reader">
-        /// The reader that retrieves XML doc comments for transformation.
+        /// A <see cref="IXmlDocCommentReader"/> that retrieves the reference set of XML doc
+        /// comments, for a real subject type.
         /// </param>
         /// 
         /// <param name="realSubectType">
-        /// The type whose assembly is referenced by the reader, and from which
-        /// the proxy types are derived from.
+        /// The <see cref="System.Type"/> whose assembly is referenced by <paramref name="reader"/>, and from which
+        /// the proxy and interface types are modelled after.
         /// </param>
         /// 
         /// <param name="proxyType">
@@ -61,11 +62,12 @@ namespace Jolt.Testing.CodeGeneration
         #region XmlDocCommentBuilderBase members --------------------------------------------------
 
         /// <summary>
-        /// Adds the proxy and interface documentation for the given constructor to the builder.
+        /// Adds the proxy and interface documentation for a given
+        /// <see cref="System.Reflection.ConstructorInfo"/> to the builder.
         /// </summary>
         /// 
         /// <param name="constructor">
-        /// The constructor whose documentation is transformed.
+        /// The <see cref="System.Reflection.ConstructorInfo"/> whose documentation is transformed.
         /// </param>
         internal override void AddConstuctor(ConstructorInfo constructor)
         {
@@ -73,11 +75,12 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds the proxy and interface documentation for the given event to the builder.
+        /// Adds the proxy and interface documentation for a given
+        /// <see cref="System.Reflection.EventInfo"/> to the builder.
         /// </summary>
         /// 
         /// <param name="eventInfo">
-        /// The event whose documentation is transformed.
+        /// The <see cref="System.Reflection.EventInfo"/> whose documentation is transformed.
         /// </param>
         internal override void AddEvent(EventInfo eventInfo)
         {
@@ -85,11 +88,12 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds the proxy and interface documentation for the given method to the builder.
+        /// Adds the proxy and interface documentation for a given
+        /// <see cref="System.Reflection.MethodInfo"/> to the builder.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method whose documentation is transformed.
+        /// The <see cref="System.Reflection.MethodInfo"/> whose documentation is transformed.
         /// </param>
         internal override void AddMethod(MethodInfo method)
         {
@@ -97,11 +101,12 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds the proxy and interface documentation for the given property to the builder.
+        /// Adds the proxy and interface documentation for a given
+        /// <see cref="System.Reflection.PropertyInfo"/> to the builder.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property whose documentation is transformed.
+        /// The <see cref="System.Reflection.PropertyInfo"/> whose documentation is transformed.
         /// </param>
         internal override void AddProperty(PropertyInfo property)
         {
@@ -113,7 +118,7 @@ namespace Jolt.Testing.CodeGeneration
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the XML doc comment reader associated with the class.
+        /// Gets the <see cref="IXmlDocCommentReader"/> associated with the instance.
         /// </summary>
         internal IXmlDocCommentReader XmlDocCommentReader
         {
@@ -125,16 +130,17 @@ namespace Jolt.Testing.CodeGeneration
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Tranforms the given member element into an two elements that respectively
-        /// represent the given member documentation for the proxy and proxy interface types.
+        /// Tranforms the given member <see cref="System.Xml.XLinq.XElement"/> documentation node
+        /// into two <see cref="System.Xml.XLinq.XElement"/> nodes that respectively represent the
+        /// member documentation nodes for the proxy and proxy interface types.
         /// </summary>
         /// 
         /// <param name="memberElement">
-        /// The member element (and documentation) to transform.
+        /// The member <see cref="System.Xml.XLinq.XElement"/> documentation to transform.
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The type whose member is referenced in the member element.
+        /// The <see cref="System.Type"/> whose member is referenced by <paramref name="memberElement"/>.
         /// </param>
         private void TransformAndAddComments(XElement memberElement, Type realSubjectType)
         {
@@ -145,23 +151,27 @@ namespace Jolt.Testing.CodeGeneration
             }
         }
 
-
         /// <summary>
-        /// Replaces the XML doc comment encoded type name of a given type with the
-        /// encoded type name of another given type within the given element.
+        /// Replaces the XML doc comment encoded type name of a given documentation node
+        /// with the encoded type name of another given <see cref="System.Type"/>.
         /// </summary>
         /// 
         /// <param name="memberElement">
-        /// The element whose name attribute is modified.
+        /// The <see cref="System.Xml.XLinq.XElement"/> whose name attribute is modified.
         /// </param>
         /// 
         /// <param name="typeToReplace">
-        /// The type whose encoded name is replaced.
+        /// The <see cref="System.Type"/> whose name is referenced by <paramref name="memberElement"/>.
         /// </param>
         /// 
         /// <param name="newType">
-        /// The new type whose name is encoded and introduce into the name attribute.
+        /// The new <see cref="System.Type"/> whose name is encoded and replaces the name attribute
+        /// of <paramref name="memberElement"/>
         /// </param>
+        /// 
+        /// <returns>
+        /// A reference to <paramref name="memberElement"/>, after it has been modified.
+        /// </returns>
         private static XElement ReplaceTypeName(XElement memberElement, Type typeToReplace, Type newType)
         {
             XAttribute memberName = memberElement.Attribute(XmlDocCommentNames.NameAttribute);

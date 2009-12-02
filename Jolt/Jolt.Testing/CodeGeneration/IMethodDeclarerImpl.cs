@@ -13,54 +13,67 @@ using System.Reflection;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Provides methods that implement the declaration logic for an
-    /// AbstractMethodDeclarer concrete specialization.  Used by the
-    /// AbstractMethodDeclarer to customize the style of method declaration
-    /// (e.g. generic, non-generic, etc...)
+    /// Defines a contract that generalizes the the declaration logic
+    /// for any <see cref="System.Reflection.MethodBase"/>.
     /// </summary>
     /// 
     /// <typeparam name="TMethodBuilder">
-    /// The type of the method buider used for declaring the method.
+    /// The type of method builder used to declare the method.
     /// </typeparam>
     /// 
     /// <typeparam name="TMethod">
-    /// The type of the method created by the method builder.
+    /// The type of method created by <typeparamref name="TMethodBuilder"/>.
     /// </typeparam>
+    /// 
+    /// <remarks>
+    /// Used by an <see cref="AbstractMethodDeclarer"/> to customize the style
+    /// of method declaration (e.g. generic, non-generic, etc...)
+    /// </remarks>
     internal interface IMethodDeclarerImpl<TMethodBuilder, TMethod>
         where TMethodBuilder : TMethod
         where TMethod : MethodBase
     {
         /// <summary>
-        /// Declares the method using the given method builder, modelling
-        /// the method signature from the given real subject type method.
-        /// Overrides the declared methods return type to the given type.
+        /// Declares a <typeparamref name="TMethod"/> using a given
+        /// <typeparamref name="TMethodBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The method builder used to declare the method.
+        /// The <typeparamref name="TMethodBuilder"/> used to declare the method.
         /// </param>
         /// 
         /// <param name="realSubjectTypeMethod">
-        /// The method to model.
+        /// The <typeparamref name="TMethod"/> to model.
         /// </param>
         /// 
         /// <param name="returnType">
-        /// The return type of the declared method.
+        /// The return <see cref="System.Type"/> of the newly declared method.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Models the declared method after the signature of
+        /// <paramref name="realSubjectTypeMethod"/>, and overrides the declared
+        /// methods return type to <paramref name="returnType"/>.
+        /// </remarks>
         void DeclareMethod(TMethodBuilder builder, TMethod realSubjectTypeMethod, Type returnType);
 
         /// <summary>
-        /// Defines the methods parameters using the given method builder,
-        /// modelling the parameters from the given real subject type method.
+        /// Defines the parameters of a <typeparamref name="TMethod"/> using a
+        /// given <typeparamref name="TMethodBuilder"/>.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The method builder used to define the method's parameters.
+        /// The <typeparamref name="TMethodBuilder"/> used to define the
+        /// method's parameters.
         /// </param>
         /// 
         /// <param name="realSubjectTypeMethod">
-        /// The method whose parameters are modelled.
+        /// The <typeparamref name="TMethod"/> whose parameters are modelled.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Models the method parameters of <paramref name="realSubjectTypeMethod"/>.
+        /// </remarks>
         void DefineMethodParameters(TMethodBuilder builder, TMethod realSubjectTypeMethod);
     }
 }

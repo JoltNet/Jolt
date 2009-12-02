@@ -14,9 +14,8 @@ using System.Reflection.Emit;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Provides methods that implement a construction mechanism for
-    /// method declarations.  Used by the ProxyTypeBuilder for creating
-    /// constructor, interface method and proxy method declarations.
+    /// Defines an abstract base class that generalizes the declaration of
+    /// a <see cref="System.Reflection.MethodBase"/> type.
     /// </summary>
     /// 
     /// <typeparam name="TMethodBuilder">
@@ -26,6 +25,11 @@ namespace Jolt.Testing.CodeGeneration
     /// <typeparam name="TMethod">
     /// The type of the method created by the method builder.
     /// </typeparam>
+    /// 
+    /// <remarks>
+    /// Used by a <see cref="ProxyTypeBuilder"/> for creating constructor, interface
+    /// method and proxy method declarations.
+    /// </remarks>
     internal abstract class AbstractMethodDeclarer<TMethodBuilder, TMethod>
         where TMethodBuilder: TMethod
         where TMethod : MethodBase
@@ -33,24 +37,24 @@ namespace Jolt.Testing.CodeGeneration
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the method declarer with a given type builder, real subject
-        /// type method, and declarer implementation.
+        /// Creates a new instance of the <see cref="AbstractMethodDeclarer"/> class.
         /// </summary>
         /// 
         /// <param name="builder">
-        /// The type builder used to create the resulting method.
+        /// The <see cref="System.Reflection.Emit.TypeBuilder"/> used to create the resulting method.
         /// </param>
         /// 
         /// <param name="methodAttributes">
-        /// The attributes applied to the method upon declaration.
+        /// The <see cref="System.Reflection.MethodAttributes"/> applied to the method upon declaration.
         /// </param>
         /// 
         /// <param name="realSubjectTypeMethod">
-        /// The real subject type method from which the resulting method is modelled.
+        /// The <see cref="System.Reflection.MethodBase"/> object representing the real subject type method
+        /// from which the resulting method is modelled.
         /// </param>
         /// 
         /// <param name="implementation">
-        /// The declarer implementation.
+        /// The <see cref="IMethodDeclarerImpl"/> implementation that performs the declaration.
         /// </param>
         internal AbstractMethodDeclarer(
             TypeBuilder builder,
@@ -69,16 +73,26 @@ namespace Jolt.Testing.CodeGeneration
         #region internal methods ------------------------------------------------------------------
 
         /// <summary>
-        /// Declares a new method, modelling it after the associated method
-        /// from the real subject type.
+        /// Declares a new <typeparamref name="TMethod"/>, modelling it after <see cref="RealSubjectTypeMethod"/>.
         /// </summary>
+        /// 
+        /// <returns>
+        /// Returns the <typeparamref name="TMethodBuilder"/> object containing the method declaration.
+        /// </returns>
         internal abstract TMethodBuilder Declare();
 
         /// <summary>
-        /// Declares a new method, modelling it after the associated method
-        /// from the real subject type.  Suggests an override for the new
-        /// method's return type.
+        /// Declares a new <typeparamref name="TMethod"/>, modelling it after <see cref="RealSubjectTypeMethod"/>.
+        /// Allows the option of overriding the new method's return type.
         /// </summary>
+        /// 
+        /// <param name="desiredReturnType">
+        /// The desired return <see cref="System.Type"/> of the newly declared method.
+        /// </param>
+        /// 
+        /// <returns>
+        /// Returns the <typeparamref name="TMethodBuilder"/> object containing the method declaration.
+        /// </returns>
         internal abstract TMethodBuilder Declare(Type desiredReturnType);
 
         #endregion
@@ -86,7 +100,7 @@ namespace Jolt.Testing.CodeGeneration
         #region protected properties --------------------------------------------------------------
 
         /// <summary>
-        /// Gets the associated type builder .
+        /// Gets the associated <see cref="System.Reflection.Emit.TypeBuilder"/> object.
         /// </summary>
         protected TypeBuilder Builder
         {
@@ -94,7 +108,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the associated method attributes.
+        /// Gets the associated <see cref="System.Reflection.MethodAttributes"/>.
         /// </summary>
         protected MethodAttributes MethodAttributes
         {
@@ -102,7 +116,8 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the associated real subject type method.
+        /// Gets the associated <typeparamref name="TMethod"/>, representing a
+        /// real subject type method.
         /// </summary>
         protected TMethod RealSubjectTypeMethod
         {
@@ -110,7 +125,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the implementation of the declarer.
+        /// Gets the associated <see cref="IMethodDeclarerImpl"/> implementation.
         /// </summary>
         protected IMethodDeclarerImpl<TMethodBuilder, TMethod> Implementation
         {

@@ -19,22 +19,28 @@ namespace Jolt.Testing.CodeGeneration
 
 
     /// <summary>
-    /// Contains helper methods for declaring types and methods.
+    /// Contains helper methods facilitating in the declaration of types and methods.
     /// </summary>
     internal static class DeclarationHelper
     {
         /// <summary>
-        /// Defines a copy of the given parameters in the order supplied,
-        /// using the given delegate.
+        /// Defines a method's parameters by invoking a custom parameter definition
+        /// delegate.
         /// </summary>
         /// 
-        /// <param name="methodBuilder">
-        /// The delegate that defines a parameter on an implicit object.
+        /// <param name="defineParameter">
+        /// The delegate that defines a parameter on an implicit method.
         /// </param>
         /// 
         /// <param name="parameters">
-        /// The parameters that model the paramters to define.
+        /// The <see cref="System.Reflection.ParameterInfo"/> objects that model the
+        /// paramters to define.
         /// </param>
+        /// 
+        /// <remarks>
+        /// The parameters are defined in the order given be <paramref name="parameters"/>,
+        /// and contain the same name and attributes as those in <paramref name="parameters"/>.
+        /// </remarks>
         internal static void DefineParametersWith(DefineParameterDelegate defineParameter, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; ++i)
@@ -44,17 +50,22 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Determines if the given parameter array contains at least one
-        /// generic parameter.
+        /// Determines if a given <see cref="System.Reflection.ParameterInfo"/> collection
+        /// contains at least one generic parameter.
         /// </summary>
         /// 
         /// <param name="parameters">
-        /// The parameter array to search.
+        /// The <see cref="System.Reflection.ParameterInfo"/> collection to search.
         /// </param>
         /// 
+        /// <returns>
+        /// Returns true if at least one element of <see cref="System.Reflection.ParameterInfo"/>
+        /// has a generic parameter type.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// Used in-place of MethodBase.ContainsGenericParameters as the property
-        /// is not supported for all derivations of the MethodBase.
+        /// Used in-place of <see cref="System.Reflection.MethodBase.ContainsGenericParameters"/>
+        /// as this property is not supported in all derivations <see cref="System.Reflection.MethodBase"/>.
         /// </remarks>
         internal static bool ContainsGenericParameters(ParameterInfo[] parameters)
         {
@@ -62,17 +73,24 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Copies the generic type constraints from a given array of generic types
-        /// to another given array of generic type builders.
+        /// Applies generic type constraints to a given collection of
+        /// <see cref="System.Reflection.Emit.GenericTypeParameterBuilder"/> objects.
         /// </summary>
         /// 
         /// <param name="sourceTypes">
-        /// The generic types containing the type constraints to copy.
+        /// The generic <see cref="System.Type"/> objects containing the type
+        /// constraints to copy.
         /// </param>
         /// 
         /// <param name="targetTypes">
-        /// The types to which the type constraints are copied to.
+        /// The <see cref="System.Reflection.Emit.GenericTypeParameterBuilder"/> objects
+        /// to which the type constraints are copied to.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Requires that the length of <paramref name="targetTypes"/> is at least the length
+        /// of <paramref name="sourceTypes"/>.
+        /// </remarks>
         internal static void CopyTypeConstraints(Type[] sourceTypes, GenericTypeParameterBuilder[] targetTypes)
         {
             if (sourceTypes.Length != targetTypes.Length) { throw new RankException(); }

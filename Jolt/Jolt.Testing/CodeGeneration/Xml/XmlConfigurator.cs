@@ -20,13 +20,15 @@ using log4net;
 namespace Jolt.Testing.CodeGeneration.Xml
 {
     /// <summary>
-    /// Defines methods to read the XML configuration of the
-    /// <seealso cref="ProxyAssemblyBuilder"/> class.
+    /// Defines for interpreting the XML configuration of the <see cref="ProxyAssemblyBuilder"/> class.
     /// </summary>
     public static class XmlConfigurator
     {
         #region constructors ----------------------------------------------------------------------
 
+        /// <summary>
+        /// Initializes the static state of the <see cref="XmlConfigurator"/> class.
+        /// </summary>
         static XmlConfigurator()
         {
             ReaderSettings = new XmlReaderSettings();
@@ -48,19 +50,22 @@ namespace Jolt.Testing.CodeGeneration.Xml
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Loads all of the types contained in the XML stream.
+        /// Interprets a given XML configuration stream, enumerating its referenced
+        /// real subject types, represented by <see cref="TypeDescriptor"/> objects.
         /// </summary>
         /// 
         /// <param name="xmlConfiguration">
-        /// The stream containing the XML configuration/enumeration of the real subject types.
+        /// A <see cref="System.IO.Stream"/>  containing the XML configuration
+        /// of the real subject types.
         /// </param>
         /// 
         /// <retuns>
-        /// Iterator containing the loaded types.
+        /// A new <see cref="System.Collections.Generic.IEnumerable"/> to enumerate
+        /// <see cref="TypeDescriptor"/> objects.
         /// </retuns>
         /// 
         /// <remarks>
-        /// The given stream is not closed by this function.
+        /// <paramref name="xmlConfiguration"/> is not closed by this function.
         /// </remarks>
         public static IEnumerable<TypeDescriptor> LoadRealSubjectTypes(Stream xmlConfiguration)
         {
@@ -98,17 +103,21 @@ namespace Jolt.Testing.CodeGeneration.Xml
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Loads the type described by the given attribute, logging a warning if the type
-        /// can not be loaded.  Returns a value denoting the success of the load operation.
+        /// Loads the <see cref="System.Type"/> described by the given <see cref="System.Xml.XLinq.XAttribute"/>,
+        /// logging a warning if the type can not be loaded.
         /// </summary>
         /// 
         /// <param name="typeAttribute">
-        /// An attribute containing the name of the type to load.
+        /// An <see cref="System.Xml.XLinq.XAttribute"/> containing the name of the type to load.
         /// </param>
         /// 
         /// <param name="type">
-        /// Contains the loaded type, or a null value if the loading is not successful.
+        /// Contains the loaded <see cref="System.Type"/>, or a null value if the loading is not successful.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if the <paramref name="Type"/> is successfully loaded, false otherwise.
+        /// </returns>
         private static bool LoadType(XAttribute typeAttribute, out Type type)
         {
             type = Type.GetType(typeAttribute.Value);

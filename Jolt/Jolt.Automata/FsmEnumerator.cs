@@ -24,7 +24,7 @@ namespace Jolt.Automata
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the internal state of the enumerator.
+        /// Creates a new instance of the <see cref="FsmEnumerator"/> class.
         /// </summary>
         /// 
         /// <param name="startState">
@@ -44,7 +44,13 @@ namespace Jolt.Automata
 
         #region IFsmEnumerator<TAlphabet> members -------------------------------------------------
 
+        /// <summary>
         /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.NextState"/>
+        /// </summary>
+        /// 
+        /// <exception cref="System.NotSupportedException">
+        /// A non deterministic transition is detected in the FSM>
+        /// </exception>
         public bool NextState(TAlphabet inputSymbol)
         {
             if (!m_isInErrorState)
@@ -76,7 +82,9 @@ namespace Jolt.Automata
             return false;
         }
 
+        /// <summary>
         /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.CurrentState"/>
+        /// </summary>
         public string CurrentState { get; private set; }
 
         #endregion

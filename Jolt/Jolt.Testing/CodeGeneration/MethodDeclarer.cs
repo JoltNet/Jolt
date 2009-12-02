@@ -14,8 +14,8 @@ using System.Reflection.Emit;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Creates the interface or proxy MethodBuilder that is used by
-    /// the ProxyTypeBuilder and declares the method.
+    /// Defines a concrete <see cref="AbstractMethodDeclarer"/> class that creates
+    /// <see cref="System.Reflection.Emit.MethodBuilder"/> objects for declaring methods.
     /// </summary>
     internal sealed class MethodDeclarer : AbstractMethodDeclarer<MethodBuilder, MethodInfo>
     {

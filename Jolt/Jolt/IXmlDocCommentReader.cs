@@ -14,8 +14,8 @@ using System.Xml.Linq;
 namespace Jolt
 {
     /// <summary>
-    /// Internal interface to support the testing of objects
-    /// that have/use an XmlDocCommentReader.
+    /// An internal interface supporting the testing of objects
+    /// that have and/or use an <see cref="XmlDocCommentReader"/>.
     /// </summary>
     internal interface IXmlDocCommentReader
     {

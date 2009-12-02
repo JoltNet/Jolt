@@ -14,8 +14,8 @@ using System.Reflection.Emit;
 namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
-    /// Implements the IMethodDeclarerImpl contract and provides methods
-    /// that declare a non-generic method.
+    /// Implements the <see cref="IMethodDeclarerImpl"/> contract and provides methods
+    /// to declare a non-generic method.
     /// </summary>
     internal sealed class NonGenericMethodDeclarerImpl : IMethodDeclarerImpl<MethodBuilder, MethodInfo>
     {

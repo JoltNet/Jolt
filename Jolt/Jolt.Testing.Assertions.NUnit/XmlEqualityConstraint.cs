@@ -13,35 +13,39 @@ using System.Xml;
 namespace Jolt.Testing.Assertions.NUnit
 {
     /// <summary>
-    /// Implements a constraint to verify if two XML readers contain XML
-    /// that is equal in terms of structure and content of elements.
+    /// Defines an NUnit constraint to verify if two <see cref="System.Xml.XmlReader"/>
+    /// objects contain XML that is equal in terms of structure and content of elements.
     /// </summary>
     public sealed class XmlEqualityConstraint : AbstractConstraint<XmlReader, XmlComparisonResult>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the constraint with the expected XML.
+        /// Creates a new instance of the <see cref="XmlEqualityConstraint"/> class.
         /// </summary>
         /// 
         /// <param name="expectedXml">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> object containing the expected XML.
         /// </param>
         public XmlEqualityConstraint(XmlReader expectedXml)
             : this(expectedXml, Factory.CreateXmlEqualityAssertion()) { }
 
         /// <summary>
-        /// Initializes the constraint with the expected XML
-        /// and the assertion that the constraint delegates to.
+        /// Creates a new instance of the <see cref="XmlEqualityConstraint"/> class,
+        /// encapsulating an <see cref="XmlEqualityAssertion"/>.
         /// </summary>
         /// 
         /// <param name="expectedXml">
-        /// The expected XML.
+        /// An <see cref="System.Xml.XmlReader"/> object containing the expected XML.
         /// </param>
         ///
         /// <param name="assertion">
-        /// The assertion delegated to by the constraint.
+        /// The <see cref="XmlEqualityAssertion"/> that performs the assertion.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Used internally by test code to override assertion operations.
+        /// </remarks>
         internal XmlEqualityConstraint(XmlReader expectedXml, XmlEqualityAssertion assertion)
         {
             m_expectedXml = expectedXml;
@@ -85,7 +89,7 @@ namespace Jolt.Testing.Assertions.NUnit
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the XmlEqualityAssertion associated with the class.
+        /// Gets the <see cref="XmlEqualityAssertion"/> associated with the instance.
         /// </summary>
         internal XmlEqualityAssertion Assertion
         {
@@ -93,7 +97,7 @@ namespace Jolt.Testing.Assertions.NUnit
         }
 
         /// <summary>
-        /// Gets the XmlReader associated with the class.
+        /// Gets the <see cref="System.Xml.XmlReader"/> associated with the instance.
         /// </summary>
         internal XmlReader ExpectedXml
         {

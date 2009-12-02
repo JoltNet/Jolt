@@ -20,7 +20,7 @@ namespace Jolt.Automata
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the fields of the class.
+        /// Creates a new instance of the <see cref="StateTransitionEventArgs"/> class.
         /// </summary>
         /// 
         /// <param name="sourceState">

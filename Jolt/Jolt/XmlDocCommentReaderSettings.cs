@@ -24,12 +24,14 @@ namespace Jolt
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the object with an empty search paths collection.
+        /// Creates a new instance of the <see cref="XmlDocCommentReaderSettings"/> class
+        /// with an empty search paths collection.
         /// </summary>
         public XmlDocCommentReaderSettings() { }
 
         /// <summary>
-        /// Initializes the object with the given directory names.
+        /// Creates a new instance of the <see cref="XmlDocCommentReaderSettings"/> class
+        /// with the given directory names.
         /// </summary>
         /// 
         /// <param name="docCommentDirectoryNames">
@@ -59,22 +61,27 @@ namespace Jolt
         #region public fields ---------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a field to store an instance of the default configuration.
+        /// Stores an instance of the default configuration.
         /// </summary>
-        public static XmlDocCommentReaderSettings Default = CreateDefaultSettings();
+        public static readonly XmlDocCommentReaderSettings Default = CreateDefaultSettings();
 
         #endregion
 
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Creates the defautl settings object with a predefined list of search paths.
+        /// Creates the default <see cref="XmlDocCommentReaderSettings"/> object.
         /// </summary>
         /// 
         /// <remarks>
         /// Searches the application's working directory, followed by each .NET Framework
         /// reference assembly directory, including 64bit variants.
         /// </remarks>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlDocCommentReaderSettings"/> object, with a
+        /// predefined list of search paths.
+        /// </returns>
         private static XmlDocCommentReaderSettings CreateDefaultSettings()
         {
             string framework = "Framework";

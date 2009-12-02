@@ -10,8 +10,7 @@
 namespace Jolt.Automata
 {
     /// <summary>
-    /// Defines an interface for enumerating states in a finite state machine (FSM).
-    /// <seealso cref="FiniteStateMachine"/>
+    /// Defines a contract for enumerating states in a <see cref="FiniteStateMachine"/> (FSM).
     /// </summary>
     /// 
     /// <typeparam name="TAlphabet">
@@ -21,17 +20,20 @@ namespace Jolt.Automata
     {
         /// <summary>
         /// Performs a state transition from the current enumeration state
-        /// using the given input symbol.  Returns TRUE if a state transition
-        /// occurs, FALSE otherwise.
+        /// using the given input symbol.
         /// </summary>
         /// 
         /// <param name="inputSymbol">
         /// The symbol that exercises a state transition.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if a state transition occurs, false otherwise.
+        /// </returns>
         bool NextState(TAlphabet inputSymbol);
 
         /// <summary>
-        /// Retrieves the state referenced by the enumerator.
+        /// Gets the state referenced by the enumerator.
         /// </summary>
         string CurrentState { get; }
     }

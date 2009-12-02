@@ -27,7 +27,7 @@ namespace Jolt.Testing.CodeGeneration
     /// <summary>
     /// Provides methods to dynamically reverse engineer a proxy and accompanying
     /// interface for a given type.  The proxy and interface are created in a given
-    /// namespace, which is appended by the namespace of the real subject type.
+    /// namespace, which is appended to the namespace of the real subject type.
     /// </summary>
     /// 
     /// <example>
@@ -46,8 +46,8 @@ namespace Jolt.Testing.CodeGeneration
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the proxy builder with a transient assembly in the current
-        /// appdomain.  Does not produce XML doc comments for generated types.
+        /// Creates a new instance of the <see cref="ProxyTypeBuilder"/> class,
+        /// with a transient assembly in the current appdomain.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -55,14 +55,19 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The type of object for which the proxy forwards to.
+        /// The <see cref="System.Type"/> of object for which the proxy forwards to.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Does not produce XML doc comments for generated types.
+        /// </remarks>
         public ProxyTypeBuilder(string rootNamespace, Type realSubjectType)
             : this(rootNamespace, realSubjectType, false) { }
 
         /// <summary>
-        /// Initializes the proxy builder with a transient assembly in the current
-        /// appdomain.
+        /// Creates a new instance of the <see cref="ProxyTypeBuilder"/> class,
+        /// with a transient assembly in the current appdomain, optionally producing
+        /// XML doc comments.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -70,11 +75,11 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The type of object for which the proxy forwards to.
+        /// The <see cref="System.Type"/> of object for which the proxy forwards to.
         /// </param>
         /// 
         /// <param name="produceXmlDocComments">
-        /// Determines if the proxy builder should attempt to produce
+        /// Determines if the <see cref="ProxyTypeBuilder"/> should attempt to produce
         /// XML doc comments for each generated type.
         /// </param>
         public ProxyTypeBuilder(string rootNamespace, Type realSubjectType, bool produceXmlDocComments)
@@ -82,7 +87,8 @@ namespace Jolt.Testing.CodeGeneration
                     AssemblyBuilderAccess.RunAndSave).DefineDynamicModule("__transientModule")) { }
 
         /// <summary>
-        /// Initializes the proxy builder with a user-specified ModuleBuilder.
+        /// Creates a new instance of the <see cref="ProxyTypeBuilder"/> class,
+        /// with a user-specified <see cref="System.Reflection.Emit.ModuleBuilder"/>.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -90,26 +96,27 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The type of object for which the proxy forwards to.
+        /// The <see cref="System.Type"/ >of object for which the proxy forwards to.
         /// </param>
         /// 
         /// <param name="produceXmlDocComments">
-        /// Determines if the proxy builder should attempt to produce
+        /// Determines if the <see cref="ProxyTypeBuilder"/> should attempt to produce
         /// XML doc comments for each generated type.
         /// </param>
         /// 
         /// <param name="targetModule">
-        /// The module in which the types are created.
+        /// The <see cref="System.Reflection.Emit.ModuleBuilder"/> in which the types are created.
         /// </param>
-        public ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, bool produceXmlDocComments, ModuleBuilder targetModule)
-            : this(sRootNamespace,
+        public ProxyTypeBuilder(string rootNamespace, Type realSubjectType, bool produceXmlDocComments, ModuleBuilder targetModule)
+            : this(rootNamespace,
                    realSubjectType,
                    produceXmlDocComments ? CreateXmlDocCommentBuilder : (CreateXDCBuilderDelegate)delegate { return new XmlDocCommentBuilderBase(); },
                    targetModule) { }
 
         /// <summary>
-        /// Initializes the proxy builder with a user-specified XML doc comment
-        /// factory method and ModuleBuilder.
+        /// Creates a new instance of the <see cref="ProxyTypeBuilder"/> class,
+        /// with a user-specified <see cref="XmlDocCommentBuilderBase"/> factory
+        /// method and <see cref="System.Reflection.Emit.ModuleBuilder"/>.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
@@ -117,18 +124,24 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The type of object for which the proxy forwards to.
+        /// The <see cref="System.Type"/> of object for which the proxy forwards to.
         /// </param>
         /// 
         /// <param name="createXDCBuilder">
         /// A delegate containing a factory method for creating the proxy
-        /// builder's XML doc comment builder.
+        /// builder's <see cref="XmlDocCommentBuilderBase"/>.
         /// </param>
         /// 
         /// <param name="targetModule">
-        /// The module in which the types are created.
+        /// The <see cref="System.Reflection.Emit.ModuleBuilder"/> in which the types are created.
         /// </param>
-        internal ProxyTypeBuilder(string sRootNamespace, Type realSubjectType, CreateXDCBuilderDelegate createXDCBuilder, ModuleBuilder targetModule)
+        /// 
+        /// <remarks>
+        /// Used internally by test code to override
+        /// <see cref="System.Reflection.Emit.ModuleBuilder"/> and <see cref="XmlDocCommentBuilderBase"/>
+        /// operations.
+        /// </remarks>
+        internal ProxyTypeBuilder(string rootNamespace, Type realSubjectType, CreateXDCBuilderDelegate createXDCBuilder, ModuleBuilder targetModule)
         {
             ValidateRealSubjectType(realSubjectType);
 
@@ -137,8 +150,8 @@ namespace Jolt.Testing.CodeGeneration
             m_addedMembers = new HashSet<MemberInfo>();
 
             // Create the type holders for the generated interface and proxy.
-            m_proxy = m_module.DefineType(CreateProxyName(sRootNamespace, m_realSubjectType), TypeAttributes.Public | TypeAttributes.Sealed);
-            m_proxyInterface = m_module.DefineType(CreateInterfaceName(sRootNamespace, m_realSubjectType),
+            m_proxy = m_module.DefineType(CreateProxyName(rootNamespace, m_realSubjectType), TypeAttributes.Public | TypeAttributes.Sealed);
+            m_proxyInterface = m_module.DefineType(CreateInterfaceName(rootNamespace, m_realSubjectType),
                 TypeAttributes.Public | TypeAttributes.Interface | TypeAttributes.Abstract);
 
             m_methodDeclarerFactory = new MethodDeclarerFactory(m_proxyInterface, m_proxy);
@@ -167,7 +180,7 @@ namespace Jolt.Testing.CodeGeneration
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Gets the real subject type referenced by the proxy.
+        /// Gets the real subject <see cref="System.Type"/> referenced by the <see cref="ProxyTypeBuilder"/>.
         /// </summary>
         public Type ProxiedType
         {
@@ -175,7 +188,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the module that owns the generated types.
+        /// Gets the <see cref="System.Reflection.Emit.ModuleBuilder"/> that owns the generated types.
         /// </summary>
         public ModuleBuilder Module
         {
@@ -183,7 +196,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Determines if the type builder produces XML doc comments.
+        /// Determines if the <see cref="ProxyTypeBuilder"/> produces XML doc comments.
         /// </summary>
         public bool ProducesXmlDocComments
         {
@@ -195,12 +208,30 @@ namespace Jolt.Testing.CodeGeneration
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Adds a method to the proxy builder.
+        /// Adds a <see cref="System.Reflection.MethodInfo"/> to the proxy builder.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to add to the builder.
+        /// The <see cref="System.Reflection.MethodInfo"/> to add to the builder.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Equivalent to calling <see cref="AddMethod(MethodInfo, Type)"/> with the
+        /// implict returnm type of <paramref name="method"/>.
+        /// </remarks>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="method"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="method"/> is not public.
+        /// <paramref name="method"/> is not a member of the builder's real subject type.
+        /// <paramref name="method"/> is not static but the builder's real subject type is abstract.
+        /// <paramref name="desiredReturnType"/> is not a base type of the return type of <paramref name="method"/>.
+        /// </exception>
+        /// 
+        /// <seealso cref="AddMethod(MethodInfo, Type)"/>
         public virtual void AddMethod(MethodInfo method)
         {
             ThrowOnNullMember(method);
@@ -208,17 +239,28 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds a method to the proxy builder, overriding the
-        /// given method's return type.
+        /// Adds a <see cref="System.Reflection.MethodInfo"/> to the proxy builder,
+        /// overriding the given method's return <see cref="System.Type"/>.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to add to the builder.
+        /// The <see cref="System.Reflection.MethodInfo"/> to add to the builder.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The type of the return value on the builder's generated method.
+        /// The <see cref="System.Type"/> of the return value on the builder's generated method.
         /// </param>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="method"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="method"/> is not public.
+        /// <paramref name="method"/> is not a member of the builder's real subject type.
+        /// <paramref name="method"/> is not static but the builder's real subject type is abstract.
+        /// <paramref name="desiredReturnType"/> is not a base type of the return type of <paramref name="method"/>.
+        /// </exception>
         public virtual void AddMethod(MethodInfo method, Type desiredReturnType)
         {
             ThrowOnNullMember(method);
@@ -226,12 +268,38 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds a property to the proxy builder.
+        /// Adds a <see cref="System.Reflection.PropertyInfo"/> to the proxy builder.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property to add to the builder.
+        /// The <see cref="System.Reflection.PropertyInfo"/> to add to the builder.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Equivalent to calling <see cref="AddProperty(PropertyInfo, Type)"/> with the
+        /// implict property type of <paramref name="property"/>.
+        /// </remarks>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="property"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="System.NotSupportedException">
+        /// <paramref name="property"/> does not define a get or set method.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="property"/> defines a set method whose return type does not
+        /// match <paramref name="desiredReturnType"/>.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="property"/> is not a member of the builder's real subject type.
+        /// <paramref name="property"/> is not static but the builder's real subject type is abstract.
+        /// <paramref name="desiredReturnType"/> is not a base type of the property type of <paramref name="property"/>.
+        /// </exception>
+        ///
+        /// <seealso cref="AddProperty(PropertyInfo, Type)"/>
         public virtual void AddProperty(PropertyInfo property)
         {
             ThrowOnNullMember(property);
@@ -239,21 +307,40 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds a property to the proxy builder, overriding the
-        /// given property's return type on the get method.
+        /// Adds a <see cref="System.Reflection.PropertyInfo"/> to the proxy builder,
+        /// overriding its return <see cref="System.Type"/> on the get method.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property to add to the builder.
+        /// The <see cref="System.Reflection.PropertyInfo"/> to add to the builder.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The type of the return value on the builder's generated get method.
+        /// The <see cref="System.Type"/> of the return value on the builder's generated get method.
         /// </param>
         /// 
         /// <remarks>
-        /// It is an error to provide an override for a property with a set method.
+        /// It is an error to provide a return type override for a property with a set method.
         /// </remarks>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="property"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="System.NotSupportedException">
+        /// <paramref name="property"/> does not define a get or set method.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="property"/> defines a set method whose return type does not
+        /// match <paramref name="desiredReturnType"/>.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="property"/> is not a member of the builder's real subject type.
+        /// <paramref name="property"/> is not static but the builder's real subject type is abstract.
+        /// <paramref name="desiredReturnType"/> is not a base type of the property type of <paramref name="property"/>.
+        /// </exception>
         public virtual void AddProperty(PropertyInfo property, Type desiredReturnType)
         {
             ThrowOnNullMember(property);
@@ -261,12 +348,22 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds an event to the proxy builder.
+        /// Adds an <see cref="System.Reflection.EventInfo"/> to the proxy builder.
         /// </summary>
         /// 
         /// <param name="eventInfo">
-        /// The event to add to the builder.
+        /// The <see cref="System.Reflection.EventInfo"/> to add to the builder.
         /// </param>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="eventInfo"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="eventInfo"/> is not public.
+        /// <paramref name="eventInfo"/> is not a member of the builder's real subject type.
+        /// <paramref name="eventInfo"/> is not static but the builder's real subject type is abstract.
+        /// </exception>
         public virtual void AddEvent(EventInfo eventInfo)
         {
             ThrowOnNullMember(eventInfo);
@@ -301,16 +398,31 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Creates the proxy interface type for the current state of the builder.
+        /// Creates the proxy interface <see cref="System.Type"/> object.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A new instance of the proxy interface <see cref="System.Type"/>, as per the
+        /// current state of the <see cref="ProxyTypeBuilder"/>.
+        /// </returns>
         public virtual Type CreateInterface()
         {
             return m_proxyInterface.CreateType();
         }
 
         /// <summary>
-        /// Creates the proxy interface type.
+        /// Creates the proxy interface and proxy <see cref="System.Type"/> objects.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A new instance of the proxy <see cref="System.Type"/>, as per the
+        /// current state of the <see cref="ProxyTypeBuilder"/>.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// The proxy interface is is also created as it is required to complete the
+        /// declaration of the proxy type.
+        /// </remarks>
         public virtual Type CreateProxy()
         {
             m_proxy.AddInterfaceImplementation(CreateInterface());
@@ -318,8 +430,12 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Creates an XmlReader capable of reading any produced XML doc comments.
+        /// Creates a new <see cref="System.Xml.XmlReader"/> capable of reading any produced XML doc comments.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A <see cref="System.Xml.XmlReader"/> for reading the builder's XML doc comments.
+        /// </returns>
         public virtual XmlReader CreateXmlDocCommentReader()
         {
             return m_xmlDocCommentBuilder.CreateReader();
@@ -330,7 +446,7 @@ namespace Jolt.Testing.CodeGeneration
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the XmlDocCommentBuilder used by the class.
+        /// Gets the <see cref="XmlDocCommentBuilderBase"/> used by this instance.
         /// </summary>
         internal XmlDocCommentBuilderBase XmlDocCommentBuilder
         {
@@ -342,10 +458,13 @@ namespace Jolt.Testing.CodeGeneration
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Copies all public constructors from the real subject type to
-        /// the proxy type.  Initializes each proxy constructor to forward to
-        /// the real subject's respective constructor.
+        /// Initializes the required constructors on the proxy type.
         /// </summary>
+        /// 
+        /// <remarks>
+        /// Copies all public constructors from the real subject type to the proxy type.
+        /// Initializes each proxy constructor to forward to the real subject's respective constructor.
+        /// </remarks>
         private void InitializeProxyConstructors()
         {
             // Initialize the base constructor emit call only when the
@@ -381,24 +500,26 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Defines a method on the proxy interface and on the proxy,
-        /// along with an implementation, for the given method.
+        /// Defines and implements a method on the proxy interface and proxy types,
+        /// modelling a given <see cref="System.Reflection.MethodInfo"/>.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method from which the build will base its definitions.
+        /// The <see cref="System.Reflection.MethodInfo"/> from which the builder
+        /// will base its definitions.
         /// </param>
         /// 
         /// <param name="methodReturnType">
-        /// The return type for the generated methods, overriding the return
-        /// type of the given method.
+        /// The return <see cref="System.Type"/> for the generated methods, overriding
+        /// the return type of the given method.
         /// </param>
         ///
         /// <remarks>
         /// Assumes that the method has been validated prior to the call.
-        /// <seealso cref="ValidateMethod(MethodInfo)"/>
-        /// <seealso cref="ThrowOnNullMember(MemberInfo)"/>
         /// </remarks>
+        /// 
+        /// <seealso cref="ValidateMethod"/>
+        /// <seealso cref="ThrowOnNullMember"/>
         private void DefineInterfaceAndProxyMethod(MethodInfo method, Type methodReturnType)
         {
             MethodBuilder interfaceMethodBuilder, proxyMethodBuilder;
@@ -406,32 +527,37 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Defines a method on the proxy interface and on the proxy,
-        /// along with an implementation, for the given method.
+        /// Defines and implements a method on the proxy interface and proxy types,
+        /// returning the respective <see cref="System.Reflection.Emit.MethodBuilder"/> objects,
+        /// modelling a given <see cref="System.Reflection.MethodInfo"/>.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method from which the build will base its definitions.
+        /// The <see cref="System.Reflection.MethodInfo"/> from which the builder
+        /// will base its definitions.
         /// </param>
         /// 
         /// <param name="methodReturnType">
-        /// The return type for the generated methods, overriding the return
-        /// type of the given method.
+        /// The return <see cref="System.Type"/> for the generated methods, overriding
+        /// the return type of the given method.
         /// </param>
         /// 
         /// <param name="interfaceMethodBuilder">
-        /// The method builder for the interface method, constructred by this method.
+        /// The <see cref="System.Reflection.Emit.MethodBuilder"/> for the interface method,
+        /// constructred by this method.
         /// </param>
         /// 
         /// <param name="proxyMethodBuilder">
-        /// The method builder for the proxy method, constructed by this method.
+        /// The <see cref="System.Reflection.Emit.MethodBuilder"/> for the proxy method,
+        /// constructed by this method.
         /// </param>
         /// 
         /// <remarks>
         /// Assumes that the method has been validated prior to the call.
-        /// <seealso cref="ValidateMethod(MethodInfo)"/>
-        /// <seealso cref="ThrowOnNullMember(MemberInfo)"/>
         /// </remarks>
+        /// 
+        /// <seealso cref="ValidateMethod"/>
+        /// <seealso cref="ThrowOnNullMember"/>
         private void DefineInterfaceAndProxyMethod(MethodInfo method, Type methodReturnType, out MethodBuilder interfaceMethodBuilder, out MethodBuilder proxyMethodBuilder)
         {
             // Declare the interface and proxy methods.
@@ -465,17 +591,28 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that the given method is accessible and legal for input into
-        /// the builder.
+        /// Verifies that the given <see cref="System.Reflection.MethodInfo"/> is legal
+        /// as input into the builder.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to validate.
+        /// The <see cref="System.Reflection.MethodInfo"/> to validate.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The desired type of the return value on the builder's generated method.
+        /// The desired <see cref="System.Type"/> of the return value on the builder's generated method.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Invokes <see cref="ValidateAccessibleMethod"/> after confirming that <paramref name="method"/>
+        /// is publicly accessible.
+        /// </remarks>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="method"/> is not public.
+        /// </exception>
+        /// 
+        /// <seealso cref="ValidateAccessibleMethod"/>
         private void ValidateMethod(MethodInfo method, Type desiredReturnType)
         {
             if (!method.IsPublic)
@@ -487,16 +624,28 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that the given method is legal for input into the builder.
+        /// Verifies that the given public <see cref="System.Reflection.MethodInfo"/>
+        /// is legal as input into the builder.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to validate.
+        /// The <see cref="System.Reflection.MethodInfo"/> to validate.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The desired type of the return value on the builder's generated method.
+        /// The desired <see cref="System.Type"/> of the return value on the builder's generated method.
         /// </param>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// A method with a signature matching <paramref name="method"/> has already been
+        /// added to the builder.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="method"/> is not a member of the builder's real subject type.
+        /// <paramref name="method"/> is not static but the builder's real subject type is abstract.
+        /// <paramref name="desiredReturnType"/> is not a base type of the return type of <paramref name="method"/>.
+        /// </exception>
         private void ValidateAccessibleMethod(MethodInfo method, Type desiredReturnType)
         {
             if (m_addedMembers.Contains(method))
@@ -526,16 +675,31 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that the given property is legal for input into the builder.
+        /// Verifies that the given <see cref="System.Reflection.PropertyInfo"/> is legal as
+        /// input into the builder.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property to validate.
+        /// The <see cref="System.Reflection.PropertyInfo"/> to validate.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The desired type of the return value on the builder's generated get method.
+        /// The desired <see cref="System.Type"/> of the return value on the builder's generated get method.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Validates the get and set methods of <paramref name="property"/>
+        /// as per the rules in <see cref="ValidateAccessibleMethod"/>.
+        /// </remarks>
+        /// 
+        /// <exception cref="System.NotSupportedException">
+        /// <paramref name="property"/> does not define a get or set method.
+        /// </exception>
+        /// 
+        /// <exception cref="System.InvalidOperationException">
+        /// <paramref name="property"/> defines a set method whose return type does not
+        /// match <paramref name="desiredReturnType"/>.
+        /// </exception>
         private void ValidateProperty(PropertyInfo property, Type desiredReturnType)
         {
             MethodInfo getMethod = property.GetGetMethod();
@@ -557,12 +721,18 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that the given event is legal for input into the builder.
+        /// Verifies that the given <see cref="System.Reflection.EventInfo"/> is legal as
+        /// input into the builder.
         /// </summary>
         /// 
         /// <param name="eventInfo">
-        /// The event to validate.
+        /// The <see cref="System.Reflection.EventInfo"/> to validate.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Validates the add and remove methods of <paramref name="eventInfo"/>
+        /// as per the rules in <see cref="ValidateMethod"/>.
+        /// </remarks>
         private void ValidateEvent(EventInfo eventInfo)
         {
             MethodInfo addMethod = eventInfo.GetAddMethod(true);
@@ -573,17 +743,22 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds a non-null method to the proxy builder, overriding the
-        /// given method's return type.
+        /// Adds a non-null <see cref="System.Reflection.MethodInfo"/> to the proxy builder.
         /// </summary>
         /// 
         /// <param name="method">
-        /// The method to add to the builder.
+        /// The <see cref="System.Reflection.MethodInfo"/> to add to the builder.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The type of the return value on the builder's generated method.
+        /// The <see cref="System.Type"/> of the return value for the builder's generated method.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Validates <paramref name="method"/> as per the rules in <see cref="ValidateMethod"/>.
+        /// </remarks>
+        /// 
+        /// <seealso cref="ValidateMethod"/>
         private void AddMethod_NonNull(MethodInfo method, Type desiredReturnType)
         {
             ValidateMethod(method, desiredReturnType);
@@ -593,21 +768,23 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Adds a property to the proxy builder, overriding the
-        /// given property's return type on the get method.
+        /// Adds a non-null <see cref="System.Reflection.PropertyInfo"/> to the proxy builder.
         /// </summary>
         /// 
         /// <param name="property">
-        /// The property to add to the builder.
+        /// The <see cref="System.Reflection.PropertyInfo"/> to add to the builder.
         /// </param>
         /// 
         /// <param name="desiredReturnType">
-        /// The type of the return value on the builder's generated get method.
+        /// The <see cref="System.Type"/> of the return value for the builder's generated get method.
         /// </param>
         /// 
         /// <remarks>
-        /// It is an error to provide an override for a property with a set method.
+        /// Validates <paramref name="property"/> as per the rules in <see cref="ValidateProperty"/>.
+        /// It is an error to provide a return type override for a property with a set method.
         /// </remarks>
+        /// 
+        /// <seealso cref="ValidateProperty"/>
         private void AddProperty_NonNull(PropertyInfo property, Type desiredReturnType)
         {
             ValidateProperty(property, desiredReturnType);
@@ -647,20 +824,27 @@ namespace Jolt.Testing.CodeGeneration
 
 
         /// <summary>
-        /// Creates an XML doc comment builder from the given types,
+        /// Creates an <see cref="XmlDocCommentBuilderBase"/> for a real subject type.
         /// </summary>
         /// 
         /// <param name="realSubjectType">
-        /// The real subject type.
+        /// The real subject type for which the <see cref="XmlDocCommentBuilderBase"/>
+        /// is created.
         /// </param>
         /// 
         /// <param name="proxyType">
-        /// The type containing the generated proxy.
+        /// The <see cref="System.Type"/> containing the generated proxy.
         /// </param>
         /// 
         /// <param name="proxyInterfaceType">
-        /// The type containing the generated proxy interface.
+        /// The <see cref="System.Type"/> containing the generated proxy interface.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlDocCommentBuilder"/>, when XML doc comments
+        /// exist for the assembly of <paramref name="realSubjectType"/>, or a new instance
+        /// of <see cref="XmlDocCommentBuilderBase"/> otherwise.
+        /// </returns>
         private static XmlDocCommentBuilderBase CreateXmlDocCommentBuilder(Type realSubjectType, Type proxyType, Type proxyInterfaceType)
         {
             // Create an XMLDocCommentReader for the real subject type.
@@ -679,9 +863,8 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Copies all of the given generic type arguments of the real
-        /// subject type to the given type builder, returning the newly
-        /// copied parameters.
+        /// Initializes the generic type arguments of a given
+        /// <see cref="System.Reflection.Emit.TypeBuilder"/>.
         /// </summary>
         /// 
         /// <param name="genericTypeArguments">
@@ -691,6 +874,15 @@ namespace Jolt.Testing.CodeGeneration
         /// <param name="typeBuilder">
         /// The TypeBuilder (proxy or proxyInterface) to initialize.
         /// </param>
+        /// 
+        /// <returns>
+        /// A reference to the newly initialized generic type arguments.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Copies <paramref name="genericTypeArguments"/> (of the real subject type)
+        /// to <paramref name="typeBuilder"/>.
+        /// </remarks>
         private static GenericTypeParameterBuilder[] InitializeGenericTypeArguments(Type[] genericTypeArguments, TypeBuilder typeBuilder)
         {
             GenericTypeParameterBuilder[] genericParameterBuilders = typeBuilder.DefineGenericParameters(Convert.ToTypeNames(genericTypeArguments));
@@ -700,26 +892,28 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Throws an exception when the given member is null.
+        /// Throws an exception when the given parameter is null.
         /// </summary>
         /// 
         /// <param name="member">
-        /// The member to validate.
+        /// The <see cref="System.Reflection.MemberInfo"/> to validate.
         /// </param>
         /// 
-        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="member"/> is null.
+        /// </exception>
         private static void ThrowOnNullMember(MemberInfo member)
         {
             if (member == null) { throw new ArgumentNullException(); }
         }
 
         /// <summary>
-        /// Emits a call to the default constructor of System.Object, using
-        /// the given IL generator.
+        /// Emits a call to the default <see cref="System.Object"/> constructor, using
+        /// a given <see cref="System.Reflection.Emit.ILGenerator"/>.
         /// </summary>
         /// 
         /// <param name="codeGenerator">
-        /// The IL generator that emits the constructor call.
+        /// The <see cref="System.Reflection.Emit.ILGenerator"/> that emits the constructor call.
         /// </param>
         private static void EmitObjectDefaultConstructorCall(ILGenerator codeGenerator)
         {
@@ -728,12 +922,17 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Verifies that a real subject type is legal for input and usage by the builder.
+        /// Verifies that a real subject type is valid input for a <see cref="ProxyTypeBuilder"/>.
         /// </summary>
         /// 
         /// <param name="realSubjectType">
-        /// The type to validate.
+        /// The <see cref="System.Type"/> to validate.
         /// </param>
+        /// 
+        /// <exception cref="System.NotSupportedException">
+        /// <paramref name="realSubjectType"/> is an interface, delegate, or a non-abstract
+        /// class with no public constructors.
+        /// </exception>
         private static void ValidateRealSubjectType(Type realSubjectType)
         {
             // Interface and delegate types can not be abstracted
@@ -754,48 +953,57 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Derives the namespace-qualified name of the proxy type from
-        /// a root namespace and the real subject type.
+        /// Creates the namespace-qualified name of the proxy type.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
-        /// The namespace in which the derived name will exist.
+        /// The namespace in which the proxy type will exist.
         /// </param>
         /// 
         /// <param name="realSubjectType">
         /// The real subject type from which the name is derived.
         /// </param>
-        /// <returns></returns>
+        /// 
+        /// <returns>
+        /// A new <see cref="System.String"/> representing the requested type name.
+        /// </returns>
         private static string CreateProxyName(string rootNamespace, Type realSubjectType)
         {
             return String.Concat(rootNamespace, '.', realSubjectType.Namespace, '.', NormalizeTypeName(realSubjectType.Name), "Proxy");
         }
 
         /// <summary>
-        /// Derives the namespace-qualified name of the interface type from
-        /// a root namespace and the real subject type.
+        /// Creates the namespace-qualified name of the interface type.
         /// </summary>
         /// 
         /// <param name="rootNamespace">
-        /// The namespace in which the derived name will exist.
+        /// The namespace in which the interface type will exist.
         /// </param>
         /// 
         /// <param name="realSubjectType">
         /// The real subject type from which the name is derived.
         /// </param>
-        /// <returns></returns>
+        /// 
+        /// <returns>
+        /// A new <see cref="System.String"/> representing the requested type name.
+        /// </returns>
         private static string CreateInterfaceName(string rootNamespace, Type realSubjectType)
         {
             return String.Concat(rootNamespace, '.', realSubjectType.Namespace, ".I", NormalizeTypeName(realSubjectType.Name));
         }
 
         /// <summary>
-        /// Removes the end of a string that starts with the ` character.
+        /// Removes a substring starting with the ` character from a given string.
         /// </summary>
         /// 
         /// <param name="typeName">
-        /// The name to normalize.
+        /// The string to normalize.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new <see cref="System.String"/> equal to <paramref name="typeName"/> with the
+        /// identified substring removed.
+        /// </returns>
         private static string NormalizeTypeName(string typeName)
         {
             int charPos = typeName.IndexOf('`');

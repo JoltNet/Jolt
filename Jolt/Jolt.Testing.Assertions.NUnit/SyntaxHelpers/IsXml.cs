@@ -13,26 +13,29 @@ using System.Xml.Schema;
 namespace Jolt.Testing.Assertions.NUnit.SyntaxHelpers
 {
     /// <summary>
-    /// Defines an NUnit syntax helper class that creates Jolt XML
-    /// constraints.
+    /// Defines an NUnit syntax helper class that creates Jolt XML constraints.
     /// </summary>
     public static class IsXml
     {
         /// <summary>
-        /// Creates an <see cref="XmlValidityConstraint"/> for the given schemas.
+        /// Creates a new instance of an <see cref="XmlValidityConstraint"/> for the given schemas.
         /// </summary>
         /// 
         /// <param name="schemas">
         /// The schemas to validate with.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlValidityConstraint"/>.
+        /// </returns>
         public static XmlValidityConstraint ValidWith(XmlSchemaSet schemas)
         {
             return new XmlValidityConstraint(schemas);
         }
 
         /// <summary>
-        /// Creates an <see cref="XmlValidityConstraint"/> for the given schemas
-        /// and validation flags.
+        /// Creates a new instance of an <see cref="XmlValidityConstraint"/> for the given schemas
+        /// and <see cref="XmlSchemaValidationFlags"/> value.
         /// </summary>
         /// 
         /// <param name="schemas">
@@ -40,32 +43,48 @@ namespace Jolt.Testing.Assertions.NUnit.SyntaxHelpers
         /// </param>
         /// 
         /// <param name="validationFlags">
-        /// Validation flags that customize the type of validation.
+        /// The <see cref="XmlSchemaValidationFlags"/> values that customize the type of validation.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlValidityConstraint"/>.
+        /// </returns>
         public static XmlValidityConstraint ValidWith(XmlSchemaSet schemas, XmlSchemaValidationFlags validationFlags)
         {
             return new XmlValidityConstraint(schemas, validationFlags);
         }
 
         /// <summary>
-        /// Creates an <see cref="XmlEqualityConstraint"/> for the given XML.
+        /// Creates a new instance of an <see cref="XmlEqualityConstraint"/> for the given
+        /// <see cref="System.Xml.XmlReader"/>.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected XML that is applied to the constraint.
+        /// The expected XML, referenced by an <see cref="System.Xml.XmlReader"/>,
+        /// that is applied to the constraint.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlEqualityConstraint"/>.
+        /// </returns>
         public static XmlEqualityConstraint EqualTo(XmlReader expected)
         {
             return new XmlEqualityConstraint(expected);
         }
 
         /// <summary>
-        /// Creates an <see cref="XmlEquivalencyConstraint"/> for the given XML.
+        /// Creates a new instance of an <see cref="XmlEquivalencyConstraint"/> for the given
+        /// <see cref="System.Xml.XmlReader"/>.
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected XML that is applied to the constraint.
+        /// The expected XML, referenced by an <see cref="System.Xml.XmlReader"/>,
+        /// that is applied to the constraint.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of an <see cref="XmlEquivalencyConstraint"/>.
+        /// </returns>
         public static XmlEquivalencyConstraint EquivalentTo(XmlReader expected)
         {
             return new XmlEquivalencyConstraint(expected);

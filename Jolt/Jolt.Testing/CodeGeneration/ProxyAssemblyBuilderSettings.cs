@@ -13,23 +13,25 @@ namespace Jolt.Testing.CodeGeneration
 {
     /// <summary>
     /// Provides configuration settings to control the type construction
-    /// process in the ProxyAssemblyBuilder class.
+    /// process in the <see cref="ProxyAssemblyBuilder"/> class.
     /// </summary>
     public sealed class ProxyAssemblyBuilderSettings : ConfigurationSection
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the object with the default configuration settings.
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilderSettings"/> class
+        /// with the default attribute values.
         /// </summary>
         public ProxyAssemblyBuilderSettings() { }
 
         /// <summary>
-        /// Initializes the object's configuration setting fields.
+        /// Creates a new instance of the <see cref="ProxyAssemblyBuilderSettings"/> class
+        /// with the given attribute values.
         /// </summary>
         /// 
         /// <param name="emitStatics">
-        /// Determines if static methods and properties are generated.
+        /// Determines if static methods/properties are generated.
         /// </param>
         /// 
         /// <param name="emitMethods">
@@ -61,7 +63,7 @@ namespace Jolt.Testing.CodeGeneration
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Gets the value that controls static function generation.
+        /// Gets the value denoting the ability to generate a static function.
         /// </summary>
         [ConfigurationProperty("emitStatics", IsRequired=false, DefaultValue=true)]
         public bool EmitStatics
@@ -70,7 +72,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the value that controls method generation.
+        /// Gets the value denoting the ability to generate a method.
         /// </summary>
         [ConfigurationProperty("emitMethods", IsRequired=false, DefaultValue=true)]
         public bool EmitMethods
@@ -79,7 +81,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the value that controls property generation.
+        /// Gets the value denoting the ability to generate a property.
         /// </summary>
         [ConfigurationProperty("emitProperties", IsRequired=false, DefaultValue=true)]
         public bool EmitProperties
@@ -88,7 +90,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the value that controls event generation.
+        /// Gets the value denoting the ability to generate an event.
         /// </summary>
         [ConfigurationProperty("emitEvents", IsRequired=false, DefaultValue=true)]
         public bool EmitEvents
@@ -97,7 +99,7 @@ namespace Jolt.Testing.CodeGeneration
         }
 
         /// <summary>
-        /// Gets the value that controls XML doc comment generation.
+        /// Gets the value denoting the ability to generate XML doc comments.
         /// </summary>
         [ConfigurationProperty("emitXmlDocComments", IsRequired=false, DefaultValue=false)]
         public bool EmitXmlDocComments
@@ -110,7 +112,7 @@ namespace Jolt.Testing.CodeGeneration
         #region public fields ---------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a field to store an instance of the default configuration.
+        /// Store an instance of the default configuration.
         /// </summary>
         public static readonly ProxyAssemblyBuilderSettings Default = new ProxyAssemblyBuilderSettings();
 

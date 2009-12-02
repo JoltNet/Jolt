@@ -36,13 +36,13 @@ namespace Jolt.Automata
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of a finite state machine.
+        /// Creates a new instance of the <see cref="FiniteStateMachine"/> class.
         /// </summary>
         public FiniteStateMachine()
             : this(new BidirectionalGraph<string, Transition<TAlphabet>>()) { }
 
         /// <summary>
-        /// Initializes a new instance of the finite state machine,
+        /// Creates a new instance of the <see cref="FiniteStateMachine"/> class,
         /// copying all vertices and edges from the given graph.
         /// </summary>
         /// 
@@ -57,8 +57,8 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Initializes a new instance of a finite state machine
-        /// from a predefined graph.
+        /// Creates a new instance of the <see cref="FiniteStateMachine"/> class,
+        /// setting the internal graph reference to the given graph.
         /// </summary>
         /// 
         /// <param name="graph">
@@ -76,18 +76,25 @@ namespace Jolt.Automata
         #region public methods --------------------------------------------------------------------
 
         /// <summary>
-        /// Adds a state with the given name to the finite state machine,
-        /// returning a value denoting if the state was indeed added.
+        /// Adds a state to the <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <param name="state">
-        /// The state to be added.
+        /// The name of the state to add.
         /// </param>
         /// 
+        /// <returns>
+        /// Returns true if the state was successfully added to the FSM, false otherwise.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// The given state name must be unique within the set of states in
-        /// the finite state machine.
+        /// <paramref name="state"/> must be unique within the set of states in
+        /// the <see cref="FiniteStateMachine"/>.
         /// </remarks>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// A reserved name was given for <paramref name="state"/>.
+        /// </exception>
         public virtual bool AddState(string state)
         {
             if (state == ErrorState)
@@ -99,18 +106,25 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Adds states with the given names to the finite state machine,
-        /// returning a value denoting the number of states added.
+        /// Adds a collection of states to the <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <param name="states">
-        /// The states to be added.
+        /// The names of the states to add.
         /// </param>
         /// 
+        /// <returns>
+        /// Returns true if the state was successfully added to the FSM, false otherwise.
+        /// </returns>
+        /// 
         /// <remarks>
-        /// The given state names must be unique within the set of states in
-        /// the finite state machine.
+        /// <paramref name="states"/> must be unique within the set of states in
+        /// the <see cref="FiniteStateMachine"/>.
         /// </remarks>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// A reserved name was given in <paramref name="states"/>.
+        /// </exception>
         public virtual int AddStates(IEnumerable<string> states)
         {
             if (states.Contains(ErrorState))
@@ -122,30 +136,32 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Removes the state with the given name from the finite state machine,
-        /// returning a value denoting if the state was removed (i.e. if it exists
-        /// in the finite state machine prior to removing).
+        /// Removes a state from the <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <param name="state">
         /// The state to remove.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if <paramref name="state"/> was found and removed from the FSM, false otherwise.
+        /// </returns>
         public virtual bool RemoveState(string state)
         {
             return m_graph.RemoveVertex(state);
         }
 
         /// <summary>
-        /// Adds the given transition to the finite state machine.
+        /// Adds a <see cref="Transition"/> to the <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <param name="transition">
-        /// The transition to be added.
+        /// The <see cref="Transition"/> to add.
         /// </param>
         /// 
         /// <remarks>
-        /// The states involved in the given transition must exist as
-        /// part of the finite state machine.
+        /// The states involved in <paramref name="transition"/> must have already
+        /// been added to the FSM.
         /// </remarks>
         public virtual void AddTransition(Transition<TAlphabet> transition)
         {
@@ -153,21 +169,32 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Removes the given transition from the finite state machine,
-        /// returning a value denoting if the transition was removed.
+        /// Removes a <see cref="Transition"/> from the <see cref="FiniteStateMachine"/>.
         /// </summary>
         /// 
         /// <param name="transition">
-        /// The transition to remote.
+        /// The <see cref="Transition"/> to remove.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if <paramref name="transition"/> was found and removed from the FSM, false otherwise.
+        /// </returns>
         public virtual bool RemoveTransition(Transition<TAlphabet> transition)
         {
             return m_graph.RemoveEdge(transition);
         }
 
         /// <summary>
-        /// Marks an existing state within the finite state machine as a final state.
+        /// Designates a state as a final state.
         /// </summary>
+        /// 
+        /// <param name="state">
+        /// The state to designate a final state.
+        /// </param>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="state"/> does not exist in the FSM.
+        /// </exception>
         public virtual void SetFinalState(string state)
         {
             if (!m_graph.ContainsVertex(state))
@@ -179,8 +206,16 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Marks existing states within the finite state machine as final states.
+        /// Designates a collection of states as finals states.
         /// </summary>
+        /// 
+        /// <param name="states">
+        /// The states to designate as final states.
+        /// </param>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// At least one state in <paramref name="states"/> does not exist in the FSM.
+        /// </exception>
         public virtual void SetFinalStates(IEnumerable<string> states)
         {
             if (!states.All(m_graph.ContainsVertex))
@@ -192,22 +227,24 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Removes the final state marking from the given state, returns a value
-        /// denoting if the final state was unmarked (i.e. it was previously marked as
-        /// a final state).
+        /// Clears the final state marking of a given state.
         /// </summary>
         /// 
         /// <param name="state">
         /// The final state to unmark.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if <paramref name="state"/> exists in the FSM and is successfully
+        /// unmarked as a final state, false otherwise.
+        /// </returns>
         public virtual bool ClearFinalState(string state)
         {
             return m_finalStates.Remove(state);
         }
 
         /// <summary>
-        /// Removes the final state marking from any of the given states that are
-        /// final states within the finite state machine.
+        /// Clears the final state marking of a given collection of states.
         /// </summary>
         /// 
         /// <param name="states">
@@ -219,24 +256,37 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Determines if the given state is a final state in the FSM.
+        /// Determines if the given state is a final state.
         /// </summary>
         /// 
         /// <param name="state">
         /// The state to validate.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns true if <paramref name="state"/> is a final state, false otherwise.
+        /// </returns>
         public virtual bool IsFinalState(string state)
         {
             return m_finalStates.Contains(state);
         }
 
         /// <summary>
-        /// Creates an enumerator for exercising the transitions of the FSM.
+        /// Creates a new <see cref="IFsmEnumerator"/> instance that is capable of
+        /// consuming input for a non-deterministic FSM.
         /// </summary>
         /// 
         /// <param name="startState">
         /// The initial state of the FSM enumerator.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new enumerator, with <paramref name="startState"/> set to the initial state of enumeration.
+        /// </returns>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// <paramref name="startState"/> is not a state in the FSM>
+        /// </exception>
         public virtual IFsmEnumerator<TAlphabet> CreateStateEnumerator(string startState)
         {
             if (!m_graph.ContainsVertex(startState))
@@ -248,13 +298,24 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Determines if the the finite state machine accepts the
+        /// Determines if the the <see cref="FiniteStateMachine"/> accepts a
         /// given sequence of input symbols.
         /// </summary>
         /// 
         /// <param name="inputSymbols">
         /// The symbols to process.
         /// </param>
+        /// 
+        /// <returns>
+        /// Returns a <see cref="ConsumptionResult"/> object denoting the success
+        /// or failure of the input symbol processing.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// Consumes the given set of input symbols from the configured start state of the FSM,
+        /// until a symbol is encountered that does not cause a transition, or all symbols are
+        /// successfully consumed.
+        /// </remarks>
         public virtual ConsumptionResult<TAlphabet> Consume(IEnumerable<TAlphabet> inputSymbols)
         {
             ulong numberOfSymbols = 0;
@@ -281,7 +342,7 @@ namespace Jolt.Automata
         #region public properties -----------------------------------------------------------------
 
         /// <summary>
-        /// Gets the internal representation of the graph.
+        /// Gets the internal representation of the <see cref="FiniteStateMachine"/> as a graph.
         /// </summary>
         public virtual IBidirectionalGraph<string, Transition<TAlphabet>> AsGraph
         {
@@ -291,6 +352,10 @@ namespace Jolt.Automata
         /// <summary>
         /// Gets/marks an existing state with the finite state machine as the start state.
         /// </summary>
+        /// 
+        /// <exception cref="System.ArgumentException">
+        /// The state mared as a start state does not exist in the FSM>
+        /// </exception>
         public virtual string StartState
         {
             get { return m_startState; }
@@ -306,7 +371,7 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Gets the final states that are associated with the finite state machine.
+        /// Enumerates the final states of the <see cref="FiniteStateMachine"/>.
         /// </summary>
         public virtual IEnumerable<string> FinalStates
         {
@@ -318,6 +383,9 @@ namespace Jolt.Automata
 
         #region internal fields -------------------------------------------------------------------
         
+        /// <summary>
+        /// The name of the implicit error state for all FSMs.
+        /// </summary>
         internal static readonly string ErrorState = "Jolt.FSM.ImplicitErrorState";
         
         #endregion

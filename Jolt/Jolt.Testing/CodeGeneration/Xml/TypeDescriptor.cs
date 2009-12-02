@@ -21,15 +21,16 @@ namespace Jolt.Testing.CodeGeneration.Xml
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the the TypeDescriptor.
+        /// Creates a new instance of the <see cref="TypeDescriptor"/> class.
         /// </summary>
         /// 
         /// <param name="realSubjectType">
-        /// The descriptor's real subject type.
+        /// A <see cref="System.Type"/> representing the real subject type.
         /// </param>
         /// 
         /// <param name="returnTypeOverrides">
-        /// The return type overrides for the real subject type.
+        /// An <see cref="System.Collections.Generic.IDictionary"/> mapping a return type to a
+        /// desired return type override.
         /// </param>
         public TypeDescriptor(Type realSubjectType, IDictionary<Type, Type> returnTypeOverrides)
         {

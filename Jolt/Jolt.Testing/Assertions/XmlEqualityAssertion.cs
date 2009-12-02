@@ -12,7 +12,7 @@ using System.Xml;
 namespace Jolt.Testing.Assertions
 {
     /// <summary>
-    /// Provides methods to verify if two XML readers contain XML
+    /// Provides assertion methods that verify if two XML readers contain XML
     /// that is equal in terms of structure and content of elements.
     /// </summary>
     public class XmlEqualityAssertion
@@ -20,19 +20,23 @@ namespace Jolt.Testing.Assertions
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes an instance of the XmlEqualityAssertion class.
+        /// Creates a new instance of the <see cref="XmlEqualityAssertion"/> class.
         /// </summary>
         public XmlEqualityAssertion()
             : this (new XmlEquivalencyAssertion(XmlComparisonFlags.Strict)) { }
 
         /// <summary>
-        /// Initializes an instance of the XmlEqualityAssertion class
-        /// with the given equivalency assertion.
+        /// Creates a new instance of the <see cref="XmlEqualityAssertion"/> class,
+        /// encapsulating an <see cref="XmlEquivalencyAssertion"/>.
         /// </summary>
         /// 
         /// <param name="assertion">
         /// The equivalency assertion to associate with the instance.
         /// </param>
+        /// 
+        /// <remarks>
+        /// Used internally by test code to override assertion operations.
+        /// </remarks>
         internal XmlEqualityAssertion(XmlEquivalencyAssertion assertion)
         {
             m_assert = assertion;
@@ -48,12 +52,17 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <param name="expected">
-        /// The expected element.
+        /// The expected XML, referenced by an <see cref="System.Xml.XmlReader"/>.
         /// </param>
         /// 
         /// <param name="actual">
-        /// The element being validated for equality.
+        /// The XML to validate, referenced by an <see cref="System.Xml.XmlReader"/>.
         /// </param>
+        /// 
+        /// <returns>
+        /// A new instance of the <see cref="XmlComparisonResult"/> containing the result
+        /// of the assertion.
+        /// </returns>
         public virtual XmlComparisonResult AreEqual(XmlReader expected, XmlReader actual)
         {
             return m_assert.AreEquivalent(expected, actual);
@@ -64,7 +73,7 @@ namespace Jolt.Testing.Assertions
         #region internal properties ---------------------------------------------------------------
 
         /// <summary>
-        /// Gets the equivalency assertion that is associated with the instance.
+        /// Gets the <see cref="XmlEquivalencyAssertion"/> that is associated with the instance.
         /// </summary>
         internal XmlEquivalencyAssertion EquivalencyAssertion
         {

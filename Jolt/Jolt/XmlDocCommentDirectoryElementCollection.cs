@@ -13,21 +13,23 @@ using System.Configuration;
 namespace Jolt
 {
     /// <summary>
-    /// Provides configuration settings to control the search paths
-    /// for locating XML doc comments.  Represents an element that
-    /// aggregates search paths.
+    /// Provides configuration settings for specifying the search paths
+    /// to locate XML doc comments.  Represents an element that
+    /// aggregates such search paths.
     /// </summary>
     public sealed class XmlDocCommentDirectoryElementCollection : ConfigurationElementCollection
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the object to an empty collection.
+        /// Creates an new instance of the <see cref="XmlDocCommentDirectoryElementCollection"/>
+        /// class with no search paths.
         /// </summary>
         public XmlDocCommentDirectoryElementCollection() { }
 
         /// <summary>
-        /// Initializes the collection with the given search paths.
+        /// Creates an new instance of the <see cref="XmlDocCommentDirectoryElementCollection"/>
+        /// with the given search paths.
         /// </summary>
         /// 
         /// <param name="directoryNames">

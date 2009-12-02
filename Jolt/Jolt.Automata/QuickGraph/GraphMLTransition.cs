@@ -20,22 +20,21 @@ using QuickGraph;
 namespace Jolt.Automata.QuickGraph
 {
     /// <summary>
-    /// Represents the transition object used by the FiniteStateMachine for
-    /// [de]serialization to/from GraphML.
+    /// Implements a type to enable the [de]serialization of a <see cref="Transition"/>
+    /// object to and from GraphML.
     /// </summary>
     /// 
     /// <typeparam name="TAlphabet">
     /// The type that represents the alphabet operated upon by the
-    /// finite state machine.
+    /// transition object.
     /// </typeparam>
     internal sealed class GraphMLTransition<TAlphabet> : Edge<GraphMLState>
     {
         #region constructors ----------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes the source and target states
-        /// of the class, leaving other attributes in their
-        /// default state.
+        /// Creates a new instance of the <see cref="GraphMLTransition"/> class,
+        /// initializing the source and target states of the new object.
         /// </summary>
         /// 
         /// <param name="source">
@@ -45,11 +44,16 @@ namespace Jolt.Automata.QuickGraph
         /// <param name="target">
         /// The target state.
         /// </param>
+        /// 
+        /// <remaks>
+        /// Does not initialize other attributes of the new object.
+        /// </remaks>
         internal GraphMLTransition(GraphMLState source, GraphMLState target)
             : base(source, target) { }
 
         /// <summary>
-        /// Initializes the attributes of the class.
+        /// Creates a new instance of the <see cref="GraphMLTransition"/> class,
+        /// initializing its attributes to the given values..
         /// </summary>
         /// 
         /// <param name="source">
@@ -103,8 +107,12 @@ namespace Jolt.Automata.QuickGraph
         #region internal methods ------------------------------------------------------------------
 
         /// <summary>
-        /// Creates a Transition object from the state of this object.
+        /// Converts the intenral state of this object to a a new <see cref="Transition"/> object.
         /// </summary>
+        /// 
+        /// <returns>
+        /// A newly created <see cref="Transition"/> object, corresponding to this object.
+        /// </returns>
         internal Transition<TAlphabet> ToTransition()
         {
             return new Transition<TAlphabet>(Source.Name, Target.Name, DeserializeMethod(TransitionPredicate), Description);
@@ -115,9 +123,7 @@ namespace Jolt.Automata.QuickGraph
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
-        /// Converts a given string representing a serialized static method
-        /// to a Predicate of the requested type.  Returns a default predicate
-        /// when the given method name cannot be resolved.
+        /// Deserializes a given string into a transition <see cref="System.Predicate"/>.
         /// </summary>
         /// 
         /// <typeparam name="TAlphabet">
@@ -128,6 +134,15 @@ namespace Jolt.Automata.QuickGraph
         /// <param name="method">
         /// The serialized method name (methodName;assemblyQualifiedTypeName).
         /// </param>
+        /// 
+        /// <returns>
+        /// Creates a new predicate if the string is deserialized to an existing method,
+        /// or returns a default predicate otherwise.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// The default predicate returns false for all inputs.
+        /// </remarks>
         private Predicate<TAlphabet> DeserializeMethod(string method)
         {
             if (method != null)
