@@ -19,6 +19,9 @@ using System.Runtime.CompilerServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
+[assembly: AssemblyVersion("0.4.*")]
+[assembly: AssemblyFileVersion("0.4.*")]
+
 // Friend Assemblies
 [assembly: InternalsVisibleTo("Jolt.Automata.Glee.Test")]
 [assembly: InternalsVisibleTo("Jolt.Automata.Msagl.Test")]
