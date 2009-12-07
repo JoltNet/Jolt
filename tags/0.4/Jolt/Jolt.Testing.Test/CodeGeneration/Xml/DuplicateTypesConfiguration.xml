@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RealSubjects xmlns="urn:Jolt.Testing.CodeGeneration.Xml">
+  <Type name="System.String, mscorlib" />
+  <Type name="System.String, mscorlib" />
+  <Type name="System.String, mscorlib" />
+</RealSubjects>

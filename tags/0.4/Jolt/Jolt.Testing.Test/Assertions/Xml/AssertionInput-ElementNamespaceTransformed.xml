@@ -1,0 +1,29 @@
+<root>
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+	<element attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+	
+	<anotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+		TextNode
+		<childElement attribute1="value-1" attribute2="value-2"/>
+		AnotherTextNode
+		<anotherChildElement xmlns="urn:anotherNamespace" attribute1="value-1" attribute2="value-2"/>
+		YetAnotherTextNode
+		<childElement attribute1="value-1" attribute2="value-2">
+			<grandChildElement xmlns:ns="urn:grandChildNamespace" attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				TextNode
+				<ns:element attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				<ns:anotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				<ns:yetAnotherElement attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				AnotherTextNode
+			</grandChildElement>
+			<anotherGrandChildElement attribute1="value-1" attribute2="value-2" attribute3="value-3">
+				TextNode
+				<element xmlns="e1" attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				AnotherTextNode
+				<element xmlns="e2" attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+				<element xmlns="e3" attribute1="value-1" attribute2="value-2" attribute3="value-3"/>
+			</anotherGrandChildElement>
+		</childElement>
+	</anotherElement>
+</root>
