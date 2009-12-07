@@ -9,6 +9,7 @@
 
 using System;
 using System.Configuration;
+using System.Reflection;
 using System.Text;
 
 using Jolt.Testing.CodeGeneration;
@@ -34,13 +35,15 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(settings.EmitStatics);
             Assert.That(settings.EmitEvents);
             Assert.That(!settings.EmitXmlDocComments);
+            Assert.That(settings.KeyPairFullPath, Is.Empty);
         }
 
         /// <summary>
-        /// Verifies the explicit construction of the class.
+        /// Verifies the explicit construction of the class, excluding specification
+        /// of the key-pair file.
         /// </summary>
         [Test]
-        public void ExplicitConstruction()
+        public void ExplicitConstruction_NoKeyPair()
         {
             bool expectedMethodSetting = RandomNumbers.Next(0, 1) == 0;
             bool expectedPropertiesSetting = RandomNumbers.Next(0, 1) == 0;
@@ -56,6 +59,57 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(settings.EmitEvents, Is.EqualTo(expectedEventSetting));
             Assert.That(settings.EmitStatics, Is.EqualTo(expectedStaticsSetting));
             Assert.That(settings.EmitXmlDocComments, Is.EqualTo(expectedXmlDocCommentsSetting));
+            Assert.That(settings.KeyPairFullPath, Is.Empty);
+        }
+
+        /// <summary>
+        /// Verifies the explicit construction of the class.
+        /// </summary>
+        [Test]
+        public void ExplicitConstruction()
+        {
+            bool expectedMethodSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedPropertiesSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedEventSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedStaticsSetting = RandomNumbers.Next(0, 1) == 0;
+            bool expectedXmlDocCommentsSetting = RandomNumbers.Next(0, 1) == 0;
+            string expectedKeyPairFullPath = "keypair.snk";
+
+            ProxyAssemblyBuilderSettings settings
+                = new ProxyAssemblyBuilderSettings(expectedStaticsSetting, expectedMethodSetting, expectedPropertiesSetting, expectedEventSetting, expectedXmlDocCommentsSetting, expectedKeyPairFullPath);
+
+            Assert.That(settings.EmitMethods, Is.EqualTo(expectedMethodSetting));
+            Assert.That(settings.EmitProperties, Is.EqualTo(expectedPropertiesSetting));
+            Assert.That(settings.EmitEvents, Is.EqualTo(expectedEventSetting));
+            Assert.That(settings.EmitStatics, Is.EqualTo(expectedStaticsSetting));
+            Assert.That(settings.EmitXmlDocComments, Is.EqualTo(expectedXmlDocCommentsSetting));
+            Assert.That(settings.KeyPairFullPath, Is.SameAs(expectedKeyPairFullPath));
+        }
+
+        /// <summary>
+        /// Verifies the explicit construction of the class when the given
+        /// key-pair path is empty.
+        /// </summary>
+        [Test]
+        public void ExplicitConstruction_EmptyKeyPair()
+        {
+            ProxyAssemblyBuilderSettings settings
+                = new ProxyAssemblyBuilderSettings(false, false, false, false, false, String.Empty);
+
+            Assert.That(settings.KeyPairFullPath, Is.Empty);
+        }
+
+        /// <summary>
+        /// Verifies the explicit construction of the class when the given
+        /// key-pair path is null.
+        /// </summary>
+        [Test]
+        public void ExplicitConstruction_NullKeyPair()
+        {
+            ProxyAssemblyBuilderSettings settings
+                = new ProxyAssemblyBuilderSettings(false, false, false, false, false, null);
+
+            Assert.That(settings.KeyPairFullPath, Is.Empty);
         }
 
         /// <summary>
@@ -69,6 +123,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitEvents);
             Assert.That(ProxyAssemblyBuilderSettings.Default.EmitStatics);
             Assert.That(!ProxyAssemblyBuilderSettings.Default.EmitXmlDocComments);
+            Assert.That(ProxyAssemblyBuilderSettings.Default.KeyPairFullPath, Is.Empty);
         }
 
         /// <summary>
@@ -116,6 +171,57 @@ namespace Jolt.Testing.Test.CodeGeneration
             AssertStaticConfiguration_EmitProperty("EmitXmlDocComments", false, false);
         }
 
+        /// <summary>
+        /// Verifies the static configuration of the KeyPairFullPath property.
+        /// </summary>
+        [Test]
+        public void EmitXmlDocComments_KeyPairFullPath()
+        {
+            AssertStaticConfiguration_EmitProperty("KeyPairFullPath", false, String.Empty);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the KeyPair property.
+        /// </summary>
+        [Test]
+        public void KeyPair()
+        {
+            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(false, false, false, false, false, "CodeGeneration\\jolt-test.snk");
+
+            StrongNameKeyPair keyPair = settings.KeyPair;
+            Assert.That(keyPair, Is.Not.Null);
+            Assert.That(keyPair.PublicKey, Is.Not.Empty);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the KeyPair property when the
+        /// key-pair file is invalid.
+        /// </summary>
+        [Test]
+        public void KeyPair_InvalidKeyPairPath()
+        {
+            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(false, false, false, false, false);
+            Assert.That(settings.KeyPair, Is.Null);
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the KeyPair property, when the key-pair has
+        /// already been loaded.
+        /// </summary>
+        [Test]
+        public void KeyPair_Cached()
+        {
+            ProxyAssemblyBuilderSettings settings = new ProxyAssemblyBuilderSettings(false, false, false, false, false, "CodeGeneration\\jolt-test.snk");
+            StrongNameKeyPair keyPair = settings.KeyPair;
+
+            Assert.That(settings.KeyPair, Is.SameAs(keyPair));
+
+            StrongNameKeyPair newKeyPair = new StrongNameKeyPair(new byte[0]);
+            settings.KeyPair = newKeyPair;
+
+            Assert.That(settings.KeyPair, Is.SameAs(newKeyPair));
+        }
+
         #endregion
 
         #region private methods -------------------------------------------------------------------
@@ -136,7 +242,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         /// <param name="expectedDefaultValue">
         /// The expected default value of the property.
         /// </param>
-        private void AssertStaticConfiguration_EmitProperty(string propertyName, bool isRequired, bool expectedDefaultValue)
+        private void AssertStaticConfiguration_EmitProperty(string propertyName, bool isRequired, object expectedDefaultValue)
         {
             StringBuilder builder = new StringBuilder(propertyName);
             builder[0] = Char.ToLower(builder[0]);

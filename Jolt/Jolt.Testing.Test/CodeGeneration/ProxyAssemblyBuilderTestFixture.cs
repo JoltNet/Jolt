@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -36,6 +37,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         static ProxyAssemblyBuilderTestFixture()
         {
             WorkingDirectoryName = Path.Combine(Path.GetTempPath(), MethodBase.GetCurrentMethod().DeclaringType.Name);
+            KeyPairPath = "CodeGeneration\\jolt-test.snk";
             PublicInstanceBinding = BindingFlags.Public | BindingFlags.Instance;
 
             ReaderSettings = new XmlReaderSettings();
@@ -75,21 +77,17 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction()
         {
-            string sExpectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
-            string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
-            string sExpectedAssemblyFullPath = Path.Combine(Environment.CurrentDirectory, sExpectedAssemblyFileName);
+            string expectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
+            string expectedAssemblyFullPath = Path.Combine(Environment.CurrentDirectory, expectedAssemblyName + ".dll");
             ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder();
 
             Assert.That(builder.RootNamespace, Is.EqualTo("Jolt.Testing.CodeGeneration"));
-            Assert.That(builder.AssemblyFullPath, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+            Assert.That(builder.AssemblyFullPath, Is.EqualTo(expectedAssemblyFullPath));
             Assert.That(builder.Settings, Is.SameAs(ProxyAssemblyBuilderSettings.Default));
+            
+            VerifyAttributes_AssemblyName(builder.Assembly.GetName(), expectedAssemblyName, new byte[0]);
+            VerifyAttributes_ModuleBuilder(builder, expectedAssemblyFullPath);
 
-            Module[] assemblyModules = builder.Assembly.GetModules();
-            Assert.That(assemblyModules, Is.Not.Empty);
-            Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
-            Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
             Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
@@ -100,22 +98,18 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_Namespace()
         {
-            string sExpectedNamespace = "Unit.Testing.Namespace";
-            string sExpectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
-            string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
-            string sExpectedAssemblyFullPath = Path.Combine(Environment.CurrentDirectory, sExpectedAssemblyFileName);
-            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(sExpectedNamespace);
+            string expectedNamespace = "Unit.Testing.Namespace";
+            string expectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
+            string expectedAssemblyFullPath = Path.Combine(Environment.CurrentDirectory, expectedAssemblyName + ".dll");
+            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(expectedNamespace);
 
-            Assert.That(builder.RootNamespace, Is.EqualTo(sExpectedNamespace));
-            Assert.That(builder.AssemblyFullPath, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+            Assert.That(builder.RootNamespace, Is.EqualTo(expectedNamespace));
+            Assert.That(builder.AssemblyFullPath, Is.EqualTo(expectedAssemblyFullPath));
             Assert.That(builder.Settings, Is.SameAs(ProxyAssemblyBuilderSettings.Default));
 
-            Module[] assemblyModules = builder.Assembly.GetModules();
-            Assert.That(assemblyModules, Is.Not.Empty);
-            Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
-            Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+            VerifyAttributes_AssemblyName(builder.Assembly.GetName(), expectedAssemblyName, new byte[0]);
+            VerifyAttributes_ModuleBuilder(builder, expectedAssemblyFullPath);
+
             Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
@@ -126,23 +120,19 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_Namespace_AssemblyFullPath()
         {
-            string sExpectedNamespace = "Internal.Testing.CodeGeneration";
-            string sExpectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
-            string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
-            string sExpectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), sExpectedAssemblyFileName);
+            string expectedNamespace = "Internal.Testing.CodeGeneration";
+            string expectedAssemblyName = "Jolt.Testing.CodeGeneration.Proxies";
+            string expectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), expectedAssemblyName + ".dll");
 
-            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(sExpectedNamespace, sExpectedAssemblyFullPath);
+            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(expectedNamespace, expectedAssemblyFullPath);
 
-            Assert.That(builder.RootNamespace, Is.EqualTo(sExpectedNamespace));
-            Assert.That(builder.AssemblyFullPath, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+            Assert.That(builder.RootNamespace, Is.EqualTo(expectedNamespace));
+            Assert.That(builder.AssemblyFullPath, Is.EqualTo(expectedAssemblyFullPath));
             Assert.That(builder.Settings, Is.SameAs(ProxyAssemblyBuilderSettings.Default));
+            
+            VerifyAttributes_AssemblyName(builder.Assembly.GetName(), expectedAssemblyName, new byte[0]);
+            VerifyAttributes_ModuleBuilder(builder, expectedAssemblyFullPath);
 
-            Module[] assemblyModules = builder.Assembly.GetModules();
-            Assert.That(assemblyModules, Is.Not.Empty);
-            Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
-            Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
             Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
@@ -153,24 +143,20 @@ namespace Jolt.Testing.Test.CodeGeneration
         [Test]
         public void Construction_Namespace_AssemblyFullPath_Settings()
         {
-            string sExpectedNamespace = "Internal.Testing.CodeGeneration";
-            string sExpectedAssemblyName = "Proxies";
-            string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
-            string sExpectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), sExpectedAssemblyFileName);
+            string expectedNamespace = "Internal.Testing.CodeGeneration";
+            string expectedAssemblyName = "Proxies";
+            string expectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), expectedAssemblyName + ".dll");
             ProxyAssemblyBuilderSettings expectedSettings = new ProxyAssemblyBuilderSettings();
 
-            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(sExpectedNamespace, sExpectedAssemblyFullPath, expectedSettings);
+            ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(expectedNamespace, expectedAssemblyFullPath, expectedSettings);
 
-            Assert.That(builder.RootNamespace, Is.EqualTo(sExpectedNamespace));
-            Assert.That(builder.AssemblyFullPath, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+            Assert.That(builder.RootNamespace, Is.EqualTo(expectedNamespace));
+            Assert.That(builder.AssemblyFullPath, Is.EqualTo(expectedAssemblyFullPath));
             Assert.That(builder.Settings, Is.SameAs(expectedSettings));
+            
+            VerifyAttributes_AssemblyName(builder.Assembly.GetName(), expectedAssemblyName, new byte[0]);
+            VerifyAttributes_ModuleBuilder(builder, expectedAssemblyFullPath);
 
-            Module[] assemblyModules = builder.Assembly.GetModules();
-            Assert.That(assemblyModules, Is.Not.Empty);
-            Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
-            Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
-            Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
             Assert.That(!builder.CreateXmlDocCommentReader().Read());
         }
 
@@ -184,31 +170,28 @@ namespace Jolt.Testing.Test.CodeGeneration
         {
             WithConfigurationFile(delegate
             {
-                string sExpectedNamespace = "Internal.Testing.CodeGeneration";
-                string sExpectedAssemblyName = "Proxies";
-                string sExpectedAssemblyFileName = sExpectedAssemblyName + ".dll";
-                string sExpectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), sExpectedAssemblyFileName);
+                string expectedNamespace = "Internal.Testing.CodeGeneration";
+                string expectedAssemblyName = "Proxies";
+                string expectedAssemblyFileName = expectedAssemblyName + ".dll";
+                string expectedAssemblyFullPath = Path.Combine(Path.GetTempPath(), expectedAssemblyFileName);
 
-                ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(sExpectedNamespace, sExpectedAssemblyFullPath);
+                ProxyAssemblyBuilder builder = new ProxyAssemblyBuilder(expectedNamespace, expectedAssemblyFullPath);
 
-                Assert.That(builder.RootNamespace, Is.EqualTo(sExpectedNamespace));
-                Assert.That(builder.AssemblyFullPath, Is.EqualTo(sExpectedAssemblyFullPath));
-                Assert.That(builder.Assembly.FullName, Is.EqualTo(sExpectedAssemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                Assert.That(builder.RootNamespace, Is.EqualTo(expectedNamespace));
+                Assert.That(builder.AssemblyFullPath, Is.EqualTo(expectedAssemblyFullPath));
                 Assert.That(builder.Settings.EmitMethods);
                 Assert.That(builder.Settings.EmitProperties);
                 Assert.That(builder.Settings.EmitEvents);
                 Assert.That(!builder.Settings.EmitStatics);
                 Assert.That(builder.Settings.EmitXmlDocComments);
-
-                Module[] assemblyModules = builder.Assembly.GetModules();
-                Assert.That(assemblyModules, Is.Not.Empty);
-                Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
-                Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(sExpectedAssemblyFullPath));
-                Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+                Assert.That(builder.Settings.KeyPairFullPath, Is.EqualTo(KeyPairPath));
+                
+                VerifyAttributes_AssemblyName(builder.Assembly.GetName(), expectedAssemblyName, builder.Settings.KeyPair.PublicKey);
+                VerifyAttributes_ModuleBuilder(builder, expectedAssemblyFullPath);
 
                 XElement validatedDocComments = XElement.Load(XmlReader.Create(builder.CreateXmlDocCommentReader(), ReaderSettings));
                 Assert.That(validatedDocComments, Is.Not.Null);
-                Assert.That(validatedDocComments.Element(XmlDocCommentNames.AssemblyElement).Element(XmlDocCommentNames.NameElement).Value, Is.EqualTo(sExpectedAssemblyName));
+                Assert.That(validatedDocComments.Element(XmlDocCommentNames.AssemblyElement).Element(XmlDocCommentNames.NameElement).Value, Is.EqualTo(expectedAssemblyName));
                 Assert.That(validatedDocComments.Element(XmlDocCommentNames.MembersElement).IsEmpty);
             });
         }
@@ -1052,6 +1035,50 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private methods -------------------------------------------------------------------
 
         /// <summary>
+        /// Verifies the attributes of a given AssemblyName.
+        /// </summary>
+        /// 
+        /// <param name="assemblyName">
+        /// The AssemblyName to validate.
+        /// </param>
+        /// 
+        /// <param name="expectedName">
+        /// The expected assembly name.
+        /// </param>
+        /// 
+        /// <param name="expectedPublicKey">
+        /// The expected public key.
+        /// </param>
+        private static void VerifyAttributes_AssemblyName(AssemblyName assemblyName, string expectedName, byte[] expectedPublicKey)
+        {
+            Assert.That(assemblyName.Name, Is.EqualTo(expectedName));
+            Assert.That(assemblyName.Version, Is.EqualTo(new Version(1, 0, 0, 0)));
+            Assert.That(assemblyName.CultureInfo, Is.EqualTo(CultureInfo.InvariantCulture));
+            Assert.That(assemblyName.GetPublicKey(), Is.EqualTo(expectedPublicKey));
+        }
+
+        /// <summary>
+        /// Verifies the Module attributes of the given ProxyAssemblyBuilder.
+        /// </summary>
+        /// 
+        /// <param name="builder">
+        /// The ProxyAssemblyBuilder to validate.
+        /// </param>
+        /// 
+        /// <param name="expectedAssemblyFullPath">
+        /// The expected full path of the assembly being built.
+        /// </param>
+        private static void VerifyAttributes_ModuleBuilder(ProxyAssemblyBuilder builder, string expectedAssemblyFullPath)
+        {
+            Module[] assemblyModules = builder.Assembly.GetModules();
+
+            Assert.That(assemblyModules, Is.Not.Empty);
+            Assert.That(assemblyModules[assemblyModules.Length - 1], Is.SameAs(builder.Module));
+            Assert.That(builder.Module.FullyQualifiedName, Is.EqualTo(expectedAssemblyFullPath));
+            Assert.That(builder.Module.ScopeName, Is.EqualTo("Jolt.Testing.CodeGeneration.Proxies.dll"));
+        }
+
+        /// <summary>
         /// Verifies the behavior of the CreateAssembly() method.
         /// </summary>
         /// 
@@ -1275,7 +1302,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             // Create the assembly configuration.
             string settingsSection = "proxyBuilderSettings";
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.Sections.Add(settingsSection, new ProxyAssemblyBuilderSettings(false, true, true, true, true));
+            config.Sections.Add(settingsSection, new ProxyAssemblyBuilderSettings(false, true, true, true, true, KeyPairPath));
             config.Save();
 
             try
@@ -1297,6 +1324,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private fields --------------------------------------------------------------------
 
         private static readonly string WorkingDirectoryName;
+        private static readonly string KeyPairPath;
         private static readonly BindingFlags PublicInstanceBinding;
         private static readonly XmlReaderSettings ReaderSettings;
 

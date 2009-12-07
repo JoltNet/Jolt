@@ -136,7 +136,9 @@ namespace Jolt.Testing.CodeGeneration
             m_settings = settings ?? ProxyAssemblyBuilderSettings.Default;
 
             AssemblyName assemblyName = new AssemblyName(Path.GetFileNameWithoutExtension(assemblyFullPath));
+            assemblyName.KeyPair = m_settings.KeyPair;
             assemblyName.Version = new Version(1, 0);
+
             m_assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave,
                 Path.GetDirectoryName(m_assemblyFullPath));
             m_module = m_assembly.DefineDynamicModule(DefaultAssemblyFilename, Path.GetFileName(assemblyFullPath), true);
