@@ -577,7 +577,7 @@ namespace Jolt.Testing.CodeGeneration
                 methodCallOpCode = OpCodes.Callvirt;
             }
 
-            // Load each funciton argument onto the stack.
+            // Load each function argument onto the stack.
             for (sbyte i = 1; i <= method.GetParameters().Length; ++i)
             {
                 codeGenerator.Emit(OpCodes.Ldarg_S, i);
