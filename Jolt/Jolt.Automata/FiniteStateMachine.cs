@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Jolt.Automata.Properties;
-using Jolt.Functional;
+using Jolt.Linq;
 using QuickGraph;
 
 namespace Jolt.Automata
@@ -375,8 +375,7 @@ namespace Jolt.Automata
         /// </summary>
         public virtual IEnumerable<string> FinalStates
         {
-            // Force creation of an enumerator that can not be down-cast to HashSet<string>.
-            get { return m_finalStates.Select(Functor.Identity<string>()); }
+            get { return m_finalStates.AsNonCastableEnumerable(); }
         }
 
         #endregion
