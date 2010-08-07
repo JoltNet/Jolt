@@ -272,29 +272,42 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Creates a new <see cref="IFsmEnumerator"/> instance that is capable of
-        /// consuming input for a non-deterministic FSM.
+        /// Creates a new concrete instance of the <see cref="IFsmEnumerator&lt;T&gt;"/> type.
         /// </summary>
+        /// 
+        /// <param name="type">
+        /// The type of enumerator to create.
+        /// </param>
         /// 
         /// <param name="startState">
         /// The initial state of the FSM enumerator.
         /// </param>
         /// 
         /// <returns>
-        /// A new enumerator, with <paramref name="startState"/> set to the initial state of enumeration.
+        /// A new FSM enumerator corresponding to the requested type, with <paramref name="startState"/>
+        /// set to the initial state of enumeration.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentException">
-        /// <paramref name="startState"/> is not a state in the FSM>
+        /// <paramref name="startState"/> is not a state in the FSM.
         /// </exception>
-        public virtual IFsmEnumerator<TAlphabet> CreateStateEnumerator(string startState)
+        public virtual IFsmEnumerator<TAlphabet> CreateStateEnumerator(EnumerationType type, string startState)
         {
             if (!m_graph.ContainsVertex(startState))
             {
                 throw new ArgumentException(String.Format(Resources.Error_CreateEnumerator_InvalidStartState, startState));
             }
 
-            return new FsmEnumerator<TAlphabet>(startState, m_graph);
+            // TODO: replace with a table lookup when EnumerationType grows.
+            switch (type)
+            {
+                case EnumerationType.Nondeterministic:
+                    return new NDFsmEnumerator<TAlphabet>(startState, m_graph);
+
+                case EnumerationType.Deterministic:
+                default:
+                    return new FsmEnumerator<TAlphabet>(startState, m_graph);
+            }
         }
 
         /// <summary>
@@ -316,25 +329,25 @@ namespace Jolt.Automata
         /// until a symbol is encountered that does not cause a transition, or all symbols are
         /// successfully consumed.
         /// </remarks>
-        public virtual ConsumptionResult<TAlphabet> Consume(IEnumerable<TAlphabet> inputSymbols)
+        public virtual ConsumptionResult<TAlphabet> Consume(EnumerationType type, IEnumerable<TAlphabet> inputSymbols)
         {
             ulong numberOfSymbols = 0;
             TAlphabet lastSymbol = default(TAlphabet);
-            IFsmEnumerator<TAlphabet> enumerator = CreateStateEnumerator(m_startState);
+            IFsmEnumerator<TAlphabet> enumerator = CreateStateEnumerator(type, m_startState);
 
             foreach (TAlphabet symbol in inputSymbols)
             {
                 ++numberOfSymbols;
                 lastSymbol = symbol;
 
-                if (!enumerator.NextState(symbol)) { break; }
+                if (!enumerator.Next(symbol)) { break; }
             }
 
             return new ConsumptionResult<TAlphabet>(
-                m_finalStates.Contains(enumerator.CurrentState),
+                m_finalStates.Overlaps(enumerator.CurrentStates),
                 lastSymbol,
                 numberOfSymbols,
-                enumerator.CurrentState);
+                enumerator.CurrentStates);
         }
 
         #endregion

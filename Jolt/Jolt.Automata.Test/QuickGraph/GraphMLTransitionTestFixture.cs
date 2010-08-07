@@ -8,8 +8,6 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -79,10 +77,9 @@ namespace Jolt.Automata.Test.QuickGraph
         {
             GraphMLState source = new GraphMLState();
             GraphMLState target = new GraphMLState();
-            Predicate<char> predicate = new FsmEnumerator<char>(null, null).NextState;
             string description = "description";
 
-            GraphMLTransition<char> graphMLTransition = new GraphMLTransition<char>(source, target, description, predicate);
+            GraphMLTransition<char> graphMLTransition = new GraphMLTransition<char>(source, target, description, __InvalidTransition);
 
             Assert.That(graphMLTransition.Source, Is.SameAs(source));
             Assert.That(graphMLTransition.Target, Is.SameAs(target));
@@ -287,6 +284,12 @@ namespace Jolt.Automata.Test.QuickGraph
         #endregion
 
         #region private methods -------------------------------------------------------------------
+
+        /// <summary>
+        /// Represents an invaid predicate as the method is not static.
+        /// </summary>
+        private bool __InvalidTransition<T>(T arg) { return false; }
+
 
         /// <summary>
         /// Verifies the behavior of the ToTransition() method,

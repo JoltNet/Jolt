@@ -7,6 +7,10 @@
 // File created: 12/23/2008 16:34:47
 // ----------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
+using Jolt.Linq;
+
 namespace Jolt.Automata
 {
     /// <summary>
@@ -28,13 +32,28 @@ namespace Jolt.Automata
         /// <param name="isAccepted"><see cref="ConsumptionResult.IsAccepted"/></param>
         /// <param name="lastSymbol"><see cref="ConsumptionResult.LastSymbol"/></param>
         /// <param name="numberOfSymbols"><see cref="ConsumptionResult.NumberOfSymbols"/></param>
-        /// <param name="lastState"><see cref="ConsumptionResult.LastState"/></param>
+        ///
+        /// <param name="lastState">
+        /// The single state to add to the <see cref="ConsumptionResult.LastStates"/> collection.
+        /// </param>
         internal ConsumptionResult(bool isAccepted, TAlphabet lastSymbol, ulong numberOfSymbols, string lastState)
+            : this(isAccepted, lastSymbol, numberOfSymbols, new[] { lastState }) 
+        { }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="ConsumptionResult"/> class.
+        /// </summary>
+        /// 
+        /// <param name="isAccepted"><see cref="ConsumptionResult.IsAccepted"/></param>
+        /// <param name="lastSymbol"><see cref="ConsumptionResult.LastSymbol"/></param>
+        /// <param name="numberOfSymbols"><see cref="ConsumptionResult.NumberOfSymbols"/></param>
+        /// <param name="lastStates"><see cref="ConsumptionResult.LastStates"/></param>
+        internal ConsumptionResult(bool isAccepted, TAlphabet lastSymbol, ulong numberOfSymbols, IEnumerable<string> lastStates)
         {
             m_isAccepted = isAccepted;
             m_lastSymbol = lastSymbol;
             m_numberOfSymbols = numberOfSymbols;
-            m_lastState = lastState;
+            m_lastStates = new HashSet<string>(lastStates);
         }
 
         #endregion
@@ -67,11 +86,11 @@ namespace Jolt.Automata
         }
 
         /// <summary>
-        /// Gets the last state visited by the <see cref="FiniteStateMachine"/>.
+        /// Gets the last states visited by the <see cref="FiniteStateMachine"/>.
         /// </summary>
-        public string LastState
+        public IEnumerable<string> LastStates
         {
-            get { return m_lastState; }
+            get { return m_lastStates.AsNonCastableEnumerable(); }
         }
 
         #endregion
@@ -81,7 +100,7 @@ namespace Jolt.Automata
         private readonly bool m_isAccepted;
         private readonly TAlphabet m_lastSymbol;
         private readonly ulong m_numberOfSymbols;
-        private readonly string m_lastState;
+        private readonly IEnumerable<string> m_lastStates;
 
         #endregion
     }

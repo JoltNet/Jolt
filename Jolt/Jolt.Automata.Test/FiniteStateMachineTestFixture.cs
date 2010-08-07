@@ -417,19 +417,38 @@ namespace Jolt.Automata.Test
         }
         
         /// <summary>
-        /// Verifies the behavior of the CreateStateEnumerator() method.
+        /// Verifies the behavior of the CreateStateEnumerator() method when requesting
+        /// a deterministic FSM enumerator.
         /// </summary>
         [Test]
-        public void CreateStateEnumerator()
+        public void CreateStateEnumerator_Deterministic()
         {
             BidirectionalGraph<string, Transition<int>> graph = new BidirectionalGraph<string,Transition<int>>();
             string startState = "start-state";
             graph.AddVertex(startState);
 
             FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
-            IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator(startState);
+            IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator(EnumerationType.Deterministic, startState);
 
             Assert.That(enumerator, Is.InstanceOf<FsmEnumerator<int>>());
+            Assert.That(enumerator.CurrentState, Is.SameAs(startState));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the CreateStateEnumerator() method when requesting
+        /// a nondeterministic FSM enumerator.
+        /// </summary>
+        [Test]
+        public void CreateStateEnumerator_Nondeterministic()
+        {
+            BidirectionalGraph<string, Transition<int>> graph = new BidirectionalGraph<string, Transition<int>>();
+            string startState = "start-state";
+            graph.AddVertex(startState);
+
+            FiniteStateMachine<int> fsm = new FiniteStateMachine<int>(graph);
+            IFsmEnumerator<int> enumerator = fsm.CreateStateEnumerator(EnumerationType.Nondeterministic, startState);
+
+            Assert.That(enumerator, Is.InstanceOf<NDFsmEnumerator<int>>());
             Assert.That(enumerator.CurrentState, Is.SameAs(startState));
         }
 
@@ -447,7 +466,7 @@ namespace Jolt.Automata.Test
             string initialState = "end-state";
 
             Assert.That(
-                () => fsm.CreateStateEnumerator(initialState),  // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                () => fsm.CreateStateEnumerator(EnumerationType.Deterministic, initialState),  // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
                 Throws.ArgumentException.With.Message.EqualTo(
                     String.Format(Resources.Error_CreateEnumerator_InvalidStartState, initialState)));
         }
@@ -461,18 +480,34 @@ namespace Jolt.Automata.Test
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
             
-            ConsumptionResult<char> result = fsm.Consume(String.Empty);
+            ConsumptionResult<char> result = fsm.Consume(EnumerationType.Deterministic, String.Empty);
             Assert.That(result.IsAccepted);
-            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastStates.First(), Is.SameAs(fsm.StartState));
             Assert.That(result.LastSymbol, Is.EqualTo(default(char)));
             Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(0));
 
             string inputSymbols = "abcdefghijklmnopqrstuvwxyz!";
-            result = fsm.Consume(inputSymbols);
+            result = fsm.Consume(EnumerationType.Deterministic, inputSymbols);
             Assert.That(result.IsAccepted);
-            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastStates.First(), Is.SameAs(fsm.StartState));
             Assert.That(result.LastSymbol, Is.EqualTo('!'));
             Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.Length));
+        }
+
+        /// <summary>
+        /// Verifies the behavior of the Consume() method when a non-deterministic
+        /// FSM accepts a sequence of input symbols, leading to multiple final states.
+        /// </summary>
+        [Test]
+        public void Consume_MutipleFinalStates_NonDeterministic()
+        {
+            FiniteStateMachine<char> fsm = FsmFactory.CreateNonDeterministicMachine_MultipleFinalStates();
+
+            ConsumptionResult<char> result = fsm.Consume(EnumerationType.Nondeterministic, "a");
+            Assert.That(result.IsAccepted);
+            Assert.That(result.LastStates.ToArray(), Is.EquivalentTo(new[] { "other", "final-1", "final-2" }));
+            Assert.That(result.LastSymbol, Is.EqualTo('a'));
+            Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(1));
         }
 
         /// <summary>
@@ -485,9 +520,9 @@ namespace Jolt.Automata.Test
             FiniteStateMachine<char> fsm = FsmFactory.CreateLengthMod3Machine();
             string inputSymbols = "abcdefghijklmnopqrstuvwxyz";
 
-            ConsumptionResult<char> result = fsm.Consume(inputSymbols);
+            ConsumptionResult<char> result = fsm.Consume(EnumerationType.Deterministic, inputSymbols);
             Assert.That(!result.IsAccepted);
-            Assert.That(result.LastState, Is.EqualTo("mod3(len) = 1"));
+            Assert.That(result.LastStates.First(), Is.EqualTo("mod3(len) = 1"));
             Assert.That(result.LastSymbol, Is.EqualTo('z'));
             Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.Length));
         }
@@ -502,9 +537,9 @@ namespace Jolt.Automata.Test
             FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
             string inputSymbols = "01001123450000";
 
-            ConsumptionResult<char> result = fsm.Consume(inputSymbols);
+            ConsumptionResult<char> result = fsm.Consume(EnumerationType.Deterministic, inputSymbols);
             Assert.That(!result.IsAccepted);
-            Assert.That(result.LastState, Is.SameAs(FiniteStateMachine<char>.ErrorState));
+            Assert.That(result.LastStates.First(), Is.SameAs(FiniteStateMachine<char>.ErrorState));
             Assert.That(result.LastSymbol, Is.EqualTo('2'));
             Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(inputSymbols.IndexOf('2') + 1));
         }
@@ -517,10 +552,10 @@ namespace Jolt.Automata.Test
         public void Consume_NoSymbols()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateEvenNumberOfZeroesMachine();
-            ConsumptionResult<char> result = fsm.Consume(Enumerable.Empty<char>());
+            ConsumptionResult<char> result = fsm.Consume(EnumerationType.Deterministic, Enumerable.Empty<char>());
 
             Assert.That(result.IsAccepted);
-            Assert.That(result.LastState, Is.SameAs(fsm.StartState));
+            Assert.That(result.LastStates.First(), Is.SameAs(fsm.StartState));
             Assert.That(result.LastSymbol, Is.EqualTo('\0'));
             Assert.That(result.NumberOfConsumedSymbols, Is.EqualTo(0));
         }
@@ -532,7 +567,7 @@ namespace Jolt.Automata.Test
         [Test, ExpectedException(typeof(ArgumentNullException))]
         public void Consume_InvalidStartState()
         {
-            new FiniteStateMachine<char>().Consume(Enumerable.Repeat('a', 10));
+            new FiniteStateMachine<char>().Consume(EnumerationType.Deterministic, Enumerable.Repeat('a', 10));
         }
 
         /// <summary>

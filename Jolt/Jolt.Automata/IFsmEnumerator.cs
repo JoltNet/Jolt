@@ -7,6 +7,8 @@
 // File created: 12/8/2008 17:55:17
 // ----------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Jolt.Automata
 {
     /// <summary>
@@ -30,11 +32,17 @@ namespace Jolt.Automata
         /// <returns>
         /// Returns true if a state transition occurs, false otherwise.
         /// </returns>
-        bool NextState(TAlphabet inputSymbol);
+        bool Next(TAlphabet inputSymbol);
 
         /// <summary>
-        /// Gets the state referenced by the enumerator.
+        /// Gets the state referenced by the enumerator.  If there is more than one
+        /// state referenced, the first visited state is returned.
         /// </summary>
         string CurrentState { get; }
+
+        /// <summary>
+        /// Gets all states referenced by the enumerator.
+        /// </summary>
+        IEnumerable<string> CurrentStates { get; }
     }
 }

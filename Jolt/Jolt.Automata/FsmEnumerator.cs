@@ -16,10 +16,15 @@ using QuickGraph;
 namespace Jolt.Automata
 {
     /// <summary>
-    /// Implements the <see cref="IFsmEnumerator"/> interface, providing an
-    /// enumerator that traverses a finite state machine in the standard manner.
+    /// Implements the <see cref="AbstractFsmEnumerator"/> base class, providing an
+    /// enumerator that traverses a deterministic finite state machine in the
+    /// standard manner.
     /// </summary>
-    internal sealed class FsmEnumerator<TAlphabet> : IFsmEnumerator<TAlphabet>
+    /// 
+    /// <typeparam name="TAlphabet">
+    /// The type that represents the alphabet operated upon by the FSM.
+    /// </typeparam>
+    internal sealed class FsmEnumerator<TAlphabet> : AbstractFsmEnumerator<TAlphabet>
     {
         #region constructors ----------------------------------------------------------------------
 
@@ -35,64 +40,53 @@ namespace Jolt.Automata
         /// The FSM to navigate, represented as a graph.
         /// </param>
         internal FsmEnumerator(string startState, IImplicitGraph<string, Transition<TAlphabet>> graph)
-        {
-            m_graph = graph;
-            CurrentState = startState;
-        }
+            : base(startState, graph)
+        { }
 
         #endregion
 
-        #region IFsmEnumerator<TAlphabet> members -------------------------------------------------
+        #region AbstractFsmEnumerator<TAlphabet> members ------------------------------------------
 
         /// <summary>
-        /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.NextState"/>
+        /// <see cref="AbstractFsmEnumerator&lt;TAlphabet&gt;.Next"/>
         /// </summary>
         /// 
         /// <exception cref="System.NotSupportedException">
-        /// A non deterministic transition is detected in the FSM>
+        /// A non deterministic transition is detected in the FSM.
         /// </exception>
-        public bool NextState(TAlphabet inputSymbol)
+        protected override bool Next(TAlphabet inputSymbol)
         {
-            if (!m_isInErrorState)
+            if (IsInErrorState) { return false; }
+
+            Transition<TAlphabet> transition;
+
+            try
             {
-                Transition<TAlphabet> transition;
-
-                try
-                {
-                    // Find the single transtrition that is accepted by the input symbol.
-                    transition = m_graph.OutEdges(CurrentState).SingleOrDefault(t => t.TransitionPredicate(inputSymbol));
-                }
-                catch (InvalidOperationException)
-                {
-                    throw new NotSupportedException(
-                        String.Format(Resources.Error_NDFSM_NotSupported, CurrentState, inputSymbol.ToString()));
-                }
-
-                if (transition != null)
-                {
-                    transition.RaiseOnTransitionEvent(new StateTransitionEventArgs<TAlphabet>(transition.Source, inputSymbol));
-                    CurrentState = transition.Target;
-                    return true;
-                }
-
-                CurrentState = FiniteStateMachine<TAlphabet>.ErrorState;
-                m_isInErrorState = true;
+                // Find the single transtrition that is accepted by the input symbol.
+                transition = Graph.OutEdges(This.CurrentState).SingleOrDefault(t => t.TransitionPredicate(inputSymbol));
+            }
+            catch (InvalidOperationException)
+            {
+                throw new NotSupportedException(
+                    String.Format(Resources.Error_NondeterministicEnumeration, This.CurrentState, inputSymbol.ToString()));
             }
 
-            return false;
+            m_currentStates.Clear();
+            if (transition != null)
+            {
+                // This code must not run in the try block as a user-defined event handler may raise
+                // the InvalidOperationException.
+                transition.RaiseOnTransitionEvent(new StateTransitionEventArgs<TAlphabet>(transition.Source, inputSymbol));
+                m_currentStates.Add(transition.Target);
+            }
+            else
+            {
+                m_currentStates.Add(FiniteStateMachine<TAlphabet>.ErrorState);
+                IsInErrorState = true;
+            }
+
+            return !IsInErrorState;
         }
-
-        /// <summary>
-        /// <see cref="IFsmEnumerator&lt;TAlphabet&gt;.CurrentState"/>
-        /// </summary>
-        public string CurrentState { get; private set; }
-
-        #endregion
-
-        #region private fields --------------------------------------------------------------------
-
-        private readonly IImplicitGraph<string, Transition<TAlphabet>> m_graph;
-        private bool m_isInErrorState;
 
         #endregion
     }

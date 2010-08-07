@@ -30,11 +30,11 @@ namespace Jolt.Automata.Test
             string inputSymbols = "mod3";
             string[] expectedStates = { "mod3(len) = 2", "mod3(len) = 1", "mod3(len) = 0", "mod3(len) = 2" };
 
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(EnumerationType.Deterministic, fsm.StartState);
 
             for (int i = 0; i < inputSymbols.Length; ++i)
             {
-                Assert.That(enumerator.NextState(inputSymbols[i]));
+                Assert.That(enumerator.Next(inputSymbols[i]));
                 Assert.That(enumerator.CurrentState, Is.EqualTo(expectedStates[i]));
             }
         }
@@ -52,14 +52,14 @@ namespace Jolt.Automata.Test
             string oddState = "odd-number";
             string inputSymbols = "0120";
             
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
-            Assert.That(enumerator.NextState(inputSymbols[0]));
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(EnumerationType.Deterministic, fsm.StartState);
+            Assert.That(enumerator.Next(inputSymbols[0]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(oddState));
-            Assert.That(enumerator.NextState(inputSymbols[1]));
+            Assert.That(enumerator.Next(inputSymbols[1]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(oddState));
-            Assert.That(!enumerator.NextState(inputSymbols[2]));
+            Assert.That(!enumerator.Next(inputSymbols[2]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(FiniteStateMachine<char>.ErrorState));
-            Assert.That(!enumerator.NextState(inputSymbols[3]));
+            Assert.That(!enumerator.Next(inputSymbols[3]));
             Assert.That(enumerator.CurrentState, Is.EqualTo(FiniteStateMachine<char>.ErrorState));
         }
 
@@ -71,13 +71,13 @@ namespace Jolt.Automata.Test
         public void NextState_NonDeterministic()
         {
             FiniteStateMachine<char> fsm = FsmFactory.CreateNonDeterministicMachine();
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(EnumerationType.Deterministic, fsm.StartState);
             char inputSymbol = 'a';
 
             Assert.That(
-                () => enumerator.NextState(inputSymbol),    // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
+                () => enumerator.Next(inputSymbol),    // TODO: Use Jolt.Bind iff NUnit accepts Action instead of TestDelegate
                 Throws.InstanceOf<NotSupportedException>().With.Message.EqualTo(
-                    String.Format(Resources.Error_NDFSM_NotSupported, fsm.StartState, inputSymbol.ToString())));
+                    String.Format(Resources.Error_NondeterministicEnumeration, fsm.StartState, inputSymbol.ToString())));
         }
 
         /// <summary>
@@ -102,10 +102,10 @@ namespace Jolt.Automata.Test
                 ++raiseEventCount;
             };
 
-            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(fsm.StartState);
+            IFsmEnumerator<char> enumerator = fsm.CreateStateEnumerator(EnumerationType.Deterministic, fsm.StartState);
             foreach (char symbol in inputSymbols)
             {
-                Assert.That(enumerator.NextState(symbol), "Test FSM is incorrectly initialized");
+                Assert.That(enumerator.Next(symbol), "Test FSM is incorrectly initialized");
             }
 
             Assert.That(raiseEventCount, Is.EqualTo(inputSymbols.Length / 4));

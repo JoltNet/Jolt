@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="NDFsmEnumeratorTestFixture.cs" />
     <Compile Include="ConsumptionResultTestFixture.cs" />
     <Compile Include="FiniteStateMachineTestFixture.cs" />
     <Compile Include="FsmConverterTestFixture.cs" />

@@ -69,15 +69,51 @@ namespace Jolt.Automata.Test
         internal static FiniteStateMachine<char> CreateNonDeterministicMachine()
         {
             FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
-            string startState = "start";
-            string aState = "a";
-            string bState = "b";
+            string[] states = { "start", "1", "2", "3", "4" };
 
-            fsm.AddStates(new string[] { startState, aState, bState });
-            fsm.StartState = startState;
+            fsm.AddStates(states);
+            fsm.StartState = states[0];
 
-            fsm.AddTransition(new Transition<char>(startState, aState, TrueForAll));
-            fsm.AddTransition(new Transition<char>(startState, bState, TrueForAll));
+            Predicate<char> equalsA = ('a').Equals;
+            Predicate<char> equalsB = ('b').Equals;
+            Predicate<char> equalsC = ('c').Equals;
+
+            fsm.AddTransition(new Transition<char>(states[0], states[1], equalsA));
+            fsm.AddTransition(new Transition<char>(states[0], states[2], equalsB));
+            fsm.AddTransition(new Transition<char>(states[0], states[3], equalsA));
+
+            fsm.AddTransition(new Transition<char>(states[1], states[1], equalsA));
+            fsm.AddTransition(new Transition<char>(states[1], states[2], equalsB));
+            fsm.AddTransition(new Transition<char>(states[1], states[3], equalsA));
+            
+            fsm.AddTransition(new Transition<char>(states[2], states[2], equalsB));
+            fsm.AddTransition(new Transition<char>(states[2], states[4], equalsC));
+
+            fsm.AddTransition(new Transition<char>(states[3], states[4], equalsA));
+            fsm.AddTransition(new Transition<char>(states[3], states[3], equalsC));
+
+            fsm.AddTransition(new Transition<char>(states[4], states[0], equalsA));
+
+            return fsm;
+        }
+
+        /// <summary>
+        /// Creates a nondeterministic FSM with multiple final states.
+        /// </summary>
+        internal static FiniteStateMachine<char> CreateNonDeterministicMachine_MultipleFinalStates()
+        {
+            FiniteStateMachine<char> fsm = new FiniteStateMachine<char>();
+            string[] states = { "start", "other", "final-1", "final-2" };
+            string[] finalStates = { states[2], states[3] };
+
+            fsm.AddStates(states);
+            fsm.StartState = states[0];
+            fsm.SetFinalStates(finalStates);
+
+            Predicate<char> transitionPredicate = Functor.ToPredicate(Functor.TrueForAll<char>());
+            fsm.AddTransition(new Transition<char>(states[0], states[1], transitionPredicate));
+            fsm.AddTransition(new Transition<char>(states[0], states[2], transitionPredicate));
+            fsm.AddTransition(new Transition<char>(states[0], states[3], transitionPredicate));
 
             return fsm;
         }
