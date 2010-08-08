@@ -729,7 +729,7 @@ namespace Jolt.Collections.Test
         /// Verifies the debugger display configuration of the class.
         /// </summary>
         [Test]
-        public void DebuggerDisplayOVerride()
+        public void DebuggerDisplayOverride()
         {
             Assert.That(
                 typeof(CircularList<>),

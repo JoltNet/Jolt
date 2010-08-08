@@ -38,7 +38,9 @@
     <Compile Include="CircularListEnumeratorTestFixture.cs" />
     <Compile Include="CircularListTestFixture.cs" />
     <Compile Include="CollectionDebuggerViewTestFixture.cs" />
+    <Compile Include="Linq\DictionaryTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadOnlyDictionaryTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Jolt.Collections\Jolt.Collections.csproj">

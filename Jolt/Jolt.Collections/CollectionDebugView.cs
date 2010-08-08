@@ -65,6 +65,7 @@ namespace Jolt.Collections
         {
             get { return m_collection; }
         }
+
         #endregion
 
         #region private fields --------------------------------------------------------------------

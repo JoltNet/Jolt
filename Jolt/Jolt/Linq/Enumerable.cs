@@ -1,10 +1,22 @@
-﻿using System.Collections.Generic;
+﻿// ----------------------------------------------------------------------------
+// Enumerable.cs
+//
+// Contains the definition of the Enumerable class.
+// Copyright 2010 Steve Guidi.
+//
+// File created: 2/12/2010 13:48:14
+// ----------------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.Linq;
 
 using Jolt.Functional;
 
 namespace Jolt.Linq
 {
+    /// <summary>
+    /// Defines extension methods for <see cref="System.Collections.Generic.IEnumerable&lt;T&gt;"/>
+    /// </summary>
     public static class Enumerable
     {
         /// <summary>
