@@ -143,6 +143,34 @@ Actual: {2}</value>
 Expected: {1}
 Actual: {2}</value>
   </data>
+  <data name="AssertionFailure_Equality_HashCodeInconsistent" xml:space="preserve">
+    <value>The type '{0}' does not implement the required hash code semantics for object equality.
+Expected: x.GetHashCode() equals y.GetHashCode() when x.Eq(y), for the implemented equality function of the given type.</value>
+  </data>
+  <data name="AssertionFailure_Equality_HashCodeNotModified" xml:space="preserve">
+    <value>The type '{0}' does not implement the required hash code semantics for object equality.
+Expected: x.GetHashCode() does not equal x'.GetHashCode() where x' is x with modified equality-sensitive object state.</value>
+  </data>
+  <data name="AssertionFailure_Equality_NullInequality" xml:space="preserve">
+    <value>The type '{0}' does not implement the null-inequality axiom for object equality.
+Expected: to x.Eq(null) returns false for the implemented equality function of the given type.</value>
+  </data>
+  <data name="AssertionFailure_Equality_ReflexivityAxiom" xml:space="preserve">
+    <value>The type '{0}' does not implement the reflexivity axiom for object equality.
+Expected: x.Eq(y) == y.Eq(x), for the implemented equality function of the given type.</value>
+  </data>
+  <data name="AssertionFailure_Equality_StatelessnessAxiom" xml:space="preserve">
+    <value>The type '{0}' does not implement the statelessness axiom for object equality.
+Expected: Successive calls to x.Eq(y) returns the same value when x and y remain unmodified, for the implemented equality function of the given type.</value>
+  </data>
+  <data name="AssertionFailure_Equality_SymmetryAxiom" xml:space="preserve">
+    <value>The type '{0}' does not implement the symmetry axiom for object equality.
+Expected: x.Eq(x) returns true, for the implemented equality function of the given type.</value>
+  </data>
+  <data name="AssertionFailure_Equality_TransitivityAxiom" xml:space="preserve">
+    <value>The type '{0}' does not implement the transitivity axiom for object equality.
+Expected: x.Eq(y) &amp;&amp; x.Eq(z) returns true if and only if x.Eq(z) returns true, for the implemented equality function of the given type.</value>
+  </data>
   <data name="AssertionFailure_UnexpectedAttribute" xml:space="preserve">
     <value>Unexpected attribute '{0}' found in element '{1}'.</value>
   </data>

@@ -7,6 +7,8 @@
 // File created: 8/31/2009 11:14:13
 // ----------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Xml.Schema;
 
 namespace Jolt.Testing.Assertions
@@ -17,13 +19,8 @@ namespace Jolt.Testing.Assertions
     internal interface IAssertionFactory
     {
         /// <summary>
-        /// Creates a new instance of the <see cref="XmlValidityAssertion"/> class.
-        /// Treats validation warnings as errors.
+        /// <see cref="XmlValidityAssertion.ctor(XmlSchemaSet)"/>
         /// </summary>
-        /// 
-        /// <param name="schemas">
-        /// The schemas defining the valid XML structure.
-        /// </param>
         /// 
         /// <returns>
         /// A new instance of the <see cref="XmlValidityAssertion"/> class, initialized
@@ -32,16 +29,8 @@ namespace Jolt.Testing.Assertions
         XmlValidityAssertion CreateXmlValidityAssertion(XmlSchemaSet schemas);
 
         /// <summary>
-        /// Creates a new instance of the <see cref="XmlValidityAssertion"/> class.
+        /// <see cref="XmlValidityAssertion.ctor(XmlSchemaSet, XmlSchemaValidationFlags)"/>
         /// </summary>
-        /// 
-        /// <param name="schemas">
-        /// The schemas defining the valid XML structure.
-        /// </param>
-        /// 
-        /// <param name="flags">
-        /// The configuration of the XML validator.
-        /// </param>
         /// 
         /// <returns>
         /// A new instance of the <see cref="XmlValidityAssertion"/> class, initialized
@@ -50,7 +39,7 @@ namespace Jolt.Testing.Assertions
         XmlValidityAssertion CreateXmlValidityAssertion(XmlSchemaSet schemas, XmlSchemaValidationFlags flags);
 
         /// <summary>
-        /// Creates a new instance of the <see cref="XmlEqualityAssertion"/> class.
+        /// <see cref="XmlEqualityAssertion.ctor()"/>
         /// </summary>
         /// 
         /// <returns>
@@ -59,17 +48,71 @@ namespace Jolt.Testing.Assertions
         XmlEqualityAssertion CreateXmlEqualityAssertion();
 
         /// <summary>
-        /// Creates a new instance of the <see cref="XmlEquivalencyAssertion"/> class.
+        /// <see cref="XmlEquivalencyAssertion.ctor(XmlComparisonFlags)"/>
         /// </summary>
-        /// 
-        /// <param name="strictness">
-        /// A set of flags denoting the definition of equivalency, for this instance.
-        /// </param>
         /// 
         /// <returns>
         /// A new instance of the <see cref="XmlEquivalencyAssertion"/>, initialized with
         /// <paramref name="strictness"/>.
         /// </returns>
         XmlEquivalencyAssertion CreateXmlEquivalencyAssertion(XmlComparisonFlags strictness);
+
+        /// <summary>
+        /// <see cref="EqualityAxiomAssertion&lt;T&gt;.ctor(IArgumentFactory&lt;T&gt;)"/>
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// The type whose equality semantics are validated.
+        /// </typeparam>
+        ///
+        /// <returns>
+        /// A new instance of the <see cref="EqualityAxiomAssertion&lt;T&gt;"/> class,
+        /// initialized with <param name="argumentFactory"/>.
+        /// </returns>
+        EqualityAxiomAssertion<T> CreateEqualityAxiomAssertion<T>(IArgumentFactory<T> argumentFactory);
+
+        /// <summary>
+        /// <see cref="EquatableAxiomAssertion&lt;T&gt;.ctor(IEquatableFactory&lt;T&gt;)"/>
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// The type whose equality semantics are validated.
+        /// </typeparam>
+        ///
+        /// <returns>
+        /// A new instance of the <see cref="EquatableAxiomAssertion&lt;T&gt;"/> class,
+        /// initialized with <param name="argumentFactory"/>.
+        /// </returns>
+        EquatableAxiomAssertion<T> CreateEquatableAxiomAssertion<T>(IEquatableFactory<T> argumentFactory)
+            where T : IEquatable<T>;
+
+        /// <summary>
+        /// <see cref="ComparableAxiomAssertion&lt;T&gt;.ctor(IComparableFactory&lt;T&gt;)"/>
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// The type whose equality semantics are validated.
+        /// </typeparam>
+        ///
+        /// <returns>
+        /// A new instance of the <see cref="ComparableAxiomAssertion&lt;T&gt;"/> class,
+        /// initialized with <param name="argumentFactory"/>.
+        /// </returns>
+        ComparableAxiomAssertion<T> CreateComparableAxiomAssertion<T>(IComparableFactory<T> argumentFactory)
+            where T : IComparable<T>;
+
+        /// <summary>
+        /// <see cref="EqualityComparerAxiomAssertion&lt;T&gt;.ctor(IArgumentFactory&lt;T&gt;, IEqualityComparer&lt;T&gt;)"/>
+        /// </summary>
+        /// 
+        /// <typeparam name="T">
+        /// The type specialization for the equality comparer to validate.
+        /// </typeparam>
+        ///
+        /// <returns>
+        /// A new instance of the <see cref="EqualityComparableAxiomAssertion&lt;T&gt;"/> class,
+        /// initialized with <paramref name="argumentFactory"/> and <paramref name="comparer"/>.
+        /// </returns>
+        EqualityComparerAxiomAssertion<T> CreateEqualityComparerAxiomAssertion<T>(IArgumentFactory<T> argumentFactory, IEqualityComparer<T> comparer);
     }
 }

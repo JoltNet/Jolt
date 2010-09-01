@@ -8,12 +8,14 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Jolt.Testing.Test.Assertions
 {
@@ -77,6 +79,56 @@ namespace Jolt.Testing.Test.Assertions
 
             XmlEquivalencyAssertion assertion = createAssertion(expectedValue);
             Assert.That(assertion.ComparisonFlags, Is.EqualTo(expectedValue));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EqualityAxiomAssertion&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EqualityAxiomAssertion<T>(Func<IArgumentFactory<T>, EqualityAxiomAssertion<T>> createAssertion)
+        {
+            IArgumentFactory<T> expectedFactory = MockRepository.GenerateStub<IArgumentFactory<T>>();
+            
+            EqualityAxiomAssertion<T> assertion = createAssertion(expectedFactory);
+            Assert.That(assertion.ArgumentFactory, Is.SameAs(expectedFactory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EquatableAxiomAssertion&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EquatableAxiomAssertion<T>(Func<IEquatableFactory<T>, EqualityAxiomAssertion<T>> createAssertion)
+            where T : IEquatable<T>
+        {
+            IEquatableFactory<T> expectedFactory = MockRepository.GenerateStub<IEquatableFactory<T>>();
+
+            EqualityAxiomAssertion<T> assertion = createAssertion(expectedFactory);
+            Assert.That(assertion, Is.InstanceOf<EquatableAxiomAssertion<T>>());
+            Assert.That(assertion.ArgumentFactory, Is.SameAs(expectedFactory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="ComparableAxiomAssertion&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void ComparableAxiomAssertion<T>(Func<IComparableFactory<T>, EqualityAxiomAssertion<T>> createAssertion)
+            where T : IComparable<T>
+        {
+            IComparableFactory<T> expectedFactory = MockRepository.GenerateStub<IComparableFactory<T>>();
+
+            EqualityAxiomAssertion<T> assertion = createAssertion(expectedFactory);
+            Assert.That(assertion, Is.InstanceOf<ComparableAxiomAssertion<T>>());
+            Assert.That(assertion.ArgumentFactory, Is.SameAs(expectedFactory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EqualityComparerAxiomAssertion&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EqualityComparerAxiomAssertion<T>(Func<IArgumentFactory<T>, IEqualityComparer<T>, EqualityAxiomAssertion<T>> createAssertion)
+        {
+            IArgumentFactory<T> expectedFactory = MockRepository.GenerateStub<IArgumentFactory<T>>();
+
+            EqualityAxiomAssertion<T> assertion = createAssertion(expectedFactory, EqualityComparer<T>.Default);
+            Assert.That(assertion, Is.InstanceOf<EqualityComparerAxiomAssertion<T>>());
+            Assert.That(assertion.ArgumentFactory, Is.SameAs(expectedFactory));
+            Assert.That((assertion as EqualityComparerAxiomAssertion<T>).Comparer, Is.SameAs(EqualityComparer<T>.Default));
         }
 
         #endregion

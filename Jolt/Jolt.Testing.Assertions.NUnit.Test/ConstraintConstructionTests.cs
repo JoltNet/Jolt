@@ -8,11 +8,13 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Jolt.Testing.Assertions.NUnit.Test
 {
@@ -76,6 +78,57 @@ namespace Jolt.Testing.Assertions.NUnit.Test
             Assert.That(constraint.ComparisonFlags, Is.EqualTo(XmlComparisonFlags.Strict));
             Assert.That(constraint.CreateAssertion, Is.InstanceOf<CreateXmlEquivalencyAssertionDelegate>());
             Assert.That(constraint.ExpectedXml, Is.SameAs(expectedXml));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EqualityAxiomConstraint&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EqualityAxiomConstraint<T>(Func<IArgumentFactory<T>, EqualityAxiomConstraint<T>> createConstraint)
+        {
+            IArgumentFactory<T> factory = MockRepository.GenerateStub<IArgumentFactory<T>>();
+            EqualityAxiomConstraint<T> constraint = createConstraint(factory);
+
+            Assert.That(constraint.Assertion, Is.Not.Null);
+            Assert.That(constraint.Assertion.ArgumentFactory, Is.SameAs(factory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EquatableAxiomConstraint&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EquatableAxiomConstraint<T>(Func<IEquatableFactory<T>, EquatableAxiomConstraint<T>> createConstraint)
+            where T : IEquatable<T>
+        {
+            IEquatableFactory<T> factory = MockRepository.GenerateStub<IEquatableFactory<T>>();
+            EquatableAxiomConstraint<T> constraint = createConstraint(factory);
+
+            Assert.That(constraint.Assertion, Is.Not.Null);
+            Assert.That(constraint.Assertion.ArgumentFactory, Is.SameAs(factory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="ComparableAxiomConstraint&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void ComparableAxiomConstraint<T>(Func<IComparableFactory<T>, ComparableAxiomConstraint<T>> createConstraint)
+            where T : IComparable<T>
+        {
+            IComparableFactory<T> factory = MockRepository.GenerateStub<IComparableFactory<T>>();
+            ComparableAxiomConstraint<T> constraint = createConstraint(factory);
+
+            Assert.That(constraint.Assertion, Is.Not.Null);
+            Assert.That(constraint.Assertion.ArgumentFactory, Is.SameAs(factory));
+        }
+
+        /// <summary>
+        /// Verifies the construction of the <seealso cref="EqualityComparerAxiomConstraint&lt;T&gt;"/> class.
+        /// </summary>
+        internal static void EqualityComparerAxiomConstraint<T>(Func<IArgumentFactory<T>, IEqualityComparer<T>, EqualityComparerAxiomConstraint<T>> createConstraint)
+        {
+            IArgumentFactory<T> factory = MockRepository.GenerateStub<IArgumentFactory<T>>();
+            EqualityComparerAxiomConstraint<T> constraint = createConstraint(factory, EqualityComparer<T>.Default);
+
+            Assert.That(constraint.Assertion, Is.Not.Null);
+            Assert.That(constraint.Assertion.ArgumentFactory, Is.SameAs(factory));
+            Assert.That(constraint.Assertion.Comparer, Is.SameAs(EqualityComparer<T>.Default));
         }
     }
 }

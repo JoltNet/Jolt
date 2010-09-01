@@ -7,6 +7,7 @@
 // File created: 8/31/2009 11:41:17
 // ----------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Xml.Schema;
 
 namespace Jolt.Testing.Assertions
@@ -45,6 +46,38 @@ namespace Jolt.Testing.Assertions
         XmlEquivalencyAssertion IAssertionFactory.CreateXmlEquivalencyAssertion(XmlComparisonFlags strictness)
         {
             return new XmlEquivalencyAssertion(strictness);
+        }
+
+        /// <summary>
+        /// <see cref="IAssertionFactory.CreateEqualityAxiomAssertion&lt;&gt;>"/>
+        /// </summary>
+        EqualityAxiomAssertion<T> IAssertionFactory.CreateEqualityAxiomAssertion<T>(IArgumentFactory<T> argumentFactory)
+        {
+            return new EqualityAxiomAssertion<T>(argumentFactory);
+        }
+
+        /// <summary>
+        /// <see cref="IAssertionFactory.CreateEquatableAxiomAssertion&lt;&gt;>"/>
+        /// </summary>
+        EquatableAxiomAssertion<T> IAssertionFactory.CreateEquatableAxiomAssertion<T>(IEquatableFactory<T> argumentFactory)
+        {
+            return new EquatableAxiomAssertion<T>(argumentFactory);
+        }
+
+        /// <summary>
+        /// <see cref="IAssertionFactory.CreateComparerAxiomAssertion&lt;&gt;>"/>
+        /// </summary>
+        ComparableAxiomAssertion<T> IAssertionFactory.CreateComparableAxiomAssertion<T>(IComparableFactory<T> argumentFactory)
+        {
+            return new ComparableAxiomAssertion<T>(argumentFactory);
+        }
+
+        /// <summary>
+        /// <see cref="IAssertionFactory.CreateEqualityComparerAxiomAssertion&lt;&gt;>"/>
+        /// </summary>
+        EqualityComparerAxiomAssertion<T> IAssertionFactory.CreateEqualityComparerAxiomAssertion<T>(IArgumentFactory<T> argumentFactory, IEqualityComparer<T> comparer)
+        {
+            return new EqualityComparerAxiomAssertion<T>(argumentFactory, comparer);
         }
 
         #endregion

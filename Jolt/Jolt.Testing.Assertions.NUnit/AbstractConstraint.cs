@@ -9,14 +9,14 @@
 
 using System;
 
-using NUnit.Framework;
 using NUnit.Framework.Constraints;
+
 
 namespace Jolt.Testing.Assertions.NUnit
 {
     /// <summary>
-    /// Defines an abstract base class that contains functionaly
-    /// common to all NUnit XML constraints.
+    /// Defines an abstract base class that contains functionality
+    /// common to all NUnit constraints.
     /// </summary>
     /// 
     /// <typeparam name="TActual">

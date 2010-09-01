@@ -16,7 +16,7 @@ namespace Jolt.Testing.Assertions
     /// <summary>
     /// Contains metadata describing the result of executing an XML assertion.
     /// </summary>
-    public sealed class XmlComparisonResult
+    public sealed class XmlComparisonResult : AssertionResult
     {
         #region constructors ----------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ namespace Jolt.Testing.Assertions
         /// </param>
         /// 
         /// <param name="message">
-        /// A message describinng the result of the comparison..
+        /// A message describing the result of the comparison.
         /// </param>
         /// 
         /// <param name="expected">
@@ -56,9 +56,8 @@ namespace Jolt.Testing.Assertions
         /// Initializes <see cref="XPathHint"/> to an XPath expression that locates <paramref name="actual"/>.
         /// </remarks>
         public XmlComparisonResult(bool comparisonResult, string message, XElement expected, XElement actual)
+            : base(comparisonResult, message)
         {
-            m_comparisonResult = comparisonResult;
-            m_message = message;
             m_expectedElement = expected;
             m_actualElement = actual;
             m_xPathHint = actual != null ? CreateXPathExpressionFor(actual) : String.Empty;
@@ -67,22 +66,6 @@ namespace Jolt.Testing.Assertions
         #endregion
 
         #region public properties -----------------------------------------------------------------
-
-        /// <summary>
-        /// Gets the result of the comparison.
-        /// </summary>
-        public bool Result
-        {
-            get { return m_comparisonResult; }
-        }
-
-        /// <param name="message">
-        /// Gets the message describinng the result of the comparison..
-        /// </param>
-        public string Message
-        {
-            get { return m_message; }
-        }
 
         /// <summary>
         /// Gets the expected <see cref="System.Xml.XLinq.XElement"/> operated upon by the comparison.
@@ -146,8 +129,6 @@ namespace Jolt.Testing.Assertions
 
         #region private fields --------------------------------------------------------------------
 
-        private readonly bool m_comparisonResult;
-        private readonly string m_message;
         private readonly XElement m_expectedElement;
         private readonly XElement m_actualElement;
         private readonly string m_xPathHint;

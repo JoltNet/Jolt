@@ -36,6 +36,14 @@
   <ItemGroup>
     <Compile Include="Assertions\AssertionConstructionTests.cs" />
     <Compile Include="Assertions\AssertionFactoryTestFixture.cs" />
+    <Compile Include="Assertions\AssertionResultTestFixture.cs" />
+    <Compile Include="Assertions\ComparableAxiomAssertionTestFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Assertions\EqualityAxiomAssertionTestFixture.cs" />
+    <Compile Include="Assertions\EqualityComparerAxiomAssertionTestFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Assertions\XmlComparisonResultTestFixture.cs" />
     <Compile Include="Assertions\XmlEqualityAssertionTestFixture.cs" />
     <Compile Include="Assertions\XmlEquivalencyAssertionTestFixture.cs" />
@@ -58,6 +66,7 @@
     <Compile Include="CodeGeneration\XmlDocCommentBuilderTestFixture.cs" />
     <Compile Include="CodeGeneration\Xml\TypeDescriptorTestFixture.cs" />
     <Compile Include="CodeGeneration\Xml\XmlConfiguratorTestFixture.cs" />
+    <Compile Include="Assertions\EquatableAxiomAssertionTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CodeGeneration\TestTypes.cs" />
   </ItemGroup>

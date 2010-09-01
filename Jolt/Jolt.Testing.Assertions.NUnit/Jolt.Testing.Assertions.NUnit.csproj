@@ -33,7 +33,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractConstraint.cs" />
+    <Compile Include="AbstractEqualityAxiomConstraint.cs" />
+    <Compile Include="ComparableAxiomConstraint.cs" />
+    <Compile Include="EqualityAxiomConstraint.cs" />
+    <Compile Include="EqualityComparerAxiomConstraint.cs" />
+    <Compile Include="EquatableAxiomConstraint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SyntaxHelpers\Implements.cs" />
     <Compile Include="XmlEqualityConstraint.cs" />
     <Compile Include="XmlEquivalencyConstraint.cs" />
     <Compile Include="SyntaxHelpers\IsXml.cs" />
@@ -50,10 +61,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\NUnit-2.5.2\bin\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

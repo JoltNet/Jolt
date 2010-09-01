@@ -60,10 +60,10 @@ namespace Jolt.Testing.Assertions.NUnit
 
         #endregion
 
-        #region AbstractXmlConstraint members -----------------------------------------------------
+        #region AbstractConstraint members --------------------------------------------------------
 
         /// <summary>
-        /// <see cref="AbstractXmlConstraint.Assert"/>
+        /// <see cref="AbstractConstraint.Assert"/>
         /// </summary>
         protected override XmlComparisonResult Assert(XmlReader actual)
         {
@@ -71,7 +71,7 @@ namespace Jolt.Testing.Assertions.NUnit
         }
 
         /// <summary>
-        /// <see cref="AbstractXmlConstraint.ToBoolean"/>
+        /// <see cref="AbstractConstraint.ToBoolean"/>
         /// </summary>
         protected override bool ToBoolean(XmlComparisonResult assertionResult)
         {
@@ -79,7 +79,7 @@ namespace Jolt.Testing.Assertions.NUnit
         }
 
         /// <summary>
-        /// <see cref="AbstractXmlConstraint.CreateAssertionErrorMessage"/>
+        /// <see cref="AbstractConstraint.CreateAssertionErrorMessage"/>
         /// </summary>
         protected override string CreateAssertionErrorMessage(XmlComparisonResult assertionResult)
         {
