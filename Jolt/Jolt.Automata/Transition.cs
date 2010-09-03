@@ -131,13 +131,13 @@ namespace Jolt.Automata
         /// </summary>
         public bool Equals(Transition<TAlphabet> transition)
         {
-            // Ensure that we don't attempt to dereference transition when it is null.
-            bool areEqual = base.Equals(transition);
+            bool areEqual = base.Equals(transition) &&
+                            m_transitionPredicate.Equals(transition.m_transitionPredicate) &&
+                            Description == transition.Description;
+            
             if (areEqual)
             {
-                areEqual &= m_transitionPredicate.Equals(transition.m_transitionPredicate) &&
-                            Description == transition.Description &&
-                            OnTransition == null ?
+                areEqual &= OnTransition == null ?
                                 transition.OnTransition == null :
                                 OnTransition.Equals(transition.OnTransition);
             }
