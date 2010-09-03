@@ -21,7 +21,7 @@ namespace Jolt.Testing.Assertions.NUnit
     /// 
     /// <typeparam name="TActual">
     /// The type of the "actual" parameter given to the
-    /// <see cref="Constraint.Matches"/> method.
+    /// <see cref="Constraint.Matches(object)"/> method.
     /// </typeparam>
     /// 
     /// <typeparam name="TAssertionResult">

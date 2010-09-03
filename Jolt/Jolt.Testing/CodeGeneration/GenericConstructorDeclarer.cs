@@ -24,7 +24,7 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region constructors ----------------------------------------------------------------------
 
-        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.ctor(TypeBuilder, MethodInfo, ConstructorInfo, AbstractMethodDeclarerImpl&lt;ConstructorBuilder, ConstructorInfo&gt;"/>
+        /// <see cref="AbstractMethodDeclarer&lt;ConstructorBuilder, ConstructorInfo&gt;.ctor(TypeBuilder, MethodInfo, ConstructorInfo, AbstractMethodDeclarerImpl&lt;ConstructorBuilder, ConstructorInfo&gt;)"/>
         internal GenericConstructorDeclarer(
             TypeBuilder proxyTypeBuilder,
             MethodAttributes constructorAttributes,

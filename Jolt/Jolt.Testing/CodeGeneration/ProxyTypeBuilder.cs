@@ -96,7 +96,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="realSubjectType">
-        /// The <see cref="System.Type"/ >of object for which the proxy forwards to.
+        /// The <see cref="System.Type"/> of object for which the proxy forwards to.
         /// </param>
         /// 
         /// <param name="produceXmlDocComments">

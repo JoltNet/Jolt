@@ -21,7 +21,7 @@ namespace Jolt.Testing.CodeGeneration
     {
         #region IMethodDeclarerImpl<MethodBuilder,MethodInfo> members -----------------------------
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo, Type>"/>
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DeclareMethod(MethodBuilder, MethodInfo, Type)"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DeclareMethod(MethodBuilder builder, MethodInfo realSubjectTypeMethod, Type returnType)
         {
             // Obtain all generic arguments that may be required by the method.
@@ -44,7 +44,7 @@ namespace Jolt.Testing.CodeGeneration
                 genericMethodArguments));
         }
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo>"/>
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(MethodBuilder, MethodInfo)"/>
         void IMethodDeclarerImpl<MethodBuilder, MethodInfo>.DefineMethodParameters(MethodBuilder builder, MethodInfo realSubjectTypeMethod)
         {
             DeclarationHelper.DefineParametersWith(builder.DefineParameter, realSubjectTypeMethod.GetParameters());

@@ -24,7 +24,7 @@ namespace Jolt.Automata
     /// 
     /// <seealso cref="FiniteStateMachine"/>
     [Serializable]
-    public sealed class Transition<TAlphabet> : EquatableEdge<string>
+    public sealed class Transition<TAlphabet> : EquatableEdge<string>, IEquatable<Transition<TAlphabet>>
     {
         #region constructors ----------------------------------------------------------------------
 
@@ -131,17 +131,15 @@ namespace Jolt.Automata
         /// </summary>
         public bool Equals(Transition<TAlphabet> transition)
         {
-            bool areEqual = base.Equals(transition) &&
-                   m_transitionPredicate.Equals(transition.m_transitionPredicate) &&
-                   Description == transition.Description;
-
-            // Prevent transition dereference when transition == null.
+            // Ensure that we don't attempt to dereference transition when it is null.
+            bool areEqual = base.Equals(transition);
             if (areEqual)
             {
-                areEqual &= OnTransition == null ?
-                    transition.OnTransition == null :
-                    OnTransition.Equals(transition.OnTransition);
-
+                areEqual &= m_transitionPredicate.Equals(transition.m_transitionPredicate) &&
+                            Description == transition.Description &&
+                            OnTransition == null ?
+                                transition.OnTransition == null :
+                                OnTransition.Equals(transition.OnTransition);
             }
 
             return areEqual;

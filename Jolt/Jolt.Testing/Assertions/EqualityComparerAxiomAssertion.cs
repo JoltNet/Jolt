@@ -13,8 +13,9 @@ using System.Collections.Generic;
 namespace Jolt.Testing.Assertions
 {
     /// <summary>
-    /// Provides assertion methods for verifiying implementations of
-    /// <see cref="System.IEqualityComparer&lt;T&gt;"/> correctly implement equality semantics.
+    /// Provides assertion methods for verifiying if implementations of
+    /// <see cref="System.Collections.Generic.IEqualityComparer&lt;T&gt;"/>
+    /// correctly implement equality semantics.
     /// </summary>
     /// 
     /// <typeparam name="T">

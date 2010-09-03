@@ -49,21 +49,39 @@ namespace Jolt.Collections
 
         #region IEquatable<CircularLinkedListNode<TElement>> members ------------------------------
 
+        /// <summary>
+        /// <see cref="Object.Equals(object)"/>
+        /// </summary>
         public bool Equals(CircularLinkedListNode<TElement> other)
         {
-            return Object.ReferenceEquals(m_node, other.m_node);
+            return other != null && Object.ReferenceEquals(m_node, other.m_node);
         }
 
         #endregion
 
         #region Object members --------------------------------------------------------------------
 
+        /// <summary>
+        /// Performs a value-based equality comparison for a given
+        /// CircularLinkedListNode.
+        /// </summary>
+        /// 
+        /// <param name="obj">
+        /// The node to compare with.
+        /// </param>
+        /// 
+        /// <returns>
+        /// A Boolean value denoting the equality of the two compared objects.
+        /// </returns>
         public override bool Equals(object obj)
         {
             return obj is CircularLinkedListNode<TElement> &&
                    Equals(obj as CircularLinkedListNode<TElement>);
         }
 
+        /// <summary>
+        /// <see cref="Object.GetHashCode()"/>
+        /// </summary>
         public override int GetHashCode()
         {
             return m_node.GetHashCode();
@@ -140,7 +158,7 @@ namespace Jolt.Collections
         #region private fields --------------------------------------------------------------------
 
         private readonly CircularLinkedList<TElement> m_list;
-        private LinkedListNode<TElement> m_node;
+        private readonly LinkedListNode<TElement> m_node;
 
         #endregion
     }

@@ -33,6 +33,7 @@
   <ItemGroup>
     <Compile Include="AbstractSeedableEnumeratorTestFixture.cs" />
     <Compile Include="CircularEnumeratorTestFixture.cs" />
+    <Compile Include="CircularLinkedListNodeFactory.cs" />
     <Compile Include="CircularLinkedListNodeTestFixture.cs" />
     <Compile Include="CircularLinkedListTestFixture.cs" />
     <Compile Include="CircularListEnumeratorTestFixture.cs" />
@@ -46,6 +47,14 @@
     <ProjectReference Include="..\Jolt.Collections\Jolt.Collections.csproj">
       <Project>{2A66CD49-6DCB-4DA1-B775-4C8342AC3641}</Project>
       <Name>Jolt.Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jolt.Testing.Assertions.NUnit\Jolt.Testing.Assertions.NUnit.csproj">
+      <Project>{DC09A424-4552-434D-995E-DF0AE2EFFA03}</Project>
+      <Name>Jolt.Testing.Assertions.NUnit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jolt.Testing\Jolt.Testing.csproj">
+      <Project>{62192419-8710-4796-AA18-1F2F8382E907}</Project>
+      <Name>Jolt.Testing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

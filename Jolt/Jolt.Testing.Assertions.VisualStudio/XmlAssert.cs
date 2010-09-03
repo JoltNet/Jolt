@@ -147,7 +147,7 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Verifies a <see cref="System.Collections.Generic.IList"/> of <see cref="ValidationEventArgs"/>
+        /// Verifies a <see cref="System.Collections.Generic.IList&lt;T&gt;"/> of <see cref="ValidationEventArgs"/>
         /// for assertion validity.
         /// </summary>
         /// 

@@ -12,6 +12,9 @@ using System.Collections.Generic;
 
 namespace Jolt.Testing.Assertions.NUnit.SyntaxHelpers
 {
+    /// <summary>
+    /// Defines an NUnit syntax helper class that creates Jolt axiom constraints.
+    /// </summary>
     public static class Implements
     {
         /// <summary>

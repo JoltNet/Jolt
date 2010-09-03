@@ -10,6 +10,8 @@
 using System;
 
 using Jolt.Functional;
+using Jolt.Testing.Assertions;
+using Jolt.Testing.Assertions.NUnit.SyntaxHelpers;
 using NUnit.Framework;
 
 namespace Jolt.Automata.Test
@@ -135,35 +137,11 @@ namespace Jolt.Automata.Test
         [Test]
         public void Equals()
         {
-            EventHandler<StateTransitionEventArgs<char>> eventHandler = Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
-            Transition<char> trans_x = new Transition<char>("start", "final", Char.IsDigit);
-            trans_x.OnTransition += eventHandler;
+            IArgumentFactory<Transition<char>> factory = new TransitionFactory();
+            IEquatableFactory<Transition<char>> equatableFactory = factory as IEquatableFactory<Transition<char>>;
 
-            Transition<char> trans_y = new Transition<char>("start", "final", Char.IsDigit);
-            trans_y.OnTransition += eventHandler;
-
-            Transition<char> trans_z = new Transition<char>("start", "final", Char.IsDigit);
-            trans_z.OnTransition += eventHandler;
-
-            // Value-based equality assertions.
-            Assert.That(trans_x, Is.EqualTo(trans_y));
-            Assert.That(trans_y, Is.EqualTo(trans_z));
-
-            // Equality axiom assertions.
-            Assert.That(trans_x.Equals(trans_x));
-            Assert.That(trans_x.Equals(trans_y), Is.EqualTo(trans_y.Equals(trans_x)));
-            
-            if (trans_x.Equals(trans_y) && trans_y.Equals(trans_z))
-            {
-                Assert.That(trans_x.Equals(trans_z));
-            }
-
-            if (trans_x.Equals(trans_z))
-            {
-                Assert.That(trans_x.Equals(trans_y) && trans_y.Equals(trans_z));
-            }
-
-            Assert.That(!trans_x.Equals(null));
+            Assert.That(typeof(Transition<char>), Implements.EqualityAxiom(factory));
+            Assert.That(typeof(Transition<char>), Implements.EqualityAxiom(equatableFactory));
         }
 
         /// <summary>
@@ -230,34 +208,6 @@ namespace Jolt.Automata.Test
             trans_y.OnTransition += Functor.ToEventHandler(Functor.NoOperation<object, StateTransitionEventArgs<char>>());
 
             Assert.That(trans_x, Is.Not.EqualTo(trans_y));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the GetHashCode() method when
-        /// two transition objects are equal.
-        /// </summary>
-        [Test]
-        public new void GetHashCode()
-        {
-            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
-            Transition<char> trans_y = new Transition<char>("source", "target", Char.IsDigit);
-
-            Assert.That(trans_x, Is.EqualTo(trans_y));
-            Assert.That(trans_x.GetHashCode(), Is.EqualTo(trans_y.GetHashCode()));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the GetHashCode() method when
-        /// a state change occurs as part of the Description property.
-        /// </summary>
-        [Test]
-        public void GetHashCode_DescriptionChange()
-        {
-            Transition<char> trans_x = new Transition<char>("source", "target", Char.IsDigit);
-            int hashCode = trans_x.GetHashCode();
-            trans_x.Description = null;
-
-            Assert.That(hashCode, Is.Not.EqualTo(trans_x.GetHashCode()));
         }
 
         /// <summary>

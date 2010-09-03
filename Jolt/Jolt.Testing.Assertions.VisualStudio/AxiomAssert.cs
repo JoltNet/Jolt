@@ -39,7 +39,7 @@ namespace Jolt.Testing.Assertions.VisualStudio
 
         /// <summary>
         /// Asserts that <typeparamref name="T"/> implements the required equality axioms,
-        /// for implementations of <see cref="System.IEquatable&lt;T&gt"/>.
+        /// for implementations of <see cref="System.IEquatable&lt;T&gt;"/>.
         /// </summary>
         /// 
         /// <typeparam name="T">
@@ -57,7 +57,7 @@ namespace Jolt.Testing.Assertions.VisualStudio
 
         /// <summary>
         /// Asserts that <typeparamref name="T"/> implements the required equality axioms,
-        /// for implementations of <see cref="System.IComparable&lt;T&gt"/>.
+        /// for implementations of <see cref="System.IComparable&lt;T&gt;"/>.
         /// </summary>
         /// 
         /// <typeparam name="T">
@@ -74,7 +74,7 @@ namespace Jolt.Testing.Assertions.VisualStudio
         }
 
         /// <summary>
-        /// Asserts that the given <see cref="System.IEqualityComparer&lt;T&gt"/> implements
+        /// Asserts that the given <see cref="System.Collections.Generic.IEqualityComparer&lt;T&gt;"/> implements
         /// the required equality axioms.
         /// </summary>
         /// 
@@ -84,6 +84,10 @@ namespace Jolt.Testing.Assertions.VisualStudio
         /// 
         /// <param name="factory">
         /// A factory that creates and modifies instances of <typeparamref name="T"/>.
+        /// </param>
+        /// 
+        /// <param name="comparer">
+        /// The equality comparer instance whose equality semantics are verified.
         /// </param>
         public static void Equality<T>(IArgumentFactory<T> factory, IEqualityComparer<T> comparer)
         {

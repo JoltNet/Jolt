@@ -211,7 +211,7 @@ namespace Jolt.Testing.Assertions
         /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements define the desired element order.
         /// </param>
         /// 
-        /// <param name="expected">
+        /// <param name="actual">
         /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements are to be reordered.
         /// </param>
         /// 
@@ -272,7 +272,7 @@ namespace Jolt.Testing.Assertions
         /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements define the desired element order.
         /// </param>
         /// 
-        /// <param name="expected">
+        /// <param name="actual">
         /// An <see cref="System.Xml.XLinq.XElement"/> whose child elements are to be reordered.
         /// </param>
         /// 

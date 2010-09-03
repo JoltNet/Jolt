@@ -37,7 +37,7 @@ namespace Jolt.Testing.Assertions.NUnit
         /// Creates a new instance of the <see cref="ComparableAxiomConstraint&lt;T&gt;"/> class.
         /// </summary>
         /// 
-        /// <param name="createAssertion">
+        /// <param name="assertion">
         /// The assertion instance to use for validating equality axioms.
         /// </param>
         internal ComparableAxiomConstraint(ComparableAxiomAssertion<T> assertion)

@@ -9,6 +9,8 @@
 
 using System.Collections.Generic;
 
+using Jolt.Testing.Assertions;
+using Jolt.Testing.Assertions.NUnit.SyntaxHelpers;
 using NUnit.Framework;
 
 namespace Jolt.Collections.Test
@@ -48,14 +50,18 @@ namespace Jolt.Collections.Test
         }
 
         /// <summary>
-        /// Verifies the behavior of the Equals() method.
+        /// Verifies the axiomatic behavior of the Equals(CircularLinkedListNode) method.
         /// </summary>
         [Test]
-        public void Equals_Equatable()
+        public void Equals()
         {
-            CircularLinkedListNode<int> node = new CircularLinkedListNode<int>(123);
+            IArgumentFactory<CircularLinkedListNode<int>> factory = new CircularLinkedListNodeFactory();
+            IEquatableFactory<CircularLinkedListNode<int>> equatableFactory = factory as IEquatableFactory<CircularLinkedListNode<int>>;
 
-            Assert.That(node.Equals(new CircularLinkedListNode<int>(null, node.ListNode)));
+            Assert.That(typeof(CircularLinkedListNode<int>), Implements.EqualityAxiom(factory));
+            Assert.That(typeof(CircularLinkedListNode<int>), Implements.EqualityAxiom(equatableFactory));
+
+            CircularLinkedListNode<int> node = new CircularLinkedListNode<int>(123);
             Assert.That(!node.Equals(new CircularLinkedListNode<int>(null, new LinkedListNode<int>(123))));
         }
 
@@ -68,28 +74,6 @@ namespace Jolt.Collections.Test
         {
             CircularLinkedListNode<int> node = new CircularLinkedListNode<int>(12345);
             Assert.That(!node.Equals("invalid-type"));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the Object.Equals() method.
-        /// </summary>
-        [Test]
-        public void Equals_Override()
-        {
-            CircularLinkedListNode<int> node = new CircularLinkedListNode<int>(123);
-
-            Assert.That(node.Equals((object)new CircularLinkedListNode<int>(null, node.ListNode)));
-            Assert.That(!node.Equals((object)new CircularLinkedListNode<int>(null, new LinkedListNode<int>(123))));
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the GetHashCode() method.
-        /// </summary>
-        [Test]
-        public void HashCode()
-        {
-            CircularLinkedListNode<int> node = new CircularLinkedListNode<int>(123);
-            Assert.That(node.GetHashCode(), Is.EqualTo(node.ListNode.GetHashCode()));
         }
 
         /// <summary>

@@ -136,7 +136,7 @@ namespace Jolt.Testing.Assertions
         /// The first instance used to verify the axiom.
         /// </param>
         /// 
-        /// <param name="y">
+        /// <param name="z">
         /// The third instance used to verify the axiom.
         /// </param>
         /// 
@@ -211,7 +211,7 @@ namespace Jolt.Testing.Assertions
         /// </param>
         /// 
         /// <returns>
-        /// Returns true if <see cref="AreEqual"/>(x, y) returns true and <see cref="GetHashCode"/>(x) equals <see cref="GetHashCode(y)"/>.
+        /// Returns true if <see cref="AreEqual"/>(x, y) returns true and <see cref="GetHashCode"/>(x) equals <see cref="GetHashCode"/>(y).
         /// Returns false otherwise.
         /// </returns>
         internal virtual bool IsHashCodeConsistent(T x, T y)
@@ -287,7 +287,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateSymmetryAxiomFailureResult()
         {
@@ -302,7 +302,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateReflexivityAxiomFailureResult()
         {
@@ -317,7 +317,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateTransitivityAxiomFailureResult()
         {
@@ -332,7 +332,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateStatelessnessAxiomFailureResult()
         {
@@ -347,7 +347,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateNullInequalityAxiomFailureResult()
         {
@@ -362,7 +362,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateHashCodeInconsistencyFailureResult()
         {
@@ -377,7 +377,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <returns>
-        /// The created instance of <see cref="AssertionResult."/>
+        /// The created instance of <see cref="AssertionResult"/>
         /// </returns>
         private static AssertionResult CreateHashCodeNotModifiedFailureResult()
         {

@@ -25,7 +25,7 @@ namespace Jolt.Testing.Assertions
         /// </summary>
         /// 
         /// <remarks>
-        /// Initializes <see cref="Result"/> to true, <see cref="Message"/> to the empty string,
+        /// Initializes <see cref="AssertionResult.Result"/> to true, <see cref="Message"/> to the empty string,
         /// <see cref="ExpectedElement"/> to null, <see cref="ActualElement"/> to null,
         /// and <see cref="XPathHint"/> to null.
         /// </remarks>

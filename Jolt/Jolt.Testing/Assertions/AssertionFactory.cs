@@ -49,7 +49,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// <see cref="IAssertionFactory.CreateEqualityAxiomAssertion&lt;&gt;>"/>
+        /// <see cref="IAssertionFactory.CreateEqualityAxiomAssertion&lt;T&gt;>"/>
         /// </summary>
         EqualityAxiomAssertion<T> IAssertionFactory.CreateEqualityAxiomAssertion<T>(IArgumentFactory<T> argumentFactory)
         {
@@ -57,7 +57,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// <see cref="IAssertionFactory.CreateEquatableAxiomAssertion&lt;&gt;>"/>
+        /// <see cref="IAssertionFactory.CreateEquatableAxiomAssertion&lt;T&gt;>"/>
         /// </summary>
         EquatableAxiomAssertion<T> IAssertionFactory.CreateEquatableAxiomAssertion<T>(IEquatableFactory<T> argumentFactory)
         {
@@ -65,7 +65,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// <see cref="IAssertionFactory.CreateComparerAxiomAssertion&lt;&gt;>"/>
+        /// <see cref="IAssertionFactory.CreateComparerAxiomAssertion&lt;T&gt;>"/>
         /// </summary>
         ComparableAxiomAssertion<T> IAssertionFactory.CreateComparableAxiomAssertion<T>(IComparableFactory<T> argumentFactory)
         {
@@ -73,7 +73,7 @@ namespace Jolt.Testing.Assertions
         }
 
         /// <summary>
-        /// <see cref="IAssertionFactory.CreateEqualityComparerAxiomAssertion&lt;&gt;>"/>
+        /// <see cref="IAssertionFactory.CreateEqualityComparerAxiomAssertion&lt;T&gt;>"/>
         /// </summary>
         EqualityComparerAxiomAssertion<T> IAssertionFactory.CreateEqualityComparerAxiomAssertion<T>(IArgumentFactory<T> argumentFactory, IEqualityComparer<T> comparer)
         {

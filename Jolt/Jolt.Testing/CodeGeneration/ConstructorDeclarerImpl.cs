@@ -36,7 +36,7 @@ namespace Jolt.Testing.CodeGeneration
             throw new NotSupportedException(String.Format(Resources.Error_DelayedConstructorDeclaration, builder.DeclaringType.Name));
         }
 
-        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(ConstructorBuilder, ConstructorInfo>"/>
+        /// <see cref="IMethodDeclarerImpl&lt;MethodBuilder, MethodInfo&gt;.DefineMethodParameters(ConstructorBuilder, ConstructorInfo)"/>
         void IMethodDeclarerImpl<ConstructorBuilder, ConstructorInfo>.DefineMethodParameters(ConstructorBuilder builder, ConstructorInfo realSubjecTypeConstructor)
         {
             DeclarationHelper.DefineParametersWith(builder.DefineParameter, realSubjecTypeConstructor.GetParameters());
