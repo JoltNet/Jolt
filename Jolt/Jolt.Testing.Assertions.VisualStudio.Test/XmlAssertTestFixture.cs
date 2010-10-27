@@ -9,11 +9,11 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 
+using Jolt.Reflection;
 using NUnit.Framework;
 using Rhino.Mocks;
 using MVTU = Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -288,7 +288,7 @@ namespace Jolt.Testing.Assertions.VisualStudio.Test
             return new ValidationEventArgs[] {
                 Activator.CreateInstance(
                     typeof(ValidationEventArgs),
-                    BindingFlags.Instance | BindingFlags.NonPublic,
+                    CompoundBindingFlags.NonPublicInstance,
                     null,
                     new object[] { new XmlSchemaException("message") },
                     null) as ValidationEventArgs

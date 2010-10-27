@@ -8,8 +8,8 @@
 // ----------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Reflection;
 
+using Jolt.Reflection;
 using Jolt.Testing.Assertions;
 
 namespace Jolt.Collections.Test
@@ -36,7 +36,7 @@ namespace Jolt.Collections.Test
         public void Modify(ref CircularLinkedListNode<int> instance)
         {
             instance.GetType()
-                    .GetField("m_node", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetField("m_node", CompoundBindingFlags.NonPublicInstance)
                     .SetValue(instance, new LinkedListNode<int>(345));
         }
 

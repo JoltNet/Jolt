@@ -120,7 +120,7 @@ namespace Jolt.Test.Types
 
         #region property-encapsulated fields ------------------------------------------------------
 
-        public U _Field;
+        public U _Field = default(U);
 
         #endregion
 
@@ -152,6 +152,11 @@ namespace Jolt.Test.Types
 
     internal abstract class __GenericTestType<R, S, T>
     {
+        private __GenericTestType()
+        {
+            _InstanceEvent += Functor.ToEventHandler(Functor.NoOperation<object, EventArgs>());
+        }
+
         public static MethodInfo NonGenericFunction { get { return ThisType.GetMethod("_NonGenericFunction"); } }
         public static MethodInfo NonGenericFunction_MixedArgs { get { return ThisType.GetMethod("_NonGenericFunction_MixedArgs"); } }
         public static MethodInfo GenericFunction { get { return ThisType.GetMethod("_GenericFunction"); } }

@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 
 using Jolt.Automata.QuickGraph;
 using Jolt.Functional;
+using Jolt.Reflection;
 using log4net.Config;
 using NUnit.Framework;
 
@@ -335,7 +336,7 @@ namespace Jolt.Automata.Test.QuickGraph
         {
             Predicate<TAlphabet> predicate = Delegate.CreateDelegate(
                 typeof(Predicate<TAlphabet>),
-                typeof(Functor).GetMethod("<FalseForAll>b__26", BindingFlags.Static | BindingFlags.NonPublic)
+                typeof(Functor).GetMethod("<FalseForAll>b__26", CompoundBindingFlags.NonPublicStatic)
                     .MakeGenericMethod(typeof(TAlphabet)))
                 as Predicate<TAlphabet>;
 

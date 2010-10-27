@@ -3,7 +3,7 @@
   <Config name="Debug" binpathtype="Auto">
     <assembly path="Jolt.Automata.Glee.Test\bin\Debug\Jolt.Automata.Glee.Test.dll" />
     <assembly path="Jolt.Automata.Test\bin\Debug\Jolt.Automata.Test.dll" />
-	<assembly path="Jolt.Collections.Test\bin\Debug\Jolt.Collections.Test.dll" />
+    <assembly path="Jolt.Collections.Test\bin\Debug\Jolt.Collections.Test.dll" />
     <assembly path="Jolt.Test\bin\Debug\Jolt.Test.dll" />
     <assembly path="Jolt.Testing.Assertions.NUnit.Test\bin\Debug\Jolt.Testing.Assertions.NUnit.Test.dll" />
     <assembly path="Jolt.Testing.Assertions.VisualStudio.Test\bin\Debug\Jolt.Testing.Assertions.VisualStudio.Test.dll" />
@@ -12,7 +12,7 @@
   <Config name="Release" binpathtype="Auto">
     <assembly path="Jolt.Automata.Glee.Test\bin\Release\Jolt.Automata.Glee.Test.dll" />
     <assembly path="Jolt.Automata.Test\bin\Release\Jolt.Automata.Test.dll" />
-	<assembly path="Jolt.Collections.Test\bin\Release\Jolt.Collections.Test.dll" />
+    <assembly path="Jolt.Collections.Test\bin\Release\Jolt.Collections.Test.dll" />
     <assembly path="Jolt.Test\bin\Release\Jolt.Test.dll" />
     <assembly path="Jolt.Testing.Assertions.NUnit.Test\bin\Release\Jolt.Testing.Assertions.NUnit.Test.dll" />
     <assembly path="Jolt.Testing.Assertions.VisualStudio.Test\bin\Release\Jolt.Testing.Assertions.VisualStudio.Test.dll" />

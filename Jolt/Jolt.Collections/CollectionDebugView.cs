@@ -36,8 +36,7 @@ namespace Jolt.Collections
         /// </param>
         public CollectionDebugView(IEnumerable<TElement> collection)
         {
-            if (collection == null) { throw new ArgumentNullException("collection"); }
-
+            ExceptionUtility.ThrowOnNullArgument(collection);
             m_collection = collection;
         }
 

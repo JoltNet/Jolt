@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 
 using Jolt.Functional;
+using Jolt.Reflection;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -101,7 +102,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             exerciseBehavior(builder);
 
             MethodInfo getXmlDocComments = typeof(XmlDocCommentBuilderBase)
-                .GetProperty("XmlDocComments", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetProperty("XmlDocComments", CompoundBindingFlags.NonPublicInstance)
                 .GetGetMethod(true);
 
             XDocument xmlDocComments = getXmlDocComments.Invoke(builder, null) as XDocument;

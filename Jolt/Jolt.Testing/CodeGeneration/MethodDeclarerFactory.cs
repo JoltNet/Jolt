@@ -24,7 +24,14 @@ namespace Jolt.Testing.CodeGeneration
     /// </summary>
     internal enum MethodDeclarerTypes
     {
+        /// <summary>
+        /// Denotes the interface method declarer type.
+        /// </summary>
         Interface,
+
+        /// <summary>
+        /// Denotes the proxy method declarer type.
+        /// </summary>
         Proxy
     }
 

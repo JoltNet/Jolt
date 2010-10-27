@@ -15,6 +15,7 @@ using System.Reflection.Emit;
 using System.Xml;
 
 using Jolt.Functional;
+using Jolt.Reflection;
 using Jolt.Testing.Properties;
 using log4net;
 
@@ -234,7 +235,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <seealso cref="AddMethod(MethodInfo, Type)"/>
         public virtual void AddMethod(MethodInfo method)
         {
-            ThrowOnNullMember(method);
+            ExceptionUtility.ThrowOnNullArgument(method);
             AddMethod_NonNull(method, method.ReturnType);
         }
 
@@ -263,7 +264,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </exception>
         public virtual void AddMethod(MethodInfo method, Type desiredReturnType)
         {
-            ThrowOnNullMember(method);
+            ExceptionUtility.ThrowOnNullArgument(method);
             AddMethod_NonNull(method, desiredReturnType);
         }
 
@@ -302,7 +303,7 @@ namespace Jolt.Testing.CodeGeneration
         /// <seealso cref="AddProperty(PropertyInfo, Type)"/>
         public virtual void AddProperty(PropertyInfo property)
         {
-            ThrowOnNullMember(property);
+            ExceptionUtility.ThrowOnNullArgument(property);
             AddProperty_NonNull(property, property.PropertyType);
         }
 
@@ -343,7 +344,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </exception>
         public virtual void AddProperty(PropertyInfo property, Type desiredReturnType)
         {
-            ThrowOnNullMember(property);
+            ExceptionUtility.ThrowOnNullArgument(property);
             AddProperty_NonNull(property, desiredReturnType);
         }
 
@@ -366,7 +367,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </exception>
         public virtual void AddEvent(EventInfo eventInfo)
         {
-            ThrowOnNullMember(eventInfo);
+            ExceptionUtility.ThrowOnNullArgument(eventInfo);
             ValidateEvent(eventInfo);
 
             // Add the event to the inteface.
@@ -474,7 +475,7 @@ namespace Jolt.Testing.CodeGeneration
 
             // Create a constructor on the proxy for each public constructor
             // on the real subject type and emit XML doc comments.
-            foreach (ConstructorInfo constructor in m_realSubjectType.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
+            foreach (ConstructorInfo constructor in m_realSubjectType.GetConstructors(CompoundBindingFlags.PublicInstance))
             {
                 ILGenerator codeGenerator = m_methodDeclarerFactory.Create(constructor).Declare().GetILGenerator();
  
@@ -889,22 +890,6 @@ namespace Jolt.Testing.CodeGeneration
             DeclarationHelper.CopyTypeConstraints(genericTypeArguments, genericParameterBuilders);
 
             return genericParameterBuilders;
-        }
-
-        /// <summary>
-        /// Throws an exception when the given parameter is null.
-        /// </summary>
-        /// 
-        /// <param name="member">
-        /// The <see cref="System.Reflection.MemberInfo"/> to validate.
-        /// </param>
-        /// 
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="member"/> is null.
-        /// </exception>
-        private static void ThrowOnNullMember(MemberInfo member)
-        {
-            if (member == null) { throw new ArgumentNullException(); }
         }
 
         /// <summary>

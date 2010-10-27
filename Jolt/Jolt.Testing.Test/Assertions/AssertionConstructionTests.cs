@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
+using Jolt.Reflection;
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -146,7 +147,7 @@ namespace Jolt.Testing.Test.Assertions
         private static MethodInfo GetValidationEventHandler(XmlReaderSettings settings)
         {
             ValidationEventHandler handler = typeof(XmlReaderSettings)
-                .GetField("valEventHandler", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetField("valEventHandler", CompoundBindingFlags.NonPublicInstance)
                 .GetValue(settings) as ValidationEventHandler;
             return handler == null ? null : handler.Method;
         }

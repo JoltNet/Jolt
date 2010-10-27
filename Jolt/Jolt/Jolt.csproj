@@ -35,6 +35,7 @@
     <Compile Include="AbstractXDCReadPolicy.cs" />
     <Compile Include="Convert.cs" />
     <Compile Include="DefaultXDCReadPolicy.cs" />
+    <Compile Include="ExceptionUtility.cs" />
     <Compile Include="Functional\Bind.cs" />
     <Compile Include="Functional\Compose.cs" />
     <Compile Include="Functional\Delegates.cs" />
@@ -48,6 +49,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Reflection\CompoundBindingFlags.cs" />
+    <Compile Include="Reflection\MethodPrefixes.cs" />
+    <Compile Include="Reflection\MethodResolver.cs" />
+    <Compile Include="Reflection\OperatorNames.cs" />
     <Compile Include="XmlDocCommentDirectoryElement.cs" />
     <Compile Include="XmlDocCommentDirectoryElementCollection.cs" />
     <Compile Include="XmlDocCommentNames.cs" />

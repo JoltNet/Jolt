@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
+using Jolt.Reflection;
 using NUnit.Framework;
 
 namespace Jolt.Test
@@ -105,7 +106,7 @@ namespace Jolt.Test
         private static MethodInfo GetMethod(string methodName, Type[] parameterTypes)
         {
             return typeof(XmlDocCommentDirectoryElementCollection)
-                .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
+                .GetMethod(methodName, CompoundBindingFlags.NonPublicInstance, null, parameterTypes, null);
         }
 
         #endregion

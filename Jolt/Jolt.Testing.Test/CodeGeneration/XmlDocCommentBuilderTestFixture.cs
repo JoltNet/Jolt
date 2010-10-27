@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
+using Jolt.Reflection;
 using Jolt.Testing.CodeGeneration;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -359,7 +360,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             return Delegate.CreateDelegate(
                 typeof(Action<TMember>),
                 builder,
-                builder.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Single(
+                builder.GetType().GetMethods(CompoundBindingFlags.NonPublicInstance).Single(
                     method => method.Name.StartsWith("Add") &&
                               method.GetParameters().Single().ParameterType == typeof(TMember))) as Action<TMember>;
         }

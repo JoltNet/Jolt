@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 
 using Jolt.Functional;
+using Jolt.Reflection;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -376,7 +377,7 @@ namespace Jolt.Test.Functional
         /// </param>
         private static MethodInfo GetNoOpMethod(params Type[] genericMethodArgs)
         {
-            MethodInfo noOpMethod =  typeof(Functor).GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Single(
+            MethodInfo noOpMethod = typeof(Functor).GetMethods(CompoundBindingFlags.NonPublicStatic).Single(
                 method => method.Name.StartsWith("<NoOperation>") &&
                           method.GetGenericArguments().Length == genericMethodArgs.Length);
             return !noOpMethod.IsGenericMethod ? noOpMethod : noOpMethod.MakeGenericMethod(genericMethodArgs);

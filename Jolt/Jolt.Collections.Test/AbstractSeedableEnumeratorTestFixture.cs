@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+using Jolt.Reflection;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -51,7 +52,7 @@ namespace Jolt.Collections.Test
             collectionEnumeretor.Expect(e => e.Reset());
             enumerator.Expect(e =>
             {
-                return (bool)e.GetType().GetMethod("MoveNextImpl", NonPublicInstance).Invoke(e, null);
+                return (bool)e.GetType().GetMethod("MoveNextImpl", CompoundBindingFlags.NonPublicInstance).Invoke(e, null);
             }).Return(true);
                 
             Assert.That(enumerator.MoveNext());
@@ -152,14 +153,8 @@ namespace Jolt.Collections.Test
         /// </returns>
         private static PropertyInfo GetCurrentIndexProperty()
         {
-            return typeof(SeedableEnumerator).GetProperty("CurrentIndex", NonPublicInstance);
+            return typeof(SeedableEnumerator).GetProperty("CurrentIndex", CompoundBindingFlags.NonPublicInstance);
         }
-
-        #endregion
-
-        #region private fields --------------------------------------------------------------------
-
-        private static BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
 
         #endregion
     }

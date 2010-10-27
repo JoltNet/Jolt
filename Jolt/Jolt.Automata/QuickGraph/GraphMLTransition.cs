@@ -8,12 +8,12 @@
 // ----------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
 using Jolt.Automata.Properties;
 using Jolt.Functional;
+using Jolt.Reflection;
 using log4net;
 using QuickGraph;
 
@@ -153,7 +153,7 @@ namespace Jolt.Automata.QuickGraph
 
                 if (declaringType != null)
                 {
-                    foreach (MethodInfo predicate in declaringType.GetMethods(PredicateBindingFlags))
+                    foreach (MethodInfo predicate in declaringType.GetMethods(CompoundBindingFlags.AnyStatic))
                     {
                         if (predicate.Name == methodName &&
                             predicate.GetParameters().Length == 1 &&
@@ -189,7 +189,6 @@ namespace Jolt.Automata.QuickGraph
         #region private fields --------------------------------------------------------------------
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphMLTransition<>));
-        private static BindingFlags PredicateBindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         #endregion
     }

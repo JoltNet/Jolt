@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
+using Jolt.Reflection;
 using Jolt.Test.Types;
 using NUnit.Framework;
 
@@ -145,11 +146,11 @@ namespace Jolt.Test
         public void ToXmlDocCommentMember_Constructor()
         {
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(System.Collections.Generic.List<>).GetConstructor(NonPublicStatic, null, Type.EmptyTypes, null)),
+                Convert.ToXmlDocCommentMember(typeof(System.Collections.Generic.List<>).GetConstructor(CompoundBindingFlags.NonPublicStatic, null, Type.EmptyTypes, null)),
                 Is.EqualTo("M:System.Collections.Generic.List`1.#cctor"));
 
             Assert.That(
-                Convert.ToXmlDocCommentMember(typeof(string).GetConstructor(NonPublicStatic, null, Type.EmptyTypes, null)),
+                Convert.ToXmlDocCommentMember(typeof(string).GetConstructor(CompoundBindingFlags.NonPublicStatic, null, Type.EmptyTypes, null)),
                 Is.EqualTo("M:System.String.#cctor"));
 
             Assert.That(
@@ -268,7 +269,7 @@ namespace Jolt.Test
         [Test]
         public void ToParameterTypes()
         {
-            ParameterInfo[] methodParams = GetType().GetMethod("__g", NonPublicInstance).GetParameters();
+            ParameterInfo[] methodParams = GetType().GetMethod("__g", CompoundBindingFlags.NonPublicInstance).GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
 
             Assert.That(methodParamTypes, Has.Length.EqualTo(4));
@@ -286,7 +287,7 @@ namespace Jolt.Test
         [Test]
         public void ToParameterTypes_NoParams()
         {
-            ParameterInfo[] methodParams = GetType().GetMethod("__f", NonPublicInstance).GetParameters();
+            ParameterInfo[] methodParams = GetType().GetMethod("__f", CompoundBindingFlags.NonPublicInstance).GetParameters();
             Type[] methodParamTypes = Convert.ToParameterTypes(methodParams);
 
             Assert.That(methodParamTypes, Is.Empty);
@@ -458,13 +459,6 @@ namespace Jolt.Test
 
         private void __f() { }
         private void __g(int x, int y, double z, byte b) { }
-
-        #endregion
-
-        #region private fields --------------------------------------------------------------------
-
-        private static readonly BindingFlags NonPublicInstance = BindingFlags.Instance | BindingFlags.NonPublic;
-        private static readonly BindingFlags NonPublicStatic = BindingFlags.Static | BindingFlags.NonPublic;
 
         #endregion
     }

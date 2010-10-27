@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.4.*")]
 
 // Friend assemblies.
+[assembly: InternalsVisibleTo("Jolt.Collections")]
 [assembly: InternalsVisibleTo("Jolt.Test")]
 [assembly: InternalsVisibleTo("Jolt.Testing")]
 [assembly: InternalsVisibleTo("Jolt.Testing.Test")]

@@ -17,6 +17,7 @@ using System.Xml.Linq;
 
 using Jolt.GeneratedTypes.System.IO;
 using Jolt.Properties;
+using Jolt.Reflection;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -409,7 +410,7 @@ namespace Jolt.Test
             IFile fileProxy = MockRepository.GenerateMock<IFile>();
             IXmlDocCommentReadPolicy readPolicy = MockRepository.GenerateMock<IXmlDocCommentReadPolicy>();
 
-            FieldInfo expectedField = typeof(Int32).GetField("MaxValue", BindingFlags.Public | BindingFlags.Static);
+            FieldInfo expectedField = typeof(Int32).GetField("MaxValue", CompoundBindingFlags.PublicStatic);
             XElement expectedComments = new XElement("comments");
 
             fileProxy.Expect(fp => fp.Exists(String.Empty)).Return(true);

@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 
+using Jolt.Reflection;
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -51,7 +52,7 @@ namespace Jolt.Testing.Test.Assertions
             instanceX.Expect(x => x.Equals(instanceY)).Return(expectedResult);
 
             BaseAssertionType assertion = new EquatableAxiomAssertion<Equatable>(factory);
-            MethodInfo areEqual = assertion.GetType().GetMethod("AreEqual", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo areEqual = assertion.GetType().GetMethod("AreEqual", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That((bool)areEqual.Invoke(assertion, new[] { instanceX, instanceY }), Is.EqualTo(expectedResult));
 

@@ -46,7 +46,7 @@ namespace Jolt.Collections
         /// </exception>
         public ReadOnlyDictionary(IDictionary<TKey, TValue> dictionary)
         {
-            if (dictionary == null) { throw new ArgumentNullException(); }
+            ExceptionUtility.ThrowOnNullArgument(dictionary);
             m_dictionary = dictionary;
         }
 

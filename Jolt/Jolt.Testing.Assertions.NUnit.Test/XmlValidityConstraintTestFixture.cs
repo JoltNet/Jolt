@@ -10,10 +10,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
+using Jolt.Reflection;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using Rhino.Mocks;
@@ -200,7 +200,7 @@ namespace Jolt.Testing.Assertions.NUnit.Test
             return new ValidationEventArgs[] {
                 Activator.CreateInstance(
                     typeof(ValidationEventArgs),
-                    BindingFlags.Instance | BindingFlags.NonPublic,
+                    CompoundBindingFlags.NonPublicInstance,
                     null,
                     new object[] { new XmlSchemaException("message") },
                     null) as ValidationEventArgs

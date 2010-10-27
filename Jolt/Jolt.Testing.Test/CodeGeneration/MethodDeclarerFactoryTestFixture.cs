@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using Jolt.Reflection;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Test.CodeGeneration.Types;
 using NUnit.Framework;
@@ -205,7 +206,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             where TMethod : MethodBase
         {
             return declarer.GetType()
-                .GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetProperty(propertyName, CompoundBindingFlags.NonPublicInstance)
                 .GetValue(declarer, null);
         }
 

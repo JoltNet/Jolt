@@ -13,6 +13,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
+using Jolt.Functional;
+using Jolt.Reflection;
+
 namespace Jolt.Testing.Test.CodeGeneration.Types
 {
     // TODO: Make types internal; fix real subject type accessibility issue.
@@ -21,6 +24,11 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
 
     public abstract class __AbstractType
     {
+        private __AbstractType()
+        {
+            _InstanceEvent += Functor.ToEventHandler(Functor.NoOperation<object, EventArgs>());
+        }
+
         public static PropertyInfo InstanceProperty { get { return ThisType.GetProperty("_InstanceProperty"); } }
         public static EventInfo InstanceEvent { get { return ThisType.GetEvent("_InstanceEvent"); } }
         
@@ -47,12 +55,12 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     {
         public static MethodInfo InstanceMethod { get { return ThisType.GetMethod("_InstanceMethod", Type.EmptyTypes); } }
         public static MethodInfo InstanceMethod_1 { get { return ThisType.GetMethod("_InstanceMethod", new[] { typeof(int) }); } }
-        public static MethodInfo StaticMethod { get { return ThisType.GetMethod("_StaticMethod", BindingFlags.Public | BindingFlags.Static); } }
+        public static MethodInfo StaticMethod { get { return ThisType.GetMethod("_StaticMethod", CompoundBindingFlags.PublicStatic); } }
         public static MethodInfo VoidReturnValueMethod { get { return ThisType.GetMethod("_VoidReturnValueMethod"); } }
         public static MethodInfo ManyArgumentsMethod { get { return ThisType.GetMethod("_ManyArgumentsMethod"); } }
         public static MethodInfo ParamsArrayArgumentsMethod { get { return ThisType.GetMethod("_ParamsArrayArgumentsMethod"); } }
         public static MethodInfo OutParameterMethod { get { return ThisType.GetMethod("_OutParameterMethod"); } }
-        public static MethodInfo PrivateMethod { get { return ThisType.GetMethod("_PrivateMethod", BindingFlags.NonPublic | BindingFlags.Instance); } }
+        public static MethodInfo PrivateMethod { get { return ThisType.GetMethod("_PrivateMethod", CompoundBindingFlags.NonPublicInstance); } }
         public static MethodInfo GenericMethod { get { return ThisType.GetMethod("_GenericMethod"); } }
 
         #region property-encapsulated members -----------------------------------------------------
@@ -163,14 +171,14 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
     public class __PropertyTestType
     {
         public static PropertyInfo InstanceProperty { get { return ThisType.GetProperty("_InstanceProperty"); } }
-        public static PropertyInfo StaticProperty { get { return ThisType.GetProperty("_StaticProperty", BindingFlags.Public | BindingFlags.Static); } }
+        public static PropertyInfo StaticProperty { get { return ThisType.GetProperty("_StaticProperty", CompoundBindingFlags.PublicStatic); } }
         public static PropertyInfo GetterProperty { get { return ThisType.GetProperty("_Getter"); } }
         public static PropertyInfo SetterProperty { get { return ThisType.GetProperty("_Setter"); } }
         public static PropertyInfo InternalGetterProperty { get { return ThisType.GetProperty("_InternalGetter"); } }
         public static PropertyInfo PrivateSetterProeprty { get { return ThisType.GetProperty("_PrivateSetter"); } }
         public static PropertyInfo Item_1 { get { return ThisType.GetProperty("Item", new[] { typeof(int) }); } }
         public static PropertyInfo Item_3 { get { return ThisType.GetProperty("Item", new[] { typeof(int), typeof(int), typeof(int) }); } }
-        public static PropertyInfo PrivateProperty { get { return ThisType.GetProperty("_PrivateProperty", BindingFlags.NonPublic | BindingFlags.Instance); } }
+        public static PropertyInfo PrivateProperty { get { return ThisType.GetProperty("_PrivateProperty", CompoundBindingFlags.NonPublicInstance); } }
 
         #region property-encapuslated properties --------------------------------------------------
 
@@ -241,7 +249,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         where V : class, new()
     {
         public static PropertyInfo InstanceProperty { get { return ThisType.GetProperty("_InstanceProperty"); } }
-        public static PropertyInfo StaticProperty { get { return ThisType.GetProperty("_StaticProperty", BindingFlags.Public | BindingFlags.Static); } }
+        public static PropertyInfo StaticProperty { get { return ThisType.GetProperty("_StaticProperty", CompoundBindingFlags.PublicStatic); } }
         public static PropertyInfo Item_1 { get { return ThisType.GetProperty("Item", new[] { ThisType.GetGenericArguments()[0] }); } }
         public static PropertyInfo Item_3 { get { return ThisType.GetProperty("Item", ThisType.GetGenericArguments()); } }
 
@@ -283,11 +291,16 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
 
     public class __EventTestType
     {
+        public __EventTestType()
+        {
+            _PrivateEvent += Functor.ToEventHandler(Functor.NoOperation<object, EventArgs>());
+        }
+
         static __EventTestType() { _StaticEvent = null; }
 
         public static EventInfo InstanceEvent { get { return ThisType.GetEvent("_InstanceEvent"); } }
-        public static EventInfo StaticEvent { get { return ThisType.GetEvent("_StaticEvent", BindingFlags.Public | BindingFlags.Static); } }
-        public static EventInfo PrivateEvent { get { return ThisType.GetEvent("_PrivateEvent", BindingFlags.NonPublic | BindingFlags.Instance); } }
+        public static EventInfo StaticEvent { get { return ThisType.GetEvent("_StaticEvent", CompoundBindingFlags.PublicStatic); } }
+        public static EventInfo PrivateEvent { get { return ThisType.GetEvent("_PrivateEvent", CompoundBindingFlags.NonPublicInstance); } }
 
         public void Raise_InstanceEvent() { RaiseEvent(_InstanceEvent); }
         public static void Raise_StaticEvent() { RaiseEvent(_StaticEvent); }
@@ -318,7 +331,7 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         static __EventTestType() { _StaticEvent = null; }
 
         public static EventInfo InstanceEvent { get { return ThisType.GetEvent("_InstanceEvent"); } }
-        public static EventInfo StaticEvent { get { return ThisType.GetEvent("_StaticEvent", BindingFlags.Public | BindingFlags.Static); } }
+        public static EventInfo StaticEvent { get { return ThisType.GetEvent("_StaticEvent", CompoundBindingFlags.PublicStatic); } }
 
         public void Raise_InstanceEvent() { RaiseEvent(_InstanceEvent); }
         public static void Raise_StaticEvent() { RaiseEvent(_StaticEvent); }
@@ -477,22 +490,40 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
 
     public class __RealSubjectType
     {
-        public static MethodInfo GetType { get { return ThisType.GetMethod("GetType"); } }
-        public static MethodInfo GetHashCode { get { return ThisType.GetMethod("GetHashCode"); } }
-        public static MethodInfo ToString { get { return ThisType.GetMethod("ToString"); } }
-        public static MethodInfo Equals { get { return ThisType.GetMethod("Equals"); } }
+        static __RealSubjectType()
+        {
+            EventHandler<EventArgs> handler = Functor.ToEventHandler(Functor.NoOperation<object, EventArgs>());
+            _PublicEvent_3 += handler;
+            _PublicEvent_4 += handler;
+            PrivateStaticEvent += handler;
+        }
+
+        public __RealSubjectType()
+        {
+            EventHandler<EventArgs> handler = Functor.ToEventHandler(Functor.NoOperation<object, EventArgs>());
+            _PublicEvent_1 += handler;
+            _PublicEvent_2 += handler;
+            InternalEvent += handler;
+            ProtectedEvent += handler;
+            PrivateEvent += handler;
+        }
+
+        public static MethodInfo GetTypeMethod { get { return ThisType.GetMethod("GetType"); } }
+        public static MethodInfo GetHashCodeMethod { get { return ThisType.GetMethod("GetHashCode"); } }
+        public static MethodInfo ToStringMethod { get { return ThisType.GetMethod("ToString"); } }
+        public static MethodInfo EqualsMethod { get { return ThisType.GetMethod("Equals"); } }
         public static MethodInfo PublicMethod_1 { get { return ThisType.GetMethod("_PublicMethod_1"); } }
         public static MethodInfo PublicMethod_2 { get { return ThisType.GetMethod("_PublicMethod_2"); } }
-        public static MethodInfo PublicMethod_3 { get { return ThisType.GetMethod("_PublicMethod_3", PublicStaticAccessibility); } }
-        public static MethodInfo PublicMethod_4 { get { return ThisType.GetMethod("_PublicMethod_4", PublicStaticAccessibility); } }
+        public static MethodInfo PublicMethod_3 { get { return ThisType.GetMethod("_PublicMethod_3", CompoundBindingFlags.PublicStatic); } }
+        public static MethodInfo PublicMethod_4 { get { return ThisType.GetMethod("_PublicMethod_4", CompoundBindingFlags.PublicStatic); } }
         public static PropertyInfo PublicProperty_1 { get { return ThisType.GetProperty("_PublicProperty_1"); } }
         public static PropertyInfo PublicProperty_2 { get { return ThisType.GetProperty("_PublicProperty_2"); } }
-        public static PropertyInfo PublicProperty_3 { get { return ThisType.GetProperty("_PublicProperty_3", PublicStaticAccessibility); } }
-        public static PropertyInfo PublicProperty_4 { get { return ThisType.GetProperty("_PublicProperty_4", PublicStaticAccessibility); } }
+        public static PropertyInfo PublicProperty_3 { get { return ThisType.GetProperty("_PublicProperty_3", CompoundBindingFlags.PublicStatic); } }
+        public static PropertyInfo PublicProperty_4 { get { return ThisType.GetProperty("_PublicProperty_4", CompoundBindingFlags.PublicStatic); } }
         public static EventInfo PublicEvent_1 { get { return ThisType.GetEvent("_PublicEvent_1"); } }
         public static EventInfo PublicEvent_2 { get { return ThisType.GetEvent("_PublicEvent_2"); } }
-        public static EventInfo PublicEvent_3 { get { return ThisType.GetEvent("_PublicEvent_3", PublicStaticAccessibility); } }
-        public static EventInfo PublicEvent_4 { get { return ThisType.GetEvent("_PublicEvent_4", PublicStaticAccessibility); } }
+        public static EventInfo PublicEvent_3 { get { return ThisType.GetEvent("_PublicEvent_3", CompoundBindingFlags.PublicStatic); } }
+        public static EventInfo PublicEvent_4 { get { return ThisType.GetEvent("_PublicEvent_4", CompoundBindingFlags.PublicStatic); } }
 
         #region property-encapsulated members -----------------------------------------------------
 
@@ -529,7 +560,6 @@ namespace Jolt.Testing.Test.CodeGeneration.Types
         private static int PrivateStaticProperty { get { return 0; } set { } }
 
         private static readonly Type ThisType = typeof(__RealSubjectType);
-        private static readonly BindingFlags PublicStaticAccessibility = BindingFlags.Public | BindingFlags.Static;
     }
 
     public class __ReturnTypeOverrideType<T, U>

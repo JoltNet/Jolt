@@ -21,7 +21,14 @@ namespace Jolt.Automata
     /// </summary>
     public enum EnumerationType
     {
+        /// <summary>
+        /// Enumerates the FSM in a deterministic fashion.
+        /// </summary>
         Deterministic,
+
+        /// <summary>
+        /// Enumerates the FSM in a nondeterministic fashion.
+        /// </summary>
         Nondeterministic
     }
 

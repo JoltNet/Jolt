@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 
+using Jolt.Reflection;
 using Jolt.Testing.Assertions;
 using Jolt.Testing.Properties;
 using NUnit.Framework;
@@ -514,7 +515,7 @@ namespace Jolt.Testing.Test.Assertions
         /// </returns>
         private static MethodInfo GetNonPublicInstanceMethod(string name, params Type[] args)
         {
-            return typeof(EqualityAxiomAssertion<>).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic, null, args, null);
+            return typeof(EqualityAxiomAssertion<>).GetMethod(name, CompoundBindingFlags.NonPublicInstance, null, args, null);
         }
 
         #endregion

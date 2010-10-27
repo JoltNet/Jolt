@@ -16,6 +16,7 @@ using System.Reflection.Emit;
 using System.Xml;
 using System.Xml.Linq;
 
+using Jolt.Reflection;
 using Jolt.Testing.Properties;
 using log4net;
 
@@ -416,7 +417,7 @@ namespace Jolt.Testing.CodeGeneration
 
         /// <summary>
         /// Creates a <see cref="System.Reflection.BindingFlags"/> enumeration representing
-        /// the given configuration
+        /// the given configuration.
         /// </summary>
         /// 
         /// <param name="emitMember">
@@ -424,7 +425,7 @@ namespace Jolt.Testing.CodeGeneration
         /// </param>
         /// 
         /// <param name="emitStatics">
-        /// Denotes if static types are remitted.
+        /// Denotes if static types are emitted.
         /// </param>
         /// 
         /// <returns>
@@ -436,7 +437,7 @@ namespace Jolt.Testing.CodeGeneration
             BindingFlags result = BindingFlags.Default;
             if (emitMember)
             {
-                result = BindingFlags.Public | BindingFlags.Instance;
+                result = CompoundBindingFlags.PublicInstance;
                 if (emitStatics)
                 {
                     result |= BindingFlags.Static;
@@ -499,7 +500,7 @@ namespace Jolt.Testing.CodeGeneration
 
         #endregion
 
-        #region private instance fields -----------------------------------------------------------
+        #region private fields --------------------------------------------------------------------
 
         private readonly string m_rootNamespace;
         private readonly AssemblyBuilder m_assembly;

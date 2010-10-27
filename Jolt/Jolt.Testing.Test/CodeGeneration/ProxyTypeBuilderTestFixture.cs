@@ -17,6 +17,7 @@ using System.Text;
 using System.Xml;
 
 using Jolt.Functional;
+using Jolt.Reflection;
 using Jolt.Testing.CodeGeneration;
 using Jolt.Testing.Properties;
 using Jolt.Testing.Test.CodeGeneration.Types;
@@ -26,7 +27,6 @@ using Rhino.Mocks;
 namespace Jolt.Testing.Test.CodeGeneration
 {
     using CreateXDCBuilderDelegate = Func<Type, Type, Type, XmlDocCommentBuilderBase>;
-
 
     /// <summary>
     /// Verifies the implementation of the ProxyTypeBuilder class.
@@ -209,7 +209,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -224,7 +224,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractType<>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -239,7 +239,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractSealedType);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -254,7 +254,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(__AbstractSealedType<,,>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Null);
         }
@@ -268,7 +268,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(string);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance );
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance );
 
             Assert.That(proxiedTypeField, Is.Not.Null);
             Assert.That(proxiedTypeField.FieldType, Is.EqualTo(proxiedType));
@@ -287,7 +287,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             Type proxiedType = typeof(System.Collections.Generic.List<>);
             ProxyTypeBuilder builder = new ProxyTypeBuilder(DefaultNamespace, proxiedType);
 
-            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", NonPublicInstance);
+            FieldInfo proxiedTypeField = builder.CreateProxy().GetField("m_realSubject", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That(proxiedTypeField, Is.Not.Null);
             Assert.That(proxiedTypeField.FieldType, Is.Not.EqualTo(proxiedType));
@@ -2228,7 +2228,7 @@ namespace Jolt.Testing.Test.CodeGeneration
             XmlDocCommentBuilderBase xdcBuilder = MockRepository.GenerateMock<XmlDocCommentBuilderBase>();
 
             MethodInfo addMember = typeof(XmlDocCommentBuilderBase)
-                    .GetMethods(NonPublicInstance)
+                    .GetMethods(CompoundBindingFlags.NonPublicInstance)
                     .Single(CreateBuilderMethodPredicate<TMember>());
 
             foreach (TMember member in expectedMembers)
@@ -2286,9 +2286,7 @@ namespace Jolt.Testing.Test.CodeGeneration
         #region private fields --------------------------------------------------------------------
 
         private static readonly string DefaultNamespace = "root";
-        private static readonly BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
-        private static readonly BindingFlags ProxyMethodInvocationFlags =
-            BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public;
+        private static readonly BindingFlags ProxyMethodInvocationFlags = BindingFlags.InvokeMethod | CompoundBindingFlags.PublicInstance;
 
         #endregion
     }

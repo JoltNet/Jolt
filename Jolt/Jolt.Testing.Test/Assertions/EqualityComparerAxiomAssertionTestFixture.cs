@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using Jolt.Reflection;
 using Jolt.Testing.Assertions;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -51,7 +52,7 @@ namespace Jolt.Testing.Test.Assertions
             comparer.Expect(c => c.Equals(instanceX, instanceY)).Return(expectedResult);
 
             BaseAssertionType assertion = new EqualityComparerAxiomAssertion<DateTime>(factory, comparer);
-            MethodInfo areEqual = assertion.GetType().GetMethod("AreEqual", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo areEqual = assertion.GetType().GetMethod("AreEqual", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That((bool)areEqual.Invoke(assertion, new object[] { instanceX, instanceY }), Is.EqualTo(expectedResult));
 
@@ -75,7 +76,7 @@ namespace Jolt.Testing.Test.Assertions
             comparer.Expect(c => c.GetHashCode(instanceX)).Return(expectedHashCode);
 
             BaseAssertionType assertion = new EqualityComparerAxiomAssertion<DateTime>(factory, comparer);
-            MethodInfo getHashCode = assertion.GetType().GetMethod("GetHashCode", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo getHashCode = assertion.GetType().GetMethod("GetHashCode", CompoundBindingFlags.NonPublicInstance);
 
             Assert.That((int)getHashCode.Invoke(assertion, new object[] { instanceX }), Is.EqualTo(expectedHashCode));
 
