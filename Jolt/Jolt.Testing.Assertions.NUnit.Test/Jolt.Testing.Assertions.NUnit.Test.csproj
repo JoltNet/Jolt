@@ -32,12 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ComparableAxiomConstraintTestFixture.cs" />
     <Compile Include="ConstraintConstructionTests.cs" />
-    <Compile Include="EqualityAxiomConstraintTestFixture.cs" />
-    <Compile Include="EqualityComparerConstraintTestFixture.cs" />
-    <Compile Include="EquatableAxiomConstraintTestFixture.cs" />
-    <Compile Include="ImplementsTestFixture.cs" />
     <Compile Include="IsXmlTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlEqualityConstraintTestFixture.cs" />

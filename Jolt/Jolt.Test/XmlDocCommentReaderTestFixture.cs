@@ -36,6 +36,7 @@ namespace Jolt.Test
         /// assembly reference and no configuration file is present.
         /// </summary>
         [Test]
+        [Ignore("mscorlib v4.5 reference assemblies are not available on build machine.")]
         public void Construction_Assembly_DefaultSettings()
         {
             XmlDocCommentReader reader = new XmlDocCommentReader(typeof(int).Assembly);

@@ -51,7 +51,7 @@ namespace Jolt.Testing.Test.Assertions
         public void Validate_XmlReader()
         {
             XmlValidityAssertion assertion = new XmlValidityAssertion(GetTestSchemas());
-            using (XmlReader xmlReader = XmlReader.Create(GetEmbeddedResource("ValidConfigurationWithOverrides.xml")))
+            using (XmlReader xmlReader = XmlReader.Create(GetEmbeddedXml("ValidConfigurationWithOverrides.xml")))
             {
                 Assert.That(assertion.Validate(xmlReader), Is.Empty);
             }
@@ -65,7 +65,7 @@ namespace Jolt.Testing.Test.Assertions
         public void Validate_XmlReader_Invalid()
         {
             XmlValidityAssertion assertion = new XmlValidityAssertion(GetTestSchemas());
-            using (XmlReader xmlReader = XmlReader.Create(GetEmbeddedResource("InvalidConfiguration.xml")))
+            using (XmlReader xmlReader = XmlReader.Create(GetEmbeddedXml("InvalidConfiguration.xml")))
             {
                 IList<ValidationEventArgs> validationErrors = assertion.Validate(xmlReader);
                 Assert.That(validationErrors, Has.Count.EqualTo(1));
@@ -85,8 +85,7 @@ namespace Jolt.Testing.Test.Assertions
         /// </summary>
         private static XmlSchemaSet GetTestSchemas()
         {
-            Type testSchemaSiblingType = typeof(Jolt.Testing.CodeGeneration.Xml.XmlConfigurator);
-            using (Stream schemaStream = testSchemaSiblingType.Assembly.GetManifestResourceStream(testSchemaSiblingType, "RealSubjectTypes.xsd"))
+            using (Stream schemaStream = GetEmbeddedXml("RealSubjectTypes.xsd"))
             {
                 XmlSchemaSet schemas = new XmlSchemaSet();
                 schemas.Add(XmlSchema.Read(schemaStream, null));
@@ -102,10 +101,10 @@ namespace Jolt.Testing.Test.Assertions
         /// <param name="resourceName">
         /// The name of the embedded resource to retrieve.
         /// </param>
-        private static Stream GetEmbeddedResource(string resourceName)
+        private static Stream GetEmbeddedXml(string resourceName)
         {
-            Type resourceSiblingType = typeof(Jolt.Testing.Test.CodeGeneration.Xml.XmlConfiguratorTestFixture);
-            return resourceSiblingType.Assembly.GetManifestResourceStream(resourceSiblingType, resourceName);
+            Type thisType = typeof(XmlValidityAssertionTestFixture);
+            return thisType.Assembly.GetManifestResourceStream(thisType, "Xml." + resourceName);
         }
 
         #endregion
