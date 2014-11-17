@@ -34,6 +34,12 @@
     <DocumentationFile>bin\Release\Jolt.Testing.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Jolt.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractConstraint.cs" />
     <Compile Include="Assertions\AssertionFactory.cs" />
@@ -83,6 +89,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Jolt.snk">
+      <Link>Jolt.snk</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

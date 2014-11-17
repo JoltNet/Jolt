@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Jolt.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assertions\AssertionConstructionTests.cs" />
     <Compile Include="Assertions\AssertionFactoryTestFixture.cs" />
@@ -100,6 +106,9 @@
     <EmbeddedResource Include="Assertions\Xml\RealSubjectTypes.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="..\Jolt.snk">
+      <Link>Jolt.snk</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
