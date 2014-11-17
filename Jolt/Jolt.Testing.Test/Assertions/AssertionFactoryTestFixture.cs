@@ -56,45 +56,5 @@ namespace Jolt.Testing.Test.Assertions
             IAssertionFactory factory = new AssertionFactory();
             AssertionConstructionTests.XmlEquivalencyAssertion(factory.CreateXmlEquivalencyAssertion);
         }
-
-        /// <summary>
-        /// Verifies the behavior of the EqualityAxiomAssertion() method.
-        /// </summary>
-        [Test]
-        public void EqualityAxiomAssertion()
-        {
-            IAssertionFactory factory = new AssertionFactory();
-            AssertionConstructionTests.EqualityAxiomAssertion<int>(factory.CreateEqualityAxiomAssertion);
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the EquatableAxiomAssertion() method.
-        /// </summary>
-        [Test]
-        public void EquatableAxiomAssertion()
-        {
-            IAssertionFactory factory = new AssertionFactory();
-            AssertionConstructionTests.EquatableAxiomAssertion<int>(factory.CreateEquatableAxiomAssertion);
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the ComparableAxiomAssertion() method.
-        /// </summary>
-        [Test]
-        public void ComparableAxiomAssertion()
-        {
-            IAssertionFactory factory = new AssertionFactory();
-            AssertionConstructionTests.ComparableAxiomAssertion<int>(factory.CreateComparableAxiomAssertion);
-        }
-
-        /// <summary>
-        /// Verifies the behavior of the EqualityComparerAxiomAssertion() method.
-        /// </summary>
-        [Test]
-        public void EqualityComparerAxiomAssertion()
-        {
-            IAssertionFactory factory = new AssertionFactory();
-            AssertionConstructionTests.EqualityComparerAxiomAssertion<int>(factory.CreateEqualityComparerAxiomAssertion);
-        }
     }
 }
