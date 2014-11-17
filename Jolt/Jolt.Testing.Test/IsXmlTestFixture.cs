@@ -7,7 +7,6 @@
 // File created: 8/23/2009 08:51:12
 // ----------------------------------------------------------------------------
 
-using Jolt.Testing.Assertions.NUnit.SyntaxHelpers;
 using NUnit.Framework;
 
 namespace Jolt.Testing.Assertions.NUnit.Test

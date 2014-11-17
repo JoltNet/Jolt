@@ -7,10 +7,13 @@
 // File created: 8/22/2009 23:05:27
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Xml;
 using System.Xml.Schema;
 
-namespace Jolt.Testing.Assertions.NUnit.SyntaxHelpers
+using Jolt.Testing.Assertions.NUnit;
+
+namespace Jolt.Testing
 {
     /// <summary>
     /// Defines an NUnit syntax helper class that creates Jolt XML constraints.
