@@ -1,13 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5DCC54DE-A15F-4719-BECE-463295EE32C3}"
-	ProjectSection(SolutionItems) = preProject
-		Jolt.license.txt = Jolt.license.txt
-		Jolt.nunit = Jolt.nunit
-		ReadMe.txt = ReadMe.txt
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Test", "Jolt.Testing.Test\Jolt.Testing.Test.csproj", "{672C31E7-EC62-43F1-9F08-5A3C7098D1F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.CodeGeneration.ProxyAssemblyDriver", "Jolt.Testing.CodeGeneration.ProxyAssemblyDriver\Jolt.Testing.CodeGeneration.ProxyAssemblyDriver.csproj", "{ECE6D090-FE3B-4C8C-B25A-A4FC2B5EA773}"
@@ -18,21 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt", "Jolt\Jolt.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Test", "Jolt.Test\Jolt.Test.csproj", "{A53A6CB3-346F-43B6-940A-066ADBE77FF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata", "Jolt.Automata\Jolt.Automata.csproj", "{01762BEE-A0B0-4E2D-910D-F0654471475A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Test", "Jolt.Automata.Test\Jolt.Automata.Test.csproj", "{8DBEF18E-B628-4419-9EF2-C5E009FB973A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Glee", "Jolt.Automata.Glee\Jolt.Automata.Glee.csproj", "{514BCC97-4CF8-4EC2-B920-79796EBCC9A7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Automata.Glee.Test", "Jolt.Automata.Glee.Test\Jolt.Automata.Glee.Test.csproj", "{F7CEA313-558C-45F1-BF7C-114982E0FA68}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.NUnit", "Jolt.Testing.Assertions.NUnit\Jolt.Testing.Assertions.NUnit.csproj", "{DC09A424-4552-434D-995E-DF0AE2EFFA03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.NUnit.Test", "Jolt.Testing.Assertions.NUnit.Test\Jolt.Testing.Assertions.NUnit.Test.csproj", "{E839FE36-7834-41BE-871E-C699C0040B7D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.VisualStudio", "Jolt.Testing.Assertions.VisualStudio\Jolt.Testing.Assertions.VisualStudio.csproj", "{75BC1570-C199-4A32-93DC-8817F5F4FED7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Testing.Assertions.VisualStudio.Test", "Jolt.Testing.Assertions.VisualStudio.Test\Jolt.Testing.Assertions.VisualStudio.Test.csproj", "{5F9E434A-0ECA-4C52-A135-12445DC4C74A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jolt.Collections", "Jolt.Collections\Jolt.Collections.csproj", "{2A66CD49-6DCB-4DA1-B775-4C8342AC3641}"
 EndProject
@@ -64,22 +47,6 @@ Global
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A53A6CB3-346F-43B6-940A-066ADBE77FF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01762BEE-A0B0-4E2D-910D-F0654471475A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DBEF18E-B628-4419-9EF2-C5E009FB973A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{514BCC97-4CF8-4EC2-B920-79796EBCC9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{514BCC97-4CF8-4EC2-B920-79796EBCC9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{514BCC97-4CF8-4EC2-B920-79796EBCC9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{514BCC97-4CF8-4EC2-B920-79796EBCC9A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7CEA313-558C-45F1-BF7C-114982E0FA68}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC09A424-4552-434D-995E-DF0AE2EFFA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -88,14 +55,6 @@ Global
 		{E839FE36-7834-41BE-871E-C699C0040B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E839FE36-7834-41BE-871E-C699C0040B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E839FE36-7834-41BE-871E-C699C0040B7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75BC1570-C199-4A32-93DC-8817F5F4FED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75BC1570-C199-4A32-93DC-8817F5F4FED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75BC1570-C199-4A32-93DC-8817F5F4FED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75BC1570-C199-4A32-93DC-8817F5F4FED7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F9E434A-0ECA-4C52-A135-12445DC4C74A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F9E434A-0ECA-4C52-A135-12445DC4C74A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F9E434A-0ECA-4C52-A135-12445DC4C74A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F9E434A-0ECA-4C52-A135-12445DC4C74A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A66CD49-6DCB-4DA1-B775-4C8342AC3641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A66CD49-6DCB-4DA1-B775-4C8342AC3641}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A66CD49-6DCB-4DA1-B775-4C8342AC3641}.Release|Any CPU.ActiveCfg = Release|Any CPU
